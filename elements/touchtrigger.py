@@ -21,32 +21,10 @@ class Touchtrigger:
                 return True  # Trigger activated
         return False
 
-    def draw_debug(self, surface):
+    def draw_debug(self, surface, name: str = ""):
         # Draw the transparent surface for debugging
         surface.blit(self.surface, self.location)
         # Draw the outline of the rectangle
         pygame.draw.rect(surface, (255, 0, 0), self.rect, 5)
-        name_surface = self.font.render(self.name, True, (255, 255, 255))  # White text
+        name_surface = self.font.render(name, True, (255, 255, 255))  # White text
         surface.blit(name_surface, (self.location[0] + 5, self.location[1] + 5))
-
-
-#chatgpt:
-#class MyClass:
-#    def __init__(self):
-#        pass
-#
-#    @classmethod
-#    def get_variable_name(cls, instance):
-#        # Get the calling frame
-#        import inspect
-#        frame = inspect.currentframe().f_back
-#        # Search through the local variables
-#        for name, value in frame.f_locals.items():
-#            if value is instance:
-#                return name
-#        return None
-#
-## Usage
-#obj = MyClass()
-#variable_name = MyClass.get_variable_name(obj)
-#print(variable_name)  # Output: obj

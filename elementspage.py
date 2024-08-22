@@ -1,6 +1,6 @@
 import pygame, time
 
-from elements import button, text, inputbox, touchtrigger, fpscounter
+from elements import button, text, inputbox, touchtrigger
 
 # Define colors
 color_start = (93, 0, 133)  # RGB for #5d0085
@@ -18,9 +18,9 @@ def draw_gradient(surface, color_start, color_end):
 # Initialize Pygame
 pygame.init()
 screen = pygame.display.set_mode((1920, 1080))
-pygame.display.set_caption("Editor")
+pygame.display.set_caption("page")
 
-def editor():
+def page():
     frametime = time.time()
     framebucket = [0, 0, int(time.time())]
     testbutton = button.Button("click", (100, 100), 24, 300, 2)
@@ -38,12 +38,19 @@ def editor():
                 pygame.quit()
                 return
         draw_gradient(screen, color_start, color_end)
+        #screen.fill((0, 0, 0))
+        testbutton.draw(screen)
+        screen.blit(pygame.font.SysFont("Arial", 16).render(f"FPS: {framebucket[1]}, frame time: {time.time() - frametime} s", True, (255, 255, 255)), (4, 4))
+        testtext.draw(screen)
+        testinput.draw(screen)
+        #testtouchtrigger.draw_debug(screen, "hewwo")
         pygame.display.flip()
         pygame.time.Clock().tick(60)
+        frametime = time.time()
         if framebucket[2] < int(time.time()):
             framebucket[1] = framebucket[0]
             framebucket = [2, framebucket[1], int(time.time())]
         else:
             framebucket[0] += 1
 
-editor()
+page()
