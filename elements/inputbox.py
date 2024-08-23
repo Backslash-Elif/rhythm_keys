@@ -8,18 +8,18 @@ colorschemes = {
     }
 
 class InputBox:
-    def __init__(self, width: int, text_size: int, position: tuple, max_input_len: int, colorscheme: int = 1, pre_input: str = ""):
+    def __init__(self, width: int, text_size: int, position: tuple, max_input_len: int, colorscheme: list, pre_input: str = ""):
         self.width = width
         self.text_size = text_size
         self.position = position
-        self.color, self.active_color = colorschemes[colorscheme]
+        self.color, self.active_color, self.text_color = colorscheme
         self.max_input_len = max_input_len
         self.input_text = pre_input
         self.active = False
         self.font = pygame.font.Font(None, self.text_size)
         self.rect = pygame.Rect(position[0], position[1], width, text_size + 10)
 
-    def handle_event(self, event):
+    def update(self, event): #event handler
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos):
                 self.active = True

@@ -22,3 +22,9 @@ class Styles:
         @staticmethod
         def dark():
             return [(33, 33, 33), (43, 43, 43), (255, 255, 255)]
+    
+    class bggradient:
+        #start color, end color
+        @staticmethod
+        def purple():
+            return [(93, 0, 133), (0, 0, 128)]

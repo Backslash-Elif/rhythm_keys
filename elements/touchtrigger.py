@@ -13,7 +13,7 @@ class Touchtrigger:
         self.surface = pygame.Surface(self.size, pygame.SRCALPHA)
         self.surface.fill((255, 255, 255, 0))  # Fully transparent
 
-    def update(self, event):
+    def update(self, event): #event handler
         # Check if the event is a mouse button RELEASE
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:  # 1 = left mouse button
             # Check if the mouse position is over the rect
@@ -25,6 +25,6 @@ class Touchtrigger:
         # Draw the transparent surface for debugging
         surface.blit(self.surface, self.location)
         # Draw the outline of the rectangle
-        pygame.draw.rect(surface, (255, 0, 0), self.rect, 5)
+        pygame.draw.rect(surface, (255, 0, 0), self.rect, 3)
         name_surface = self.font.render(name, True, (255, 255, 255))  # White text
-        surface.blit(name_surface, (self.location[0] + 5, self.location[1] + 5))
+        surface.blit(name_surface, (self.location[0] + 3, self.location[1] + 3))

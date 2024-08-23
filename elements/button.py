@@ -1,29 +1,8 @@
 import pygame
-#import sys
-#
-## Initialize Pygame
-#pygame.init()
-#
-## Set up display
-#screen = pygame.display.set_mode((800, 600))
-#pygame.display.set_caption("Reusable Button Example")
-#
-## Define colors
-#WHITE = (255, 255, 255)
-#BLUE = (0, 0, 255)
-#GREEN = (0, 255, 0)
 
-#colors
-colorschemes = {
-    1: [(33, 33, 33), (43, 43, 43)],
-    2: [(11, 87, 208), (30, 100, 212)],
-    3: [(255, 0, 0), (204, 0, 0)]
-    }
-
-# Button class
 class Button:
-    def __init__(self, text, position, text_size, width, color_scheme=1):
-        self.color, self.hover_color = colorschemes[color_scheme]
+    def __init__(self, text: str, position: tuple, text_size: int, width: int, color_scheme: list):
+        self.color, self.hover_color = color_scheme
         self.text = text
         self.position = position
         self.text_size = text_size
