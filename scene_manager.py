@@ -1,9 +1,11 @@
-from editor import Editor
+import example, editor_main_menu, editor_create_menu
 
-class Scenemanager:
+class SceneManager:
     def __init__(self, initial_scene: str) -> None:
         self.scenes = {
-            "Editor": Editor
+            "Example": example.Example,
+            "Editor main menu": editor_main_menu.EditorMainMenu, 
+            "Editor create menu": editor_create_menu.EditorCreateMenu
             }
         self.current_scene = self.scenes[initial_scene](self) #create a instance of the selected class
     

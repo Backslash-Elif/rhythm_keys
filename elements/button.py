@@ -1,14 +1,15 @@
 import pygame
 
 class Button:
-    def __init__(self, text: str, position: tuple, text_size: int, width: int, color_scheme: list):
+    def __init__(self, text: str, text_size: int, position: tuple, width: int, height: int, color_scheme: list):
         self.color, self.hover_color = color_scheme
         self.text = text
         self.position = position
         self.text_size = text_size
         self.width = width
+        self.height = height
         self.font = pygame.font.Font(None, self.text_size)
-        self.rect = pygame.Rect(position[0], position[1], width, self.text_size + 20)
+        self.rect = pygame.Rect(position[0], position[1], width, height)
 
     def draw(self, surface):
         # Draw rounded rectangle
@@ -26,33 +27,3 @@ class Button:
             # Check if the mouse position is over the rect
             return self.rect.collidepoint(event.pos)
         return False
-
-# Main program to demonstrate the button
-#def main():
-#    button = Button(GREEN, "Click Me", (325, 250), 30, 150)
-#
-#    while True:
-#        for event in pygame.event.get():
-#            if event.type == pygame.QUIT:
-#                pygame.quit()
-#                sys.exit()
-#
-#        # Check for mouse hover
-#        mouse_pos = pygame.mouse.get_pos()
-#        if button.is_hovered(mouse_pos):
-#            button.color = BLUE
-#        else:
-#            button.color = GREEN
-#
-#        # Fill the screen with white
-#        screen.fill(WHITE)
-#
-#        # Draw the button
-#        button.draw(screen)
-#
-#        # Refresh the display
-#        pygame.display.flip()
-#        pygame.time.Clock().tick(60)  # Limit to 60 frames per second
-#
-#if __name__ == "__main__":
-#    main()

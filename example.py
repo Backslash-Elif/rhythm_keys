@@ -1,9 +1,9 @@
 import scene, random
 
-from elements import button, text, inputbox, touchtrigger, fpscounter, bgstyle
+from elements import button, text, touchtrigger, fpscounter, bgstyle
 from elements.styles import Styles
 
-class Editor(scene.Scene):
+class Example(scene.Scene):
     def __init__(self, manager):
         super().__init__(manager)
         self.manager = manager
@@ -14,13 +14,13 @@ class Editor(scene.Scene):
         self.fps_text = text.Text("loading", 24, (0, 0))
         #elements
         self.numberdisplay = text.Text(str(random.randint(1, 1000)), 64, (500, 500))
-        self.refreshbutton = button.Button("Refresh", (500, 700), 32, 256, Styles.button.primary())
+        self.refreshbutton = button.Button("Refresh", 32, (500, 700), 256, 64, Styles.button.primary())
     
     def handle_event(self, event):
         if self.fps_toggle.update(event):
             self.show_fps = not self.show_fps
         if self.refreshbutton.is_clicked(event):
-            self.manager.switch_to_scene("Editor")
+            self.manager.switch_to_scene("Example")
     
     def draw(self, surface):
         bgstyle.Bgstyle.draw_gradient(surface, Styles.bggradient.purple())
@@ -29,6 +29,7 @@ class Editor(scene.Scene):
             self.fps_text.draw(surface)
         self.numberdisplay.draw(surface)
         self.refreshbutton.draw(surface)
+        self.fps_toggle.draw_debug(surface, "fps")
     
     def update(self):
         self.fps.tick()
