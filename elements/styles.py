@@ -28,3 +28,25 @@ class Styles:
         @staticmethod
         def purple():
             return [(93, 0, 133), (0, 0, 128)]
+
+    class card:
+        #srgb
+        @staticmethod
+        def light():
+            return (255, 255, 255, 64)
+        
+        @staticmethod
+        def dark():
+            return (0, 0, 0, 64)
+        
+        @staticmethod
+        def primary():
+            return(11, 87, 208, 64)
+        
+        @staticmethod
+        def attention():
+            return(255, 255, 0, 64)
+        
+        @staticmethod
+        def danger():
+            return(255, 0, 0, 64)

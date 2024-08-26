@@ -1,6 +1,6 @@
 import pygame, scene, global_vars
 
-from elements import button, text, inputbox, touchtrigger, fpscounter, bgstyle, display_image
+from elements import button, text, inputbox, touchtrigger, fpscounter, bgstyle, display_image, card
 from elements.styles import Styles
 from tools import Tools
 
@@ -30,7 +30,8 @@ class EditorCreateMenu(scene.Scene):
         self.star3 = display_image.DisplayImage("assets/icons/star.png", (770, 500-10), (48, 48))
         self.star4 = display_image.DisplayImage("assets/icons/star.png", (820, 500-10), (48, 48))
         self.star5 = display_image.DisplayImage("assets/icons/star.png", (870, 500-10), (48, 48))
-        self.difficultydisplaytext = text.Text(str(global_vars.const_editor_difficulty_names[global_vars.editor_difficulty]).capitalize(), 32, (1000, 500))
+        self.difficultydisplaytext = text.Text(str(global_vars.const_editor_difficulty_names[global_vars.editor_difficulty]).capitalize(), 32, (950, 500))
+        self.difficultybgcard = card.Card((660, 480), (450, 70), Styles.card.dark())
         self.star1tt = touchtrigger.Touchtrigger((670, 500-10), (48, 48))
         self.star2tt = touchtrigger.Touchtrigger((720, 500-10), (48, 48))
         self.star3tt = touchtrigger.Touchtrigger((770, 500-10), (48, 48))
@@ -66,6 +67,7 @@ class EditorCreateMenu(scene.Scene):
         self.artisttext.draw(surface)
         self.artistinput.draw(surface)
         self.difficultytext.draw(surface)
+        self.difficultybgcard.draw(surface)
         self.star1.draw(surface)
         self.star2.draw(surface)
         self.star3.draw(surface)
