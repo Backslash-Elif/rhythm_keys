@@ -12,7 +12,7 @@ class EditorCreateMenu(scene.Scene):
         global_vars.editor_author = global_vars.user_name
         global_vars.editor_song_artist = ""
         global_vars.editor_length = 0
-        global_vars.editor_difficulty = "Beginner"
+        global_vars.editor_difficulty = 0
         #fps stuff
         self.fps_toggle = touchtrigger.Touchtrigger((0, 0), (256, 24))
         self.show_fps = False
@@ -25,11 +25,17 @@ class EditorCreateMenu(scene.Scene):
         self.artisttext = text.Text("Enter song artist:", 32, (400, 400))
         self.artistinput = inputbox.InputBox(700, 64, 32, (650, 400-10), 32, Styles.inputbox.dark())
         self.difficultytext = text.Text("Difficulty:", 32, (400, 500))
-        self.star1 = display_image.DisplayImage("assets/icons/star.png", (650+20, 500-10), (48, 48))
-        self.star2 = display_image.DisplayImage("assets/icons/star.png", (650+70, 500-10), (48, 48))
-        self.star3 = display_image.DisplayImage("assets/icons/star.png", (650+120, 500-10), (48, 48))
-        self.star4 = display_image.DisplayImage("assets/icons/star.png", (650+170, 500-10), (48, 48))
-        self.star5 = display_image.DisplayImage("assets/icons/star.png", (650+220, 500-10), (48, 48))
+        self.star1 = display_image.DisplayImage("assets/icons/star.png", (670, 500-10), (48, 48))
+        self.star2 = display_image.DisplayImage("assets/icons/star.png", (720, 500-10), (48, 48))
+        self.star3 = display_image.DisplayImage("assets/icons/star.png", (770, 500-10), (48, 48))
+        self.star4 = display_image.DisplayImage("assets/icons/star.png", (820, 500-10), (48, 48))
+        self.star5 = display_image.DisplayImage("assets/icons/star.png", (870, 500-10), (48, 48))
+        self.difficultydisplaytext = text.Text(str(global_vars.const_editor_difficulty_names[global_vars.editor_difficulty]).capitalize(), 32, (1000, 500))
+        self.star1tt = touchtrigger.Touchtrigger((670, 500-10), (48, 48))
+        self.star2tt = touchtrigger.Touchtrigger((720, 500-10), (48, 48))
+        self.star3tt = touchtrigger.Touchtrigger((770, 500-10), (48, 48))
+        self.star4tt = touchtrigger.Touchtrigger((820, 500-10), (48, 48))
+        self.star5tt = touchtrigger.Touchtrigger((870, 500-10), (48, 48))
     
     def handle_event(self, event):
         if self.fps_toggle.update(event):
@@ -38,6 +44,16 @@ class EditorCreateMenu(scene.Scene):
             self.manager.switch_to_scene("Editor main menu")
         self.nameinput.handle_events(event)
         self.artistinput.handle_events(event)
+        if self.star1tt.update(event):
+            global_vars.editor_difficulty = 0
+        if self.star2tt.update(event):
+            global_vars.editor_difficulty = 1
+        if self.star3tt.update(event):
+            global_vars.editor_difficulty = 2
+        if self.star4tt.update(event):
+            global_vars.editor_difficulty = 3
+        if self.star5tt.update(event):
+            global_vars.editor_difficulty = 4
     
     def draw(self, surface):
         bgstyle.Bgstyle.draw_gradient(surface, Styles.bggradient.purple())
@@ -55,6 +71,8 @@ class EditorCreateMenu(scene.Scene):
         self.star3.draw(surface)
         self.star4.draw(surface)
         self.star5.draw(surface)
+        self.difficultydisplaytext.set_text(str(global_vars.const_editor_difficulty_names[global_vars.editor_difficulty]).capitalize())
+        self.difficultydisplaytext.draw(surface)
     
     def update(self):
         self.fps.tick()
