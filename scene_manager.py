@@ -1,9 +1,8 @@
-import example, editor_main_menu, editor_create_menu
+import editor_main_menu, editor_create_menu
 
 class SceneManager:
     def __init__(self, initial_scene: str) -> None:
         self.scenes = {
-            "Example": example.Example,
             "Editor main menu": editor_main_menu.EditorMainMenu, 
             "Editor create menu": editor_create_menu.EditorCreateMenu
             }

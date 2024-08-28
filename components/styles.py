@@ -1,17 +1,17 @@
 class Styles:
     class button:
-        #color, hover color
+        #color, hover color, text color
         @staticmethod
         def primary():
-            return [(11, 87, 208), (30, 100, 212)]
+            return [(11, 87, 208), (30, 100, 212), (255, 255, 255)]
         
         @staticmethod
         def secondary():
-            return [(33, 33, 33), (43, 43, 43)]
+            return [(33, 33, 33), (43, 43, 43), (255, 255, 255)]
         
         @staticmethod
         def danger():
-            return [(255, 0, 0), (204, 0, 0)]
+            return [(255, 0, 0), (204, 0, 0), (255, 255, 255)]
     
     class inputbox:
         #color, active color, text color

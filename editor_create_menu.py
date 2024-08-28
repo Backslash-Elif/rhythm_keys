@@ -19,7 +19,7 @@ class EditorCreateMenu(scene.Scene):
         self.fps = fpscounter.Fpscounter()
         self.info_text = text.Text("loading", 24, (0, 0))
         #elements
-        self.backbutton = button.Button("Back", 32, (64, 1080-128), 128, 64, Styles.button.danger())
+        self.backbutton = button.Button("Back", 32, (64, 1080-128), (128, 64), Styles.button.danger())
         self.nametext = text.Text("Enter song name:", 32, (400, 300))
         self.nameinput = inputbox.InputBox((700, 64), 32, (650, 300-10), 32, Styles.inputbox.dark())
         self.artisttext = text.Text("Enter song artist:", 32, (400, 400))
@@ -38,7 +38,7 @@ class EditorCreateMenu(scene.Scene):
         self.star4tt = touchtrigger.Touchtrigger((820, 500-10), (48, 48))
         self.star5tt = touchtrigger.Touchtrigger((870, 500-10), (48, 48))
         self.songcard = card.Card((1400, 300), (400, 600), Styles.card.dark())
-        self.songpickerbtn = button.Button("Pick song...", 32, (1420, 320), 360, 64, Styles.button.primary())
+        self.songpickerbtn = button.Button("Pick song...", 32, (1420, 320), (360, 64), Styles.button.primary())
     
     def handle_event(self, event):
         if self.fps_toggle.update(event):
