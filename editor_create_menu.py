@@ -1,7 +1,7 @@
 import pygame, scene, global_vars
 
-from elements import button, text, inputbox, touchtrigger, fpscounter, bgstyle, display_image, card
-from elements.styles import Styles
+from components import button, text, inputbox, touchtrigger, fpscounter, bgstyle, display_image, card
+from components.styles import Styles
 from tools import Tools
 
 class EditorCreateMenu(scene.Scene):
@@ -21,9 +21,9 @@ class EditorCreateMenu(scene.Scene):
         #elements
         self.backbutton = button.Button("Back", 32, (64, 1080-128), 128, 64, Styles.button.danger())
         self.nametext = text.Text("Enter song name:", 32, (400, 300))
-        self.nameinput = inputbox.InputBox(700, 64, 32, (650, 300-10), 32, Styles.inputbox.dark())
+        self.nameinput = inputbox.InputBox((700, 64), 32, (650, 300-10), 32, Styles.inputbox.dark())
         self.artisttext = text.Text("Enter song artist:", 32, (400, 400))
-        self.artistinput = inputbox.InputBox(700, 64, 32, (650, 400-10), 32, Styles.inputbox.dark())
+        self.artistinput = inputbox.InputBox((700, 64), 32, (650, 400-10), 32, Styles.inputbox.dark())
         self.difficultytext = text.Text("Difficulty:", 32, (400, 500))
         self.star1 = display_image.DisplayImage("assets/icons/star.png", (670, 500-10), (48, 48))
         self.star2 = display_image.DisplayImage("assets/icons/star.png", (720, 500-10), (48, 48))

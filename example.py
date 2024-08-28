@@ -1,7 +1,7 @@
 import scene, random
 
-from elements import button, text, touchtrigger, fpscounter, bgstyle
-from elements.styles import Styles
+from components import button, text, touchtrigger, fpscounter, bgstyle
+from components.styles import Styles
 
 class Example(scene.Scene):
     def __init__(self, manager):
@@ -12,7 +12,7 @@ class Example(scene.Scene):
         self.show_fps = False
         self.fps = fpscounter.Fpscounter()
         self.fps_text = text.Text("loading", 24, (0, 0))
-        #elements
+        #components
         self.numberdisplay = text.Text(str(random.randint(1, 1000)), 64, (500, 500))
         self.refreshbutton = button.Button("Refresh", 32, (500, 700), 256, 64, Styles.button.primary())
     

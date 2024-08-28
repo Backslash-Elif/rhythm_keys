@@ -1,6 +1,6 @@
 import pygame, time
 
-from elements import button, text, inputbox, touchtrigger
+from components import button, text, inputbox, touchtrigger
 
 # Define colors
 color_start = (93, 0, 133)  # RGB for #5d0085

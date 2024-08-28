@@ -1,7 +1,7 @@
 import pygame, scene
 
-from elements import button, text, touchtrigger, fpscounter, bgstyle
-from elements.styles import Styles
+from components import button, text, touchtrigger, fpscounter, bgstyle
+from components.styles import Styles
 from tools import Tools
 
 class EditorMainMenu(scene.Scene):
@@ -13,7 +13,7 @@ class EditorMainMenu(scene.Scene):
         self.show_fps = False
         self.fps = fpscounter.Fpscounter()
         self.info_text = text.Text("loading", 24, (0, 0))
-        #elements
+        #components
         self.menucreate = button.Button("Create New", 32, Tools.screen.findcenterwithobject((1920, 1080), (512, 64), (0, -72)), 512, 64, Styles.button.primary())
         self.menuopen = button.Button("Open...", 32, Tools.screen.findcenterwithobject((1920, 1080), (512, 64)), 512, 64, Styles.button.secondary())
         self.menuback = button.Button("Back", 32, Tools.screen.findcenterwithobject((1920, 1080), (512, 64), (0, 72)), 512, 64, Styles.button.secondary())
