@@ -1,4 +1,5 @@
-import pygame, scene
+import pygame
+from scenes import scene
 
 from components import button, text, touchtrigger, fpscounter, bgstyle
 from components.styles import Styles

@@ -1,4 +1,4 @@
-import editor_main_menu, editor_create_menu
+from scenes import editor_main_menu, editor_create_menu
 
 class SceneManager:
     def __init__(self, initial_scene: str) -> None:

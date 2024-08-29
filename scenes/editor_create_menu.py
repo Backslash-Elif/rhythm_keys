@@ -1,4 +1,5 @@
-import pygame, scene, global_vars
+import pygame, global_vars
+from scenes import scene
 
 from components import button, text, inputbox, touchtrigger, fpscounter, bgstyle, display_image, card
 from components.styles import Styles
