@@ -10,6 +10,7 @@ editor_length = 0
 editor_difficulty = 0
 editor_bpm = 0
 editor_lvldat = {}
+editor_filepath = ""
 #UI
 ui_screen_size = (1920, 1080) #TODO make 720p mode
 

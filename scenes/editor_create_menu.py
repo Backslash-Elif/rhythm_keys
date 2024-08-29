@@ -1,8 +1,24 @@
-import pygame, global_vars, tools
+import os, time, pygame, global_vars, tools
 from scenes import scene
 
 from components import button, text, inputbox, touchtrigger, fpscounter, bgstyle, display_image, card
 from components.styles import Styles
+
+import tkinter as tk
+from tkinter import filedialog
+
+
+def file_picker():
+    #make rootwindow and hide it
+    root = tk.Tk()
+    root.withdraw()
+
+    #file allow list
+    file_types = [("All Audio Files", "*.wav;*.mp3;*.ogg;*.midi")]
+
+    #file dialog
+    file_path = filedialog.askopenfilename(title="Select an Audio File", filetypes=file_types)
+    return file_path
 
 class EditorCreateMenu(scene.Scene):
     def __init__(self, manager):
@@ -43,8 +59,15 @@ class EditorCreateMenu(scene.Scene):
         self.star3tt = touchtrigger.Touchtrigger((420, 500+8), (48, 48))
         self.star4tt = touchtrigger.Touchtrigger((470, 500+8), (48, 48))
         self.star5tt = touchtrigger.Touchtrigger((520, 500+8), (48, 48))
-        self.song_card = card.Card((1400, 300), (400, 600), Styles.card.dark())
-        self.songpicker_btn = button.Button("Pick song...", 32, (1420, 320), (360, 64), Styles.button.primary())
+
+        self.song_card = card.Card((1100, 300), (520, 600), Styles.card.light())
+        self.songpicker_btn = button.Button("Pick song...", 32, (1120, 320), (480, 64), Styles.button.primary())
+        self.song_file_text = text.Text("No song selected yet!", 32, (1120, 400))
+        self.song_bpm_text = text.Text("BPM:", 32, (1120, 450))
+        self.song_bpm_input = inputbox.InputBox((150, 48), 32, (1200, 450-12), 3, Styles.inputbox.dark())
+        self.song_tap_btn = button.Button("Tap", 32, (1370, 450-12), (120, 48), Styles.button.primary())
+        self.song_tap_reset_btn = button.Button("Reset", 24, (1510, 450-12), (64, 48), Styles.button.secondary())
+        self.song_tap = [None, 0] #begin tap time, taps
     
     def handle_event(self, event):
         if self.fps_toggle.update(event):
@@ -64,7 +87,17 @@ class EditorCreateMenu(scene.Scene):
         if self.star5tt.update(event):
             global_vars.editor_difficulty = 4
         if self.songpicker_btn.is_clicked(event):
-            print("pick file...") # TODO make filepicker, filelocation variable, fix & rebuild button component, rebuild input field component
+            temp_file = file_picker()
+            if temp_file:
+                global_vars.editor_filepath = temp_file
+                self.song_file_text.set_text(os.path.basename(temp_file))
+        self.song_bpm_input.handle_events(event)
+        if self.song_tap_btn.is_clicked(event):
+            if self.song_tap[0]:
+                self.song_tap[1] += 1
+                self.song_bpm_input.set_text(str(self.song_tap[1]/((time.time()-self.song_tap[0])/60)))
+            else:
+                self.song_tap = [time.time(), 1]
     
     def draw(self, surface):
         bgstyle.Bgstyle.draw_gradient(surface, Styles.bggradient.purple())
@@ -87,6 +120,11 @@ class EditorCreateMenu(scene.Scene):
         self.difficulty_display_text.draw(surface)
         self.song_card.draw(surface)
         self.songpicker_btn.draw(surface)
+        self.song_file_text.draw(surface)
+        self.song_bpm_text.draw(surface)
+        self.song_bpm_input.draw(surface)
+        self.song_tap_btn.draw(surface)
+        self.song_tap_reset_btn.draw(surface)
     
     def update(self):
         self.fps.tick()
