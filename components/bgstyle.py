@@ -4,7 +4,7 @@ class Bgstyle:
     def __init__(self) -> None:
         pass
     
-    def draw_gradient(surface, colors: list):
+    def draw_gradient(surface, colors: tuple):
         color_start, color_end = colors
         for y in range(surface.get_height()):
             # Interpolate the color

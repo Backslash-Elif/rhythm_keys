@@ -6,7 +6,7 @@ class Fpscounter:
         self.frame_counter = 0
         self.current_second = 0
     
-    def tick(self):
+    def tick(self): #count frames
         if self.current_second < int(time.time()):
             self.fps = self.frame_counter
             self.frame_counter = 1
@@ -14,5 +14,5 @@ class Fpscounter:
         else:
             self.frame_counter += 1
     
-    def get_fps(self):
+    def get_fps(self): #get method for fps
         return self.fps

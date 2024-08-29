@@ -21,9 +21,6 @@ class EditorMainMenu(scene.Scene):
     def handle_event(self, event):
         if self.fps_toggle.update(event):
             self.show_fps = not self.show_fps
-        self.menucreate.handle_events(event)
-        self.menuopen.handle_events(event)
-        self.menuback.handle_events(event)
         if self.menucreate.is_clicked(event):
             self.manager.switch_to_scene("Editor create menu")
     

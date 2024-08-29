@@ -2,29 +2,29 @@ import pygame
 
 class Text:
     def __init__(self, text: str, size: int, position: tuple, color:tuple = (255, 255, 255)) -> None:
-        self.displaytext = text
-        self.textsize = size
-        self.textpos = position
-        self.textcolor = color
-        self.font = pygame.font.SysFont(None, self.textsize)
+        self.display_text = text
+        self.text_size = size
+        self.position = position
+        self.text_color = color
+
+        self.font = pygame.font.SysFont(None, self.text_size) #font set to None for pygame built-in font
     
     def draw(self, surface): #draw to surface
-        text_surface = self.font.render(self.displaytext, True, self.textcolor)
-        
-        # Blit the text onto the screen
-        surface.blit(text_surface, self.textpos)
+        text_surface = self.font.render(self.display_text, True, self.text_color)
+        #blit the text onto given surface
+        surface.blit(text_surface, self.position)
     
-    def get_size(self):
-        return self.font.size(self.displaytext)  # Returns (width, height)
+    def get_size(self): #gets the size of the text
+        return self.font.size(self.display_text)  #(width, height)
     
     def get_text(self): #getter method text
-        return self.displaytext
+        return self.display_text
     
     def set_text(self, newtext:str): #setter method text
-        self.displaytext = newtext
+        self.display_text = newtext
     
     def get_position(self): #getter method text position
-        return self.textpos
+        return self.position
     
     def set_position(self, newposition): #setter method text position
-        self.textpos = newposition
+        self.position = newposition
