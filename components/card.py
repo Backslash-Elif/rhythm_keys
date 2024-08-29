@@ -19,3 +19,6 @@ class Card:
     def draw(self, surface):
         #draw prerendered surface onto main screen
         surface.blit(self.buffer, self.position)
+    
+    def get_size(self):
+        return self.size

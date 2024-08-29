@@ -26,5 +26,5 @@ class Text:
     def get_position(self): #getter method text position
         return self.position
     
-    def set_position(self, newposition): #setter method text position
+    def set_position(self, newposition: tuple): #setter method text position
         self.position = newposition

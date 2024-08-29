@@ -1,9 +1,8 @@
-import pygame, global_vars
+import pygame, global_vars, tools
 from scenes import scene
 
 from components import button, text, inputbox, touchtrigger, fpscounter, bgstyle, display_image, card
 from components.styles import Styles
-from tools import Tools
 
 class EditorCreateMenu(scene.Scene):
     def __init__(self, manager):
@@ -19,35 +18,41 @@ class EditorCreateMenu(scene.Scene):
         self.show_fps = False
         self.fps = fpscounter.Fpscounter()
         self.info_text = text.Text("loading", 24, (0, 0))
-        #elements
-        self.backbutton = button.Button("Back", 32, (64, 1080-128), (128, 64), Styles.button.danger())
-        self.nametext = text.Text("Enter song name:", 32, (400, 300))
-        self.nameinput = inputbox.InputBox((700, 64), 32, (650, 300-10), 32, Styles.inputbox.dark())
-        self.artisttext = text.Text("Enter song artist:", 32, (400, 400))
-        self.artistinput = inputbox.InputBox((700, 64), 32, (650, 400-10), 32, Styles.inputbox.dark())
-        self.difficultytext = text.Text("Difficulty:", 32, (400, 500))
-        self.star1 = display_image.DisplayImage("assets/icons/star.png", (670, 500-10), (48, 48))
-        self.star2 = display_image.DisplayImage("assets/icons/star.png", (720, 500-10), (48, 48))
-        self.star3 = display_image.DisplayImage("assets/icons/star.png", (770, 500-10), (48, 48))
-        self.star4 = display_image.DisplayImage("assets/icons/star.png", (820, 500-10), (48, 48))
-        self.star5 = display_image.DisplayImage("assets/icons/star.png", (870, 500-10), (48, 48))
-        self.difficultydisplaytext = text.Text(str(global_vars.const_editor_difficulty_names[global_vars.editor_difficulty]).capitalize(), 32, (950, 500))
-        self.difficultybgcard = card.Card((660, 480), (450, 70), Styles.card.primary())
-        self.star1tt = touchtrigger.Touchtrigger((670, 500-10), (48, 48))
-        self.star2tt = touchtrigger.Touchtrigger((720, 500-10), (48, 48))
-        self.star3tt = touchtrigger.Touchtrigger((770, 500-10), (48, 48))
-        self.star4tt = touchtrigger.Touchtrigger((820, 500-10), (48, 48))
-        self.star5tt = touchtrigger.Touchtrigger((870, 500-10), (48, 48))
-        self.songcard = card.Card((1400, 300), (400, 600), Styles.card.dark())
-        self.songpickerbtn = button.Button("Pick song...", 32, (1420, 320), (360, 64), Styles.button.primary())
+        
+        self.back_btn = button.Button("Back", 32, (64, 1080-128), (128, 64), Styles.button.danger())
+        #inputs
+        self.name_text = text.Text("Enter song name:", 24, (300+10, 300-24), Styles.colors.light_gray())
+        self.name_input = inputbox.InputBox((700, 48), 32, (300, 300), 32, Styles.inputbox.dark())
+        self.artist_text = text.Text("Enter song artist:", 24, (300+10, 400-24), Styles.colors.light_gray())
+        self.artist_input = inputbox.InputBox((700, 48), 32, (300, 400), 32, Styles.inputbox.dark())
+        #difficulty
+        self.difficulty_bg_card = card.Card((300, 500), (450, 64), Styles.card.primary())
+        self.difficulty_text = text.Text("Difficulty:", 24, (300+10, 500-24), Styles.colors.light_gray())
+        self.difficulty_display_text = text.Text(str(global_vars.const_editor_difficulty_names[global_vars.editor_difficulty]).capitalize(), 32, (600, 0))
+        self.difficulty_display_text.set_position((self.difficulty_display_text.get_position()[0], 500+tools.Screen.center_axis(self.difficulty_bg_card.get_size()[1], self.difficulty_display_text.get_size()[1])))
+        #star icons
+        self.star1 = display_image.DisplayImage("assets/icons/star.png", (320, 500+8), (48, 48))
+        self.star2 = display_image.DisplayImage("assets/icons/star.png", (370, 500+8), (48, 48))
+        self.star3 = display_image.DisplayImage("assets/icons/star.png", (420, 500+8), (48, 48))
+        self.star4 = display_image.DisplayImage("assets/icons/star.png", (470, 500+8), (48, 48))
+        self.star5 = display_image.DisplayImage("assets/icons/star.png", (520, 500+8), (48, 48))
+
+        #star touch triggers
+        self.star1tt = touchtrigger.Touchtrigger((320, 500+8), (48, 48))
+        self.star2tt = touchtrigger.Touchtrigger((370, 500+8), (48, 48))
+        self.star3tt = touchtrigger.Touchtrigger((420, 500+8), (48, 48))
+        self.star4tt = touchtrigger.Touchtrigger((470, 500+8), (48, 48))
+        self.star5tt = touchtrigger.Touchtrigger((520, 500+8), (48, 48))
+        self.song_card = card.Card((1400, 300), (400, 600), Styles.card.dark())
+        self.songpicker_btn = button.Button("Pick song...", 32, (1420, 320), (360, 64), Styles.button.primary())
     
     def handle_event(self, event):
         if self.fps_toggle.update(event):
             self.show_fps = not self.show_fps
-        if self.backbutton.is_clicked(event):
+        if self.back_btn.is_clicked(event):
             self.manager.switch_to_scene("Editor main menu")
-        self.nameinput.handle_events(event)
-        self.artistinput.handle_events(event)
+        self.name_input.handle_events(event)
+        self.artist_input.handle_events(event)
         if self.star1tt.update(event):
             global_vars.editor_difficulty = 0
         if self.star2tt.update(event):
@@ -58,7 +63,7 @@ class EditorCreateMenu(scene.Scene):
             global_vars.editor_difficulty = 3
         if self.star5tt.update(event):
             global_vars.editor_difficulty = 4
-        if self.songpickerbtn.is_clicked(event):
+        if self.songpicker_btn.is_clicked(event):
             print("pick file...") # TODO make filepicker, filelocation variable, fix & rebuild button component, rebuild input field component
     
     def draw(self, surface):
@@ -66,22 +71,22 @@ class EditorCreateMenu(scene.Scene):
         if self.show_fps:
             self.info_text.set_text(f"FPS: {self.fps.get_fps()}, Mouse: X={pygame.mouse.get_pos()[0]} Y={pygame.mouse.get_pos()[1]}")
             self.info_text.draw(surface)
-        self.backbutton.draw(surface)
-        self.nametext.draw(surface)
-        self.nameinput.draw(surface)
-        self.artisttext.draw(surface)
-        self.artistinput.draw(surface)
-        self.difficultytext.draw(surface)
-        self.difficultybgcard.draw(surface)
+        self.back_btn.draw(surface)
+        self.name_text.draw(surface)
+        self.name_input.draw(surface)
+        self.artist_text.draw(surface)
+        self.artist_input.draw(surface)
+        self.difficulty_text.draw(surface)
+        self.difficulty_bg_card.draw(surface)
         self.star1.draw(surface)
         self.star2.draw(surface)
         self.star3.draw(surface)
         self.star4.draw(surface)
         self.star5.draw(surface)
-        self.difficultydisplaytext.set_text(str(global_vars.const_editor_difficulty_names[global_vars.editor_difficulty]).capitalize())
-        self.difficultydisplaytext.draw(surface)
-        self.songcard.draw(surface)
-        self.songpickerbtn.draw(surface)
+        self.difficulty_display_text.set_text(str(global_vars.const_editor_difficulty_names[global_vars.editor_difficulty]).capitalize())
+        self.difficulty_display_text.draw(surface)
+        self.song_card.draw(surface)
+        self.songpicker_btn.draw(surface)
     
     def update(self):
         self.fps.tick()

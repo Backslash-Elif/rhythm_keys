@@ -50,3 +50,69 @@ class Styles:
         @staticmethod
         def danger():
             return(255, 0, 0, 64)
+    
+    class colors:
+        #red, green, blue
+        @staticmethod
+        def red():
+            return (255, 0, 0)
+        
+        @staticmethod
+        def light_red():
+            return (255, 99, 71)
+        
+        @staticmethod
+        def green():
+            return (0, 255, 0)
+        
+        @staticmethod
+        def light_green():
+            return (0, 255, 127)
+        
+        @staticmethod
+        def blue():
+            return (0, 0, 255)
+        
+        @staticmethod
+        def light_blue():
+            return (11, 87, 208)
+        
+        @staticmethod
+        def purple():
+            return (132, 3, 252)
+        
+        @staticmethod
+        def magenta():
+            return (255, 0, 255)
+        
+        @staticmethod
+        def orange():
+            return (255, 165, 0)
+        
+        @staticmethod
+        def yellow():
+            return (255, 255, 0)
+        
+        @staticmethod
+        def gray():
+            return (128, 128, 128)
+        
+        @staticmethod
+        def light_gray():
+            return (200, 200, 200)
+        
+        @staticmethod
+        def dark_gray():
+            return (64, 64, 64)
+        
+        @staticmethod
+        def black_gray():
+            return (33, 33, 33)
+        
+        @staticmethod
+        def white():
+            return (255, 255, 255)
+        
+        @staticmethod
+        def black():
+            return (0, 0, 0)
