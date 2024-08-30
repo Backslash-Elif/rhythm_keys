@@ -15,11 +15,11 @@ class EditorMainMenu(scene.Scene):
         self.info_text = text.Text("loading", 24, (0, 0))
         #components
         self.title_text = text.Text("Welcome to the editor!", 128, (0, 175), Styles.colors.light_green())
-        self.create_button = button.Button("Create New", 32, tools.Screen.center_obj(global_vars.ui_screen_size, (512, 64), (0, -72)), (512, 64), Styles.button.primary())
-        self.open_button = button.Button("Open...", 32, tools.Screen.center_obj(global_vars.ui_screen_size, (512, 64)), (512, 64), Styles.button.secondary())
-        self.back_button = button.Button("Back", 32, tools.Screen.center_obj(global_vars.ui_screen_size, (512, 64), (0, 72)), (512, 64), Styles.button.secondary())
+        self.create_button = button.Button("Create New", 32, tools.Screen.center_obj(global_vars.sys_screen_size, (512, 64), (0, -72)), (512, 64), Styles.button.primary())
+        self.open_button = button.Button("Open...", 32, tools.Screen.center_obj(global_vars.sys_screen_size, (512, 64)), (512, 64), Styles.button.secondary())
+        self.back_button = button.Button("Back", 32, tools.Screen.center_obj(global_vars.sys_screen_size, (512, 64), (0, 72)), (512, 64), Styles.button.secondary())
         #configure components
-        self.title_text.set_position((tools.Screen.center_axis(global_vars.ui_screen_size[0], self.title_text.get_size()[0]), self.title_text.get_position()[1]))
+        self.title_text.set_position((tools.Screen.center_axis(global_vars.sys_screen_size[0], self.title_text.get_size()[0]), self.title_text.get_position()[1]))
     
     def handle_event(self, event):
         if self.fps_toggle.update(event):

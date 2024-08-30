@@ -1,4 +1,4 @@
-import os, time, pygame, global_vars, tools
+import os, time, pygame, global_vars, tools, sound_engine
 from scenes import scene
 
 from components import button, text, inputbox, touchtrigger, fpscounter, bgstyle, display_image, card
@@ -35,7 +35,7 @@ class EditorCreateMenu(scene.Scene):
         self.fps = fpscounter.Fpscounter()
         self.info_text = text.Text("loading", 24, (0, 0))
         
-        self.back_btn = button.Button("Back", 32, (64, 1080-128), (128, 64), Styles.button.danger())
+        self.back_btn = button.Button("Back", 32, (64, global_vars.sys_screen_size[1]-128), (128, 64), Styles.button.danger())
         #inputs
         self.name_text = text.Text("Enter song name:", 24, (300+10, 300-24), Styles.colors.light_gray())
         self.name_input = inputbox.InputBox((700, 48), 32, (300, 300), 32, Styles.inputbox.dark())
@@ -59,15 +59,21 @@ class EditorCreateMenu(scene.Scene):
         self.star3tt = touchtrigger.Touchtrigger((420, 500+8), (48, 48))
         self.star4tt = touchtrigger.Touchtrigger((470, 500+8), (48, 48))
         self.star5tt = touchtrigger.Touchtrigger((520, 500+8), (48, 48))
-
-        self.song_card = card.Card((1100, 300), (520, 600), Styles.card.light())
+        #song selection
+        self.song_card = card.Card((1100, 300), (520, 400), Styles.card.light())
         self.songpicker_btn = button.Button("Pick song...", 32, (1120, 320), (480, 64), Styles.button.primary())
         self.song_file_text = text.Text("No song selected yet!", 32, (1120, 400))
         self.song_bpm_text = text.Text("BPM:", 32, (1120, 450))
         self.song_bpm_input = inputbox.InputBox((150, 48), 32, (1200, 450-12), 3, Styles.inputbox.dark())
-        self.song_tap_btn = button.Button("Tap", 32, (1370, 450-12), (120, 48), Styles.button.primary())
-        self.song_tap_reset_btn = button.Button("Reset", 24, (1510, 450-12), (64, 48), Styles.button.secondary())
+        self.song_tap_btn = button.Button("Tap", 32, (1370, 450-12), (130, 48), Styles.button.primary())
+        self.song_tap_reset_btn = button.Button("Reset", 24, (1520, 450-12), (80, 48), Styles.button.danger())
         self.song_tap = [] #for bpm calculation
+        self.song_test = sound_engine.SoundEngine()
+        self.song_len_text = text.Text("Length:", 32, (1120, 500))
+        self.song_test_btn = button.Button("Play", 32, (1370, 650-18), (130, 48), Styles.button.primary())
+        self.song_test_reset_btn = button.Button("Reset", 24, (1520, 650-18), (80, 48), Styles.button.danger())
+
+        self.next_btn = button.Button("Next", 32, (global_vars.sys_screen_size[0]-(64+128), global_vars.sys_screen_size[1]-128), (128, 64), Styles.button.primary())
     
     def handle_event(self, event):
         if self.fps_toggle.update(event):
@@ -86,21 +92,46 @@ class EditorCreateMenu(scene.Scene):
             global_vars.editor_difficulty = 3
         if self.star5tt.update(event):
             global_vars.editor_difficulty = 4
-        if self.songpicker_btn.is_clicked(event):
+        if self.songpicker_btn.is_clicked(event): #load file
             temp_file = file_picker()
             if temp_file:
                 global_vars.editor_filepath = temp_file
                 self.song_file_text.set_text(os.path.basename(temp_file))
+                self.song_test.load(temp_file)
+                song_m = int(self.song_test.get_song_len() / 60)
+                song_s = int(self.song_test.get_song_len() % 60)
+                if type(self.song_test.get_song_len() == float):
+                    self.song_len_text.set_text(f"Length: {song_m}min {song_s}sec ({round(self.song_test.get_song_len(), 3)}sec)")
+                else:
+                    self.song_len_text.set_text(f"Length: {song_m}min {song_s}sec ({int(self.song_test.get_song_len())}sec)")
         self.song_bpm_input.handle_events(event)
-        if self.song_tap_btn.is_clicked(event):
+        if self.song_tap_btn.is_clicked(event): #bpm logic
             self.song_tap.append(time.time())
-            if len(self.song_tap) >= 2:
+            if len(self.song_tap) >= 8:
                 intervals = [self.song_tap[i+1] - self.song_tap[i] for i in range(len(self.song_tap)-1)] #get intervals with math magic
                 average_interval = sum(intervals) / len(intervals)
-                self.song_bpm_input.set_text(str(round(60 / average_interval)))
-        if self.song_tap_reset_btn.is_clicked(event):
+                self.song_bpm_input.set_text(str(round(60 / average_interval)+1)) #+1 because it was always one too low
+            else:
+                self.song_bpm_input.set_text("Computing...")
+        if self.song_tap_reset_btn.is_clicked(event): #bpm reset
             self.song_tap = []
             self.song_bpm_input.set_text("")
+        if self.song_test_btn.is_clicked(event):
+            if self.song_test.song_loaded():
+                if self.song_test.get_play_state() == 1:
+                    self.song_test.pause()
+                    self.song_test_btn.set_text("Resume")
+                else:
+                    self.song_test.play()
+                    self.song_test_btn.set_text("Pause")
+        if self.song_test_reset_btn.is_clicked(event):
+            if self.song_test.song_loaded():
+                self.song_test.stop()
+                self.song_test_btn.set_text("Play")
+        if self.next_btn.is_clicked(event): #next button trigger
+            if not (self.name_input.get_text() or self.artist_input.get_text()):
+                if type(self.song_bpm_input) in [int, float]:
+                    print("to be implemented...")
     
     def draw(self, surface):
         bgstyle.Bgstyle.draw_gradient(surface, Styles.bggradient.purple())
@@ -128,6 +159,10 @@ class EditorCreateMenu(scene.Scene):
         self.song_bpm_input.draw(surface)
         self.song_tap_btn.draw(surface)
         self.song_tap_reset_btn.draw(surface)
+        self.song_len_text.draw(surface)
+        self.song_test_btn.draw(surface)
+        self.song_test_reset_btn.draw(surface)
+        self.next_btn.draw(surface)
     
     def update(self):
         self.fps.tick()

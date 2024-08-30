@@ -42,3 +42,7 @@ class Button:
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:  #1 = left mouse button
             return self.hitbox.collidepoint(event.pos)
         return False
+    
+    def set_text(self, new_text: str):
+        self.text_object.set_text(new_text)
+        self._render()
