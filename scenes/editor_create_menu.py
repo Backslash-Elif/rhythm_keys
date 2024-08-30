@@ -67,7 +67,7 @@ class EditorCreateMenu(scene.Scene):
         self.song_bpm_input = inputbox.InputBox((150, 48), 32, (1200, 450-12), 3, Styles.inputbox.dark())
         self.song_tap_btn = button.Button("Tap", 32, (1370, 450-12), (120, 48), Styles.button.primary())
         self.song_tap_reset_btn = button.Button("Reset", 24, (1510, 450-12), (64, 48), Styles.button.secondary())
-        self.song_tap = [None, 0] #begin tap time, taps
+        self.song_tap = [] #for bpm calculation
     
     def handle_event(self, event):
         if self.fps_toggle.update(event):
@@ -93,11 +93,14 @@ class EditorCreateMenu(scene.Scene):
                 self.song_file_text.set_text(os.path.basename(temp_file))
         self.song_bpm_input.handle_events(event)
         if self.song_tap_btn.is_clicked(event):
-            if self.song_tap[0]:
-                self.song_tap[1] += 1
-                self.song_bpm_input.set_text(str(self.song_tap[1]/((time.time()-self.song_tap[0])/60)))
-            else:
-                self.song_tap = [time.time(), 1]
+            self.song_tap.append(time.time())
+            if len(self.song_tap) >= 2:
+                intervals = [self.song_tap[i+1] - self.song_tap[i] for i in range(len(self.song_tap)-1)] #get intervals with math magic
+                average_interval = sum(intervals) / len(intervals)
+                self.song_bpm_input.set_text(str(round(60 / average_interval)))
+        if self.song_tap_reset_btn.is_clicked(event):
+            self.song_tap = []
+            self.song_bpm_input.set_text("")
     
     def draw(self, surface):
         bgstyle.Bgstyle.draw_gradient(surface, Styles.bggradient.purple())

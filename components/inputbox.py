@@ -65,6 +65,6 @@ class InputBox:
     def get_text(self): #get method for display text
         return self.display_text
     
-    def set_text(self, new_text): #set method for display text
+    def set_text(self, new_text: str): #set method for display text
         self.display_text = new_text
         self._render()
