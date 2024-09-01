@@ -10,7 +10,7 @@ class SoundEngine:
     def load(self, songpath: str): #load song from path
         self.eject()
         self.current_song = songpath
-        pygame.mixer.music.load(songpath)
+        pygame.mixer.music.load(songpath) #TODO fix exception for corrupted file
         self.sound = pygame.mixer.Sound(songpath) #get song details
     
     def eject(self): #unload song

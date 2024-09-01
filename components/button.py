@@ -46,3 +46,11 @@ class Button:
     def set_text(self, new_text: str):
         self.text_object.set_text(new_text)
         self._render()
+    
+    def set_color_scheme(self, new_color_scheme: tuple):
+        self.color, self.hover_color, self.text_color = new_color_scheme
+        self._render()
+    
+    def set_position(self, new_position: tuple):
+        self.position = new_position
+        self.hitbox = pygame.Rect(self.position[0], self.position[1], self.width, self.height) #update hitbox

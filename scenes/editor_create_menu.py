@@ -1,7 +1,7 @@
 import os, time, pygame, global_vars, tools, sound_engine
 from scenes import scene
 
-from components import button, text, inputbox, touchtrigger, fpscounter, bgstyle, display_image, card
+from components import button, text, inputbox, touchtrigger, fpscounter, bgstyle, display_image, card, alert
 from components.styles import Styles
 
 import tkinter as tk
@@ -64,7 +64,7 @@ class EditorCreateMenu(scene.Scene):
         self.songpicker_btn = button.Button("Pick song...", 32, (1120, 320), (480, 64), Styles.button.primary())
         self.song_file_text = text.Text("No song selected yet!", 32, (1120, 400))
         self.song_bpm_text = text.Text("BPM:", 32, (1120, 450))
-        self.song_bpm_input = inputbox.InputBox((150, 48), 32, (1200, 450-12), 3, Styles.inputbox.dark())
+        self.song_bpm_input = inputbox.InputBox((150, 48), 32, (1200, 450-12), 3 , Styles.inputbox.dark())
         self.song_tap_btn = button.Button("Tap", 32, (1370, 450-12), (130, 48), Styles.button.primary())
         self.song_tap_reset_btn = button.Button("Reset", 24, (1520, 450-12), (80, 48), Styles.button.danger())
         self.song_tap = [] #for bpm calculation
@@ -74,6 +74,8 @@ class EditorCreateMenu(scene.Scene):
         self.song_test_reset_btn = button.Button("Reset", 24, (1520, 650-18), (80, 48), Styles.button.danger())
 
         self.next_btn = button.Button("Next", 32, (global_vars.sys_screen_size[0]-(64+128), global_vars.sys_screen_size[1]-128), (128, 64), Styles.button.primary())
+
+        self.alert_object = alert.Alert()
     
     def handle_event(self, event):
         if self.fps_toggle.update(event):
@@ -129,9 +131,11 @@ class EditorCreateMenu(scene.Scene):
                 self.song_test.stop()
                 self.song_test_btn.set_text("Play")
         if self.next_btn.is_clicked(event): #next button trigger
-            if not (self.name_input.get_text() or self.artist_input.get_text()):
-                if type(self.song_bpm_input) in [int, float]:
-                    print("to be implemented...")
+            if self.name_input.get_text() and self.artist_input.get_text() and self.song_bpm_input.get_text().isnumeric() and global_vars.editor_filepath:
+                print("TODO: Change to other scene")
+            else:
+                self.alert_object.new_alert("Fill out all fields!")
+        self.alert_object.handle_events(event)
     
     def draw(self, surface):
         bgstyle.Bgstyle.draw_gradient(surface, Styles.bggradient.purple())
@@ -163,6 +167,7 @@ class EditorCreateMenu(scene.Scene):
         self.song_test_btn.draw(surface)
         self.song_test_reset_btn.draw(surface)
         self.next_btn.draw(surface)
+        self.alert_object.draw(surface)
     
     def update(self):
         self.fps.tick()
