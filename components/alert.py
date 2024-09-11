@@ -7,7 +7,7 @@ class Alert:
         self.fullscreencard = card.Card((0, 0), global_vars.sys_screen_size, Styles.card.dark())
         self.msg_card = None
         self.text_object = text.Text("No alert text provided XwX", 32, (0, 0))
-        self.action_btn = button.Button("OK", 48, (0, 0), (128, 64), Styles.button.primary())
+        self.action_btn = button.Button("OK", 32, (0, 0), (64, 32), Styles.button.primary())
         self.active = False
 
         self.buffer = pygame.Surface(global_vars.sys_screen_size, pygame.SRCALPHA)
@@ -18,12 +18,14 @@ class Alert:
         self.msg_card.draw(self.buffer)
         self.text_object.draw(self.buffer)
     
-    def new_alert(self, alert_text: str):
+    def new_alert(self, alert_text: str): #creates alert
+        #styling:
         self.text_object.set_text(alert_text)
-        self.text_object.set_position(tools.Screen.center_obj(global_vars.sys_screen_size, self.text_object.get_size()))
-        card_size = (self.text_object.get_size()[0]+100, self.text_object.get_size()[1]+200)
+        text_pos = tools.Screen.center_obj(global_vars.sys_screen_size, self.text_object.get_size())
+        self.text_object.set_position((text_pos[0], text_pos[1]-self.text_object.get_size()[1]/2))
+        card_size = (self.text_object.get_size()[0]+100, self.text_object.get_size()[1]+100)
         self.msg_card = card.Card(tools.Screen.center_obj(global_vars.sys_screen_size, card_size), card_size, Styles.card.attention())
-        self.action_btn.set_position((tools.Screen.center_axis(global_vars.sys_screen_size[0], 128), (global_vars.sys_screen_size[1]/2)+(card_size[1]/2-(64+16))))
+        self.action_btn.set_position((tools.Screen.center_axis(global_vars.sys_screen_size[0], 64), (global_vars.sys_screen_size[1]/2)+(card_size[1]/2-(32+16))))
         self.active = True
         self._render()
     
@@ -36,4 +38,6 @@ class Alert:
             #blits the prerendered buffer to the given surface
             surface.blit(self.buffer, (0, 0))
             self.action_btn.draw(surface) #draw directly cuz already prerendered
-        
+    
+    def is_active(self):
+        return self.active

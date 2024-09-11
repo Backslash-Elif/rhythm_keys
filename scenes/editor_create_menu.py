@@ -80,62 +80,64 @@ class EditorCreateMenu(scene.Scene):
     def handle_event(self, event):
         if self.fps_toggle.update(event):
             self.show_fps = not self.show_fps
-        if self.back_btn.is_clicked(event):
-            self.manager.switch_to_scene("Editor main menu")
-        self.name_input.handle_events(event)
-        self.artist_input.handle_events(event)
-        if self.star1tt.update(event):
-            global_vars.editor_difficulty = 0
-        if self.star2tt.update(event):
-            global_vars.editor_difficulty = 1
-        if self.star3tt.update(event):
-            global_vars.editor_difficulty = 2
-        if self.star4tt.update(event):
-            global_vars.editor_difficulty = 3
-        if self.star5tt.update(event):
-            global_vars.editor_difficulty = 4
-        if self.songpicker_btn.is_clicked(event): #load file
-            temp_file = file_picker()
-            if temp_file:
-                global_vars.editor_filepath = temp_file
-                self.song_file_text.set_text(os.path.basename(temp_file))
-                self.song_test.load(temp_file)
-                song_m = int(self.song_test.get_song_len() / 60)
-                song_s = int(self.song_test.get_song_len() % 60)
-                if type(self.song_test.get_song_len() == float):
-                    self.song_len_text.set_text(f"Length: {song_m}min {song_s}sec ({round(self.song_test.get_song_len(), 3)}sec)")
+        if self.alert_object.is_active():
+            self.alert_object.handle_events(event)
+        else:
+            if self.back_btn.is_clicked(event):
+                self.manager.switch_to_scene("Editor main menu")
+            self.name_input.handle_events(event)
+            self.artist_input.handle_events(event)
+            if self.star1tt.update(event):
+                global_vars.editor_difficulty = 0
+            if self.star2tt.update(event):
+                global_vars.editor_difficulty = 1
+            if self.star3tt.update(event):
+                global_vars.editor_difficulty = 2
+            if self.star4tt.update(event):
+                global_vars.editor_difficulty = 3
+            if self.star5tt.update(event):
+                global_vars.editor_difficulty = 4
+            if self.songpicker_btn.is_clicked(event): #load file
+                temp_file = file_picker()
+                if temp_file:
+                    global_vars.editor_filepath = temp_file
+                    self.song_file_text.set_text(os.path.basename(temp_file))
+                    self.song_test.load(temp_file)
+                    song_m = int(self.song_test.get_song_len() / 60)
+                    song_s = int(self.song_test.get_song_len() % 60)
+                    if type(self.song_test.get_song_len() == float):
+                        self.song_len_text.set_text(f"Length: {song_m}min {song_s}sec ({round(self.song_test.get_song_len(), 3)}sec)")
+                    else:
+                        self.song_len_text.set_text(f"Length: {song_m}min {song_s}sec ({int(self.song_test.get_song_len())}sec)")
+            self.song_bpm_input.handle_events(event)
+            if self.song_tap_btn.is_clicked(event): #bpm logic
+                self.song_tap.append(time.time())
+                if len(self.song_tap) >= 8:
+                    intervals = [self.song_tap[i+1] - self.song_tap[i] for i in range(len(self.song_tap)-1)] #get intervals with math magic
+                    average_interval = sum(intervals) / len(intervals)
+                    self.song_bpm_input.set_text(str(round(60 / average_interval)+1)) #+1 because it was always one too low
                 else:
-                    self.song_len_text.set_text(f"Length: {song_m}min {song_s}sec ({int(self.song_test.get_song_len())}sec)")
-        self.song_bpm_input.handle_events(event)
-        if self.song_tap_btn.is_clicked(event): #bpm logic
-            self.song_tap.append(time.time())
-            if len(self.song_tap) >= 8:
-                intervals = [self.song_tap[i+1] - self.song_tap[i] for i in range(len(self.song_tap)-1)] #get intervals with math magic
-                average_interval = sum(intervals) / len(intervals)
-                self.song_bpm_input.set_text(str(round(60 / average_interval)+1)) #+1 because it was always one too low
-            else:
-                self.song_bpm_input.set_text("Computing...")
-        if self.song_tap_reset_btn.is_clicked(event): #bpm reset
-            self.song_tap = []
-            self.song_bpm_input.set_text("")
-        if self.song_test_btn.is_clicked(event):
-            if self.song_test.song_loaded():
-                if self.song_test.get_play_state() == 1:
-                    self.song_test.pause()
-                    self.song_test_btn.set_text("Resume")
+                    self.song_bpm_input.set_text("Computing...")
+            if self.song_tap_reset_btn.is_clicked(event): #bpm reset
+                self.song_tap = []
+                self.song_bpm_input.set_text("")
+            if self.song_test_btn.is_clicked(event):
+                if self.song_test.song_loaded():
+                    if self.song_test.get_play_state() == 1:
+                        self.song_test.pause()
+                        self.song_test_btn.set_text("Resume")
+                    else:
+                        self.song_test.play()
+                        self.song_test_btn.set_text("Pause")
+            if self.song_test_reset_btn.is_clicked(event):
+                if self.song_test.song_loaded():
+                    self.song_test.stop()
+                    self.song_test_btn.set_text("Play")
+            if self.next_btn.is_clicked(event): #next button trigger
+                if self.name_input.get_text() and self.artist_input.get_text() and self.song_bpm_input.get_text().isnumeric() and global_vars.editor_filepath:
+                    print("TODO: Change to other scene")
                 else:
-                    self.song_test.play()
-                    self.song_test_btn.set_text("Pause")
-        if self.song_test_reset_btn.is_clicked(event):
-            if self.song_test.song_loaded():
-                self.song_test.stop()
-                self.song_test_btn.set_text("Play")
-        if self.next_btn.is_clicked(event): #next button trigger
-            if self.name_input.get_text() and self.artist_input.get_text() and self.song_bpm_input.get_text().isnumeric() and global_vars.editor_filepath:
-                print("TODO: Change to other scene")
-            else:
-                self.alert_object.new_alert("Fill out all fields!")
-        self.alert_object.handle_events(event)
+                    self.alert_object.new_alert("Fill out all fields!")
     
     def draw(self, surface):
         bgstyle.Bgstyle.draw_gradient(surface, Styles.bggradient.purple())
