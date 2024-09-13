@@ -6,7 +6,7 @@ screen = pygame.display.set_mode((1920, 1080))
 pygame.display.set_caption("Rhythm Keys")
 clock = pygame.time.Clock()
 
-scene_mgr = scene_manager.SceneManager("Editor")
+scene_mgr = scene_manager.SceneManager("Editor main menu")
 
 while True:
     for event in pygame.event.get():

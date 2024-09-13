@@ -59,6 +59,9 @@ class EditorCreateMenu(scene.Scene):
         self.star3tt = touchtrigger.Touchtrigger((420, 500+8), (48, 48))
         self.star4tt = touchtrigger.Touchtrigger((470, 500+8), (48, 48))
         self.star5tt = touchtrigger.Touchtrigger((520, 500+8), (48, 48))
+
+        self.difficulty = 0
+
         #song selection
         self.song_card = card.Card((1100, 300), (520, 400), Styles.card.light())
         self.songpicker_btn = button.Button("Pick song...", 32, (1120, 320), (480, 64), Styles.button.primary())
@@ -88,15 +91,15 @@ class EditorCreateMenu(scene.Scene):
             self.name_input.handle_events(event)
             self.artist_input.handle_events(event)
             if self.star1tt.update(event):
-                global_vars.editor_difficulty = 0
+                self.difficulty = 0
             if self.star2tt.update(event):
-                global_vars.editor_difficulty = 1
+                self.difficulty = 1
             if self.star3tt.update(event):
-                global_vars.editor_difficulty = 2
+                self.difficulty = 2
             if self.star4tt.update(event):
-                global_vars.editor_difficulty = 3
+                self.difficulty = 3
             if self.star5tt.update(event):
-                global_vars.editor_difficulty = 4
+                self.difficulty = 4
             if self.songpicker_btn.is_clicked(event): #load file
                 temp_file = file_picker()
                 if temp_file:
@@ -135,7 +138,12 @@ class EditorCreateMenu(scene.Scene):
                     self.song_test_btn.set_text("Play")
             if self.next_btn.is_clicked(event): #next button trigger
                 if self.name_input.get_text() and self.artist_input.get_text() and self.song_bpm_input.get_text().isnumeric() and global_vars.editor_filepath:
-                    print("TODO: Change to other scene")
+                    global_vars.editor_name = self.name_input.get_text()
+                    global_vars.editor_author = global_vars.user_name
+                    global_vars.editor_song_artist = self.artist_input.get_text()
+                    global_vars.editor_length = self.song_test.get_song_len()
+                    global_vars.editor_difficulty = self.difficulty
+                    self.manager.switch_to_scene("Editor")
                 else:
                     self.alert_object.new_alert("Fill out all fields!")
     
