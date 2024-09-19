@@ -2,7 +2,7 @@ import pygame, global_vars, tools
 from scenes import scene
 
 from components import button, text, touchtrigger, fpscounter, bgstyle
-from components.styles import Styles
+from components.styles import colors, UI_colors, background_gradient
 
 class EditorMainMenu(scene.Scene):
     def __init__(self, manager):
@@ -14,10 +14,10 @@ class EditorMainMenu(scene.Scene):
         self.fps = fpscounter.Fpscounter()
         self.info_text = text.Text("loading", 24, (0, 0))
         #components
-        self.title_text = text.Text("Welcome to the editor!", 128, (0, 175), Styles.colors.light_green())
-        self.create_button = button.Button("Create New", 32, tools.Screen.center_obj(global_vars.sys_screen_size, (512, 64), (0, -72)), (512, 64), Styles.button.primary())
-        self.open_button = button.Button("Open...", 32, tools.Screen.center_obj(global_vars.sys_screen_size, (512, 64)), (512, 64), Styles.button.secondary())
-        self.back_button = button.Button("Back", 32, tools.Screen.center_obj(global_vars.sys_screen_size, (512, 64), (0, 72)), (512, 64), Styles.button.secondary())
+        self.title_text = text.Text("Welcome to the editor!", 128, (0, 175), colors["light_green"][0])
+        self.create_button = button.Button("Create New", 32, tools.Screen.center_obj(global_vars.sys_screen_size, (512, 64), (0, -72)), (512, 64), UI_colors["primary"])
+        self.open_button = button.Button("Open...", 32, tools.Screen.center_obj(global_vars.sys_screen_size, (512, 64)), (512, 64), UI_colors["secondary"])
+        self.back_button = button.Button("Back", 32, tools.Screen.center_obj(global_vars.sys_screen_size, (512, 64), (0, 72)), (512, 64), UI_colors["secondary"])
         #configure components
         self.title_text.set_position((tools.Screen.center_axis(global_vars.sys_screen_size[0], self.title_text.get_size()[0]), self.title_text.get_position()[1]))
     
@@ -28,7 +28,7 @@ class EditorMainMenu(scene.Scene):
             self.manager.switch_to_scene("Editor create menu")
     
     def draw(self, surface):
-        bgstyle.Bgstyle.draw_gradient(surface, Styles.bggradient.purple())
+        bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color])
         if self.show_fps:
             self.info_text.set_text(f"FPS: {self.fps.get_fps()}, Mouse: X={pygame.mouse.get_pos()[0]} Y={pygame.mouse.get_pos()[1]}")
             self.info_text.draw(surface)

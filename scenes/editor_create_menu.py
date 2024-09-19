@@ -2,7 +2,7 @@ import os, time, pygame, global_vars, tools, sound_engine
 from scenes import scene
 
 from components import button, text, inputbox, touchtrigger, fpscounter, bgstyle, display_image, card, alert
-from components.styles import Styles
+from components.styles import colors, UI_colors, card_themes, background_gradient
 
 import tkinter as tk
 from tkinter import filedialog
@@ -35,15 +35,15 @@ class EditorCreateMenu(scene.Scene):
         self.fps = fpscounter.Fpscounter()
         self.info_text = text.Text("loading", 24, (0, 0))
         
-        self.back_btn = button.Button("Back", 32, (64, global_vars.sys_screen_size[1]-128), (128, 64), Styles.button.danger())
+        self.back_btn = button.Button("Back", 32, (64, global_vars.sys_screen_size[1]-128), (128, 64), UI_colors["danger"])
         #inputs
-        self.name_text = text.Text("Enter song name:", 24, (300+10, 300-24), Styles.colors.light_gray())
-        self.name_input = inputbox.InputBox((700, 48), 32, (300, 300), 32, Styles.inputbox.dark())
-        self.artist_text = text.Text("Enter song artist:", 24, (300+10, 400-24), Styles.colors.light_gray())
-        self.artist_input = inputbox.InputBox((700, 48), 32, (300, 400), 32, Styles.inputbox.dark())
+        self.name_text = text.Text("Enter song name:", 24, (300+10, 300-24), colors["light_gray"][0])
+        self.name_input = inputbox.InputBox((700, 48), 32, (300, 300), 32, UI_colors["secondary"])
+        self.artist_text = text.Text("Enter song artist:", 24, (300+10, 400-24), colors["light_gray"][0])
+        self.artist_input = inputbox.InputBox((700, 48), 32, (300, 400), 32, UI_colors["secondary"])
         #difficulty
-        self.difficulty_bg_card = card.Card((300, 500), (450, 64), Styles.card.primary())
-        self.difficulty_text = text.Text("Difficulty:", 24, (300+10, 500-24), Styles.colors.light_gray())
+        self.difficulty_bg_card = card.Card((300, 500), (450, 64), card_themes["primary"])
+        self.difficulty_text = text.Text("Difficulty:", 24, (300+10, 500-24), colors["light_gray"][0])
         self.difficulty_display_text = text.Text(str(global_vars.const_editor_difficulty_names[global_vars.editor_difficulty]).capitalize(), 32, (600, 0))
         self.difficulty_display_text.set_position((self.difficulty_display_text.get_position()[0], 500+tools.Screen.center_axis(self.difficulty_bg_card.get_size()[1], self.difficulty_display_text.get_size()[1])))
         #star icons
@@ -63,20 +63,20 @@ class EditorCreateMenu(scene.Scene):
         self.difficulty = 0
 
         #song selection
-        self.song_card = card.Card((1100, 300), (520, 400), Styles.card.light())
-        self.songpicker_btn = button.Button("Pick song...", 32, (1120, 320), (480, 64), Styles.button.primary())
+        self.song_card = card.Card((1100, 300), (520, 400), card_themes["light"])
+        self.songpicker_btn = button.Button("Pick song...", 32, (1120, 320), (480, 64), UI_colors["primary"])
         self.song_file_text = text.Text("No song selected yet!", 32, (1120, 400))
         self.song_bpm_text = text.Text("BPM:", 32, (1120, 450))
-        self.song_bpm_input = inputbox.InputBox((150, 48), 32, (1200, 450-12), 3 , Styles.inputbox.dark())
-        self.song_tap_btn = button.Button("Tap", 32, (1370, 450-12), (130, 48), Styles.button.primary())
-        self.song_tap_reset_btn = button.Button("Reset", 24, (1520, 450-12), (80, 48), Styles.button.danger())
+        self.song_bpm_input = inputbox.InputBox((150, 48), 32, (1200, 450-12), 3 , UI_colors["secondary"])
+        self.song_tap_btn = button.Button("Tap", 32, (1370, 450-12), (130, 48), UI_colors["primary"])
+        self.song_tap_reset_btn = button.Button("Reset", 24, (1520, 450-12), (80, 48), UI_colors["danger"])
         self.song_tap = [] #for bpm calculation
         self.song_test = sound_engine.SoundEngine()
         self.song_len_text = text.Text("Length:", 32, (1120, 500))
-        self.song_test_btn = button.Button("Play", 32, (1370, 650-18), (130, 48), Styles.button.primary())
-        self.song_test_reset_btn = button.Button("Reset", 24, (1520, 650-18), (80, 48), Styles.button.danger())
+        self.song_test_btn = button.Button("Play", 32, (1370, 650-18), (130, 48), UI_colors["primary"])
+        self.song_test_reset_btn = button.Button("Reset", 24, (1520, 650-18), (80, 48), UI_colors["danger"])
 
-        self.next_btn = button.Button("Next", 32, (global_vars.sys_screen_size[0]-(64+128), global_vars.sys_screen_size[1]-128), (128, 64), Styles.button.primary())
+        self.next_btn = button.Button("Next", 32, (global_vars.sys_screen_size[0]-(64+128), global_vars.sys_screen_size[1]-128), (128, 64), UI_colors["primary"])
 
         self.alert_object = alert.Alert()
     
@@ -148,7 +148,7 @@ class EditorCreateMenu(scene.Scene):
                     self.alert_object.new_alert("Fill out all fields!")
     
     def draw(self, surface):
-        bgstyle.Bgstyle.draw_gradient(surface, Styles.bggradient.purple())
+        bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color])
         if self.show_fps:
             self.info_text.set_text(f"FPS: {self.fps.get_fps()}, Mouse: X={pygame.mouse.get_pos()[0]} Y={pygame.mouse.get_pos()[1]}")
             self.info_text.draw(surface)

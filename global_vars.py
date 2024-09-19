@@ -12,8 +12,8 @@ def save_directory(dir_name: str): #gets the location for the save data
 
 #user
 user_name = "Backslash Elif"
-user_theme = "dark"
-user_color = "purple"
+user_dark_mode = True
+user_bg_color = "orchids"
 #editor
 editor_name = ""
 editor_author = ""
