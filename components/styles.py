@@ -74,9 +74,10 @@ def compute_dynamic_colors():
     background_gradient["orchids"] = (compute_bg(colors["pink"][0], colors["purple"][0]))
     background_gradient["peppermint"] = (compute_bg(colors["sky_blue"][0], colors["light_green"][0]))
     background_gradient["forrest"] = (compute_bg(colors["dark_green"][0], colors["light_green"][0]))
+    background_gradient["tomato"] = (compute_bg(colors["soft_red"][0], colors["yellow"][0]))
     background_gradient["ocean"] = (compute_bg(colors["sky_blue"][0], colors["blue"][0]))
     background_gradient["coral_reef"] = (compute_bg(colors["red"][0], colors["blue"][0]))
-    background_gradient["stone"] = (compute_bg(colors["gray"][0], colors["black_gray"][0]))
+    background_gradient["none"] = (colors["white"][0], colors["white"][0])
 
 compute_dynamic_colors()
 

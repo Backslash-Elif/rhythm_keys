@@ -26,6 +26,8 @@ class EditorMainMenu(scene.Scene):
             self.show_fps = not self.show_fps
         if self.create_button.is_clicked(event):
             self.manager.switch_to_scene("Editor create menu")
+        if self.back_button.is_clicked(event):
+            self.manager.switch_to_scene("Main menu")
     
     def draw(self, surface):
         bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color])
