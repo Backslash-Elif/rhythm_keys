@@ -1,8 +1,8 @@
 import os, time, pygame, global_vars, tools, sound_engine
 from scenes import scene
 
-from components import button, text, inputbox, touchtrigger, fpscounter, bgstyle, display_image, card, alert
-from components.styles import colors, UI_colors, card_themes, background_gradient
+from components import button, debug, text, inputbox, touchtrigger, bgstyle, display_image, card, alert
+from components.styles import colors, UI_colors, background_gradient, card_themes, ColorName, UIColorName, CardThemeName, text_size, TextSizeName
 
 import tkinter as tk
 from tkinter import filedialog
@@ -29,60 +29,55 @@ class EditorCreateMenu(scene.Scene):
         global_vars.editor_song_artist = ""
         global_vars.editor_length = 0
         global_vars.editor_difficulty = 0
-        #fps stuff
-        self.fps_toggle = touchtrigger.Touchtrigger((0, 0), (256, 24))
-        self.show_fps = False
-        self.fps = fpscounter.Fpscounter()
-        self.info_text = text.Text("loading", 24, (0, 0))
         
-        self.back_btn = button.Button("Back", 32, (64, global_vars.sys_screen_size[1]-128), (128, 64), UI_colors["danger"])
+        self.debug_text_debugobject = debug.DebugInfo()
+        self.debug_grid_debugobject = debug.Grid(global_vars.sys_screen_size)
+
+        self.back_btn = button.Button("Back", text_size[TextSizeName.TEXT], (50, 950), (100, 50), UI_colors[UIColorName.DANGER])
+        self.fg_cardobject = card.Card((200, 200), (1500, 600), card_themes[CardThemeName.DYNAMIC])
         #inputs
-        self.name_text = text.Text("Enter song name:", 24, (300+10, 300-24), colors["light_gray"][0])
-        self.name_input = inputbox.InputBox((700, 48), 32, (300, 300), 32, UI_colors["secondary"])
-        self.artist_text = text.Text("Enter song artist:", 24, (300+10, 400-24), colors["light_gray"][0])
-        self.artist_input = inputbox.InputBox((700, 48), 32, (300, 400), 32, UI_colors["secondary"])
+        self.name_text = text.Text("Enter song name:", text_size[TextSizeName.SMALL_TEXT], (300, 250), (200, 50), colors[ColorName.DYNAMIC][1], text.TextAlign.BOTTOM_LEFT)
+        self.name_input = inputbox.InputBox((700, 48), text_size[TextSizeName.TEXT], (300, 300), 32, UI_colors[UIColorName.SECONDARY])
+        self.artist_text = text.Text("Enter song artist:", text_size[TextSizeName.SMALL_TEXT], (300, 350), (200, 50), colors[ColorName.DYNAMIC][1], text.TextAlign.BOTTOM_LEFT)
+        self.artist_input = inputbox.InputBox((700, 48), text_size[TextSizeName.TEXT], (300, 400), 32, UI_colors[UIColorName.SECONDARY])
         #difficulty
-        self.difficulty_bg_card = card.Card((300, 500), (450, 64), card_themes["primary"])
-        self.difficulty_text = text.Text("Difficulty:", 24, (300+10, 500-24), colors["light_gray"][0])
-        self.difficulty_display_text = text.Text(str(global_vars.const_editor_difficulty_names[global_vars.editor_difficulty]).capitalize(), 32, (600, 0))
-        self.difficulty_display_text.set_position((self.difficulty_display_text.get_position()[0], 500+tools.Screen.center_axis(self.difficulty_bg_card.get_size()[1], self.difficulty_display_text.get_size()[1])))
+        self.difficulty_bg_card = card.Card((300-10, 500-10), (450+20, 100+20), card_themes[CardThemeName.PRIMARY])
+        self.difficulty_text = text.Text("Difficulty", text_size[TextSizeName.SMALL_TEXT], (300, 500), (200, 50), colors[ColorName.DYNAMIC][1], text.TextAlign.TOP_LEFT)
+        self.difficulty_display_text = text.Text(str(global_vars.const_editor_difficulty_names[global_vars.editor_difficulty]).capitalize(), 32, (600, 550), (100, 50), colors[ColorName.DYNAMIC][0])
         #star icons
-        self.star1 = display_image.DisplayImage("assets/icons/star.png", (320, 500+8), (48, 48))
-        self.star2 = display_image.DisplayImage("assets/icons/star.png", (370, 500+8), (48, 48))
-        self.star3 = display_image.DisplayImage("assets/icons/star.png", (420, 500+8), (48, 48))
-        self.star4 = display_image.DisplayImage("assets/icons/star.png", (470, 500+8), (48, 48))
-        self.star5 = display_image.DisplayImage("assets/icons/star.png", (520, 500+8), (48, 48))
+        self.star1 = display_image.DisplayImage("assets/icons/star.png", (300, 550), (49, 49))
+        self.star2 = display_image.DisplayImage("assets/icons/star.png", (350, 550), (49, 49))
+        self.star3 = display_image.DisplayImage("assets/icons/star.png", (400, 550), (49, 49))
+        self.star4 = display_image.DisplayImage("assets/icons/star.png", (450, 550), (49, 49))
+        self.star5 = display_image.DisplayImage("assets/icons/star.png", (500, 550), (49, 49))
 
         #star touch triggers
-        self.star1tt = touchtrigger.Touchtrigger((320, 500+8), (48, 48))
-        self.star2tt = touchtrigger.Touchtrigger((370, 500+8), (48, 48))
-        self.star3tt = touchtrigger.Touchtrigger((420, 500+8), (48, 48))
-        self.star4tt = touchtrigger.Touchtrigger((470, 500+8), (48, 48))
-        self.star5tt = touchtrigger.Touchtrigger((520, 500+8), (48, 48))
+        self.star1tt = touchtrigger.Touchtrigger((300, 550), (49, 49))
+        self.star2tt = touchtrigger.Touchtrigger((350, 550), (49, 49))
+        self.star3tt = touchtrigger.Touchtrigger((400, 550), (49, 49))
+        self.star4tt = touchtrigger.Touchtrigger((450, 550), (49, 49))
+        self.star5tt = touchtrigger.Touchtrigger((500, 550), (49, 49))
 
         self.difficulty = 0
 
         #song selection
-        self.song_card = card.Card((1100, 300), (520, 400), card_themes["light"])
-        self.songpicker_btn = button.Button("Pick song...", 32, (1120, 320), (480, 64), UI_colors["primary"])
-        self.song_file_text = text.Text("No song selected yet!", 32, (1120, 400))
-        self.song_bpm_text = text.Text("BPM:", 32, (1120, 450))
-        self.song_bpm_input = inputbox.InputBox((150, 48), 32, (1200, 450-12), 3 , UI_colors["secondary"])
-        self.song_tap_btn = button.Button("Tap", 32, (1370, 450-12), (130, 48), UI_colors["primary"])
-        self.song_tap_reset_btn = button.Button("Reset", 24, (1520, 450-12), (80, 48), UI_colors["danger"])
+        self.songpicker_btn = button.Button("Pick song...", text_size[TextSizeName.TEXT], (1100, 300), (500, 50), UI_colors[UIColorName.PRIMARY])
+        self.song_file_text = text.Text("No song selected yet!", text_size[TextSizeName.TEXT], (1100, 350), (500, 50), colors[ColorName.DYNAMIC][0], text.TextAlign.LEFT)
+        self.song_bpm_text = text.Text("BPM:", text_size[TextSizeName.TEXT], (1100, 450), (100, 50), colors[ColorName.DYNAMIC][0])
+        self.song_bpm_input = inputbox.InputBox((150, 50), text_size[TextSizeName.TEXT], (1200, 450), 3 , UI_colors[UIColorName.SECONDARY])
+        self.song_tap_btn = button.Button("Tap", text_size[TextSizeName.TEXT], (1370, 450), (130, 50), UI_colors[UIColorName.PRIMARY])
+        self.song_tap_reset_btn = button.Button("Reset", text_size[TextSizeName.SMALL_TEXT], (1520, 450), (80, 50), UI_colors[UIColorName.DANGER])
         self.song_tap = [] #for bpm calculation
         self.song_test = sound_engine.SoundEngine()
-        self.song_len_text = text.Text("Length:", 32, (1120, 500))
-        self.song_test_btn = button.Button("Play", 32, (1370, 650-18), (130, 48), UI_colors["primary"])
-        self.song_test_reset_btn = button.Button("Reset", 24, (1520, 650-18), (80, 48), UI_colors["danger"])
+        self.song_len_text = text.Text("Length:", text_size[TextSizeName.TEXT], (1100, 500), (500, 50), colors[ColorName.DYNAMIC][0], text.TextAlign.LEFT)
+        self.song_test_btn = button.Button("Play", text_size[TextSizeName.TEXT], (1370, 650), (130, 50), UI_colors[UIColorName.PRIMARY])
+        self.song_test_reset_btn = button.Button("Reset", text_size[TextSizeName.SMALL_TEXT], (1520, 650), (80, 50), UI_colors[UIColorName.DANGER])
 
-        self.next_btn = button.Button("Next", 32, (global_vars.sys_screen_size[0]-(64+128), global_vars.sys_screen_size[1]-128), (128, 64), UI_colors["primary"])
+        self.next_btn = button.Button("Next", text_size[TextSizeName.TEXT], (1750, 950), (100, 50), UI_colors[UIColorName.PRIMARY])
 
         self.alert_object = alert.Alert()
     
     def handle_event(self, event):
-        if self.fps_toggle.update(event):
-            self.show_fps = not self.show_fps
         if self.alert_object.is_active():
             self.alert_object.handle_events(event)
         else:
@@ -149,24 +144,29 @@ class EditorCreateMenu(scene.Scene):
     
     def draw(self, surface):
         bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color])
-        if self.show_fps:
-            self.info_text.set_text(f"FPS: {self.fps.get_fps()}, Mouse: X={pygame.mouse.get_pos()[0]} Y={pygame.mouse.get_pos()[1]}")
-            self.info_text.draw(surface)
+        if global_vars.sys_debug_lvl > 0:
+            self.debug_text_debugobject.draw(surface)
         self.back_btn.draw(surface)
+        self.fg_cardobject.draw(surface)
         self.name_text.draw(surface)
         self.name_input.draw(surface)
         self.artist_text.draw(surface)
         self.artist_input.draw(surface)
-        self.difficulty_text.draw(surface)
         self.difficulty_bg_card.draw(surface)
+        self.difficulty_text.draw(surface)
         self.star1.draw(surface)
         self.star2.draw(surface)
         self.star3.draw(surface)
         self.star4.draw(surface)
         self.star5.draw(surface)
-        self.difficulty_display_text.set_text(str(global_vars.const_editor_difficulty_names[global_vars.editor_difficulty]).capitalize())
+        if global_vars.sys_debug_lvl > 0:
+            self.star1tt.draw_debug(surface)
+            self.star2tt.draw_debug(surface)
+            self.star3tt.draw_debug(surface)
+            self.star4tt.draw_debug(surface)
+            self.star5tt.draw_debug(surface)
+        self.difficulty_display_text.set_text(str(global_vars.const_editor_difficulty_names[self.difficulty]).capitalize())
         self.difficulty_display_text.draw(surface)
-        self.song_card.draw(surface)
         self.songpicker_btn.draw(surface)
         self.song_file_text.draw(surface)
         self.song_bpm_text.draw(surface)
@@ -178,6 +178,5 @@ class EditorCreateMenu(scene.Scene):
         self.song_test_reset_btn.draw(surface)
         self.next_btn.draw(surface)
         self.alert_object.draw(surface)
-    
-    def update(self):
-        self.fps.tick()
+        if global_vars.sys_debug_lvl > 1:
+            self.debug_grid_debugobject.draw(surface)

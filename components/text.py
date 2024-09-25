@@ -1,27 +1,72 @@
-import pygame
+import pygame, tools
+from enum import Enum
+
+class TextAlign(Enum):
+    TOP_LEFT = "top left"
+    TOP = "top"
+    TOP_RIGHT = "top right"
+    LEFT = "left"
+    CENTER = "center"
+    RIGHT = "right"
+    BOTTOM_LEFT = "bottom left"
+    BOTTOM = "bottom"
+    BOTTOM_RIGHT = "bottom right"
 
 class Text:
-    def __init__(self, text: str, size: int, position: tuple, color:tuple = (255, 255, 255)) -> None:
+    def __init__(self, text: str, text_size: int, position: tuple, size: tuple, color:tuple = (255, 255, 255), text_align: TextAlign = TextAlign.CENTER) -> None:
         self.display_text = text
-        self.text_size = size
+        self.text_size = text_size
         self.position = position
         self.text_color = color
+        self.text_align = text_align
+        self.size = size
 
         self.font = pygame.font.SysFont(None, self.text_size) #font set to None for pygame built-in font
+        self.buffer = pygame.Surface(size, pygame.SRCALPHA)
+        self._render()
+    
+    def _render(self):
+        self.buffer.fill((255, 255, 255, 0))
+        text_size = self.font.size(self.display_text)
+        text_position = (0, 0)
+        if self.text_align == TextAlign.TOP_LEFT:
+            text_position = (0, 0)
+        elif self.text_align == TextAlign.TOP:
+            text_position = (tools.Screen.center_axis(self.size[0], self.text_size[0]), 0)
+        elif self.text_align == TextAlign.TOP_RIGHT:
+            text_position = (self.size[0] - text_size[0], 0)
+        elif self.text_align == TextAlign.LEFT:
+            text_position = (0, tools.Screen.center_axis(self.size[1], text_size[1]))
+        elif self.text_align == TextAlign.CENTER:
+            text_position = (tools.Screen.center_obj(self.size, text_size))
+        elif self.text_align == TextAlign.RIGHT:
+            text_position = (self.size[0] - text_size[0], tools.Screen.center_axis(self.size[1], text_size[1]))
+        elif self.text_align == TextAlign.BOTTOM_LEFT:
+            text_position = (0, self.size[1] - text_size[1])
+        elif self.text_align == TextAlign.BOTTOM:
+            text_position = (0, tools.Screen.center_axis(self.size[1], text_size[1]))
+        elif self.text_align == TextAlign.BOTTOM_RIGHT:
+            text_position = (self.size[0] - text_size[0], self.size[1] - text_size[1])
+        
+        text_surface = self.font.render(self.display_text, True, self.text_color)
+        self.buffer.blit(text_surface, text_position)
     
     def draw(self, surface): #draw to surface
-        text_surface = self.font.render(self.display_text, True, self.text_color)
-        #blit the text onto given surface
-        surface.blit(text_surface, self.position)
+        surface.blit(self.buffer, self.position)
     
     def get_size(self): #gets the size of the text
-        return self.font.size(self.display_text)  #(width, height)
+        return self.size
+    
+    def set_size(self, new_size: tuple): #gets the size of the text
+        self.size = new_size
+        self._render()
     
     def get_text(self): #getter method text
         return self.display_text
     
     def set_text(self, newtext:str): #setter method text
         self.display_text = newtext
+        self._render()
     
     def get_position(self): #getter method text position
         return self.position

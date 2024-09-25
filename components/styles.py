@@ -1,5 +1,7 @@
 import global_vars
+from enum import Enum
 
+#color manipulation
 def get_color_brightness(color: tuple):
     r, g, b = color
     return 0.299*color[0]/255 + 0.587*color[1]/255 + 0.114*color[2]/255 #0.299, 0.587, 0.114 perceived brightness of rgb
@@ -29,71 +31,135 @@ def compute_bg(start_color: tuple, end_color:tuple): #custom function to calcula
     brightness /= 255
     return ((int(start_color[0]*brightness), int(start_color[1]*brightness), int(start_color[2]*brightness)), (int(end_color[0]*brightness), int(end_color[1]*brightness), int(end_color[2]*brightness)))
 
+#enums
+class ColorName(Enum):
+    RED = "red"
+    LIGHT_RED = "light_red"
+    SOFT_RED = "soft_red"
+    DARK_RED = "dark_red"
+    GREEN = "green"
+    LIGHT_GREEN = "light_green"
+    DARK_GREEN = "dark_green"
+    BLUE = "blue"
+    LIGHT_BLUE = "light_blue"
+    DARK_BLUE = "dark_blue"
+    SKY_BLUE = "sky_blue"
+    PURPLE = "purple"
+    PINK = "pink"
+    MAGENTA = "magenta"
+    ORANGE = "orange"
+    YELLOW = "yellow"
+    GRAY = "gray"
+    LIGHT_GRAY = "light_gray"
+    DARK_GRAY = "dark_gray"
+    BLACK_GRAY = "black_gray"
+    WHITE = "white"
+    BLACK = "black"
+    DYNAMIC = "dynamic"
+
+class UIColorName(Enum):
+    PRIMARY = "primary"
+    SECONDARY = "secondary"
+    SUCCESS = "success"
+    WARNING = "warning"
+    DANGER = "danger"
+
+class BGGradientName(Enum):
+    MIDNIGHT = "midnight"
+    DAYBREAK = "daybreak"
+    ORCHIDS = "orchids"
+    PEPPERMINT = "peppermint"
+    FORREST = "forrest"
+    TOMATO = "tomato"
+    OCEAN = "ocean"
+    CORAL_REEF = "coral_reef"
+    NONE = "none"
+
+class CardThemeName(Enum):
+    LIGHT = "light"
+    DARK = "dark"
+    PRIMARY = "primary"
+    WARNING = "warning"
+    DANGER = "danger"
+    DYNAMIC = "dynamic"
+
+class TextSizeName(Enum):
+    LARGE_TITLE = "large_title"
+    TITLE = "title"
+    SMALL_TITLE = "small_title"
+    SUBTITLE = "subtitle"
+    TEXT = "text"
+    SMALL_TEXT = "small_text"
+
 colors = { #original colors in format (R, G, B)
-    "red": (255, 0, 0),
-    "light_red": (255, 99, 71),
-    "soft_red": (225, 18, 69),
-    "dark_red": (139, 0, 0),
-    "green": (0, 255, 0),
-    "light_green": (0, 255, 127),
-    "dark_green": (0, 100, 0),
-    "blue": (0, 0, 255),
-    "light_blue": (11, 87, 208),
-    "dark_blue": (0, 0, 128),
-    "sky_blue": (0, 191, 255),
-    "purple": (132, 3, 252),
-    "pink": (255, 20, 147),
-    "magenta": (255, 0, 255),
-    "orange": (255, 165, 0),
-    "yellow": (255, 255, 0),
-    "gray": (128, 128, 128),
-    "light_gray": (212, 212, 212),
-    "dark_gray": (58, 58, 58),
-    "black_gray": (33, 33, 33),
-    "white": (255, 255, 255),
-    "black": (0, 0, 0)
+    ColorName.RED: (255, 0, 0),
+    ColorName.LIGHT_RED: (255, 99, 71),
+    ColorName.SOFT_RED: (225, 18, 69),
+    ColorName.DARK_RED: (139, 0, 0),
+    ColorName.GREEN: (0, 255, 0),
+    ColorName.LIGHT_GREEN: (0, 255, 127),
+    ColorName.DARK_GREEN: (0, 100, 0),
+    ColorName.BLUE: (0, 0, 255),
+    ColorName.LIGHT_BLUE: (11, 87, 208),
+    ColorName.DARK_BLUE: (0, 0, 128),
+    ColorName.SKY_BLUE: (0, 191, 255),
+    ColorName.PURPLE: (132, 3, 252),
+    ColorName.PINK: (255, 20, 147),
+    ColorName.MAGENTA: (255, 0, 255),
+    ColorName.ORANGE: (255, 165, 0),
+    ColorName.YELLOW: (255, 255, 0),
+    ColorName.GRAY: (128, 128, 128),
+    ColorName.LIGHT_GRAY: (212, 212, 212),
+    ColorName.DARK_GRAY: (58, 58, 58),
+    ColorName.BLACK_GRAY: (33, 33, 33),
+    ColorName.WHITE: (255, 255, 255),
+    ColorName.BLACK: (0, 0, 0)
 }
 
 #pre-calculates auto-generated accented colors and their matching text-color, done to reduce redundant color calculations. in format {key, ((standard color), (accented color), (text color))}
 for key, value in colors.items():
     colors[key] = compute_accent(value)
+colors[ColorName.DYNAMIC] = ((0, 0, 0), (58, 58, 58), (255, 255, 255)) #init fir dynamic color
 
 UI_colors = {} #unified shortcuts to various colors which are used for the UI
 background_gradient = {}
+card_themes = {} #(R, G, B, A)
 
 def compute_dynamic_colors():
-    UI_colors["primary"] = colors["light_blue"]
-    UI_colors["secondary"] = colors["dark_gray"] if global_vars.user_dark_mode else colors["light_gray"] #automatically switch between themes depending on light or dark mode
-    UI_colors["success"] = colors["light_green"]
-    UI_colors["warning"] = colors["yellow"]
-    UI_colors["danger"] = colors["soft_red"]
+    global dynamic_card_color, dynamic_text_color
 
+    colors[ColorName.DYNAMIC] = ((255, 255, 255), (212, 212, 212), (0, 0, 0)) if global_vars.user_dark_mode else ((0, 0, 0), (58, 58, 58), (255, 255, 255))
+
+    UI_colors[UIColorName.PRIMARY] = colors[ColorName.LIGHT_BLUE]
+    UI_colors[UIColorName.SECONDARY] = colors[ColorName.DARK_GRAY] if global_vars.user_dark_mode else colors[ColorName.LIGHT_GRAY] #automatically switch between themes depending on light or dark mode
+    UI_colors[UIColorName.SUCCESS] = colors[ColorName.LIGHT_GREEN]
+    UI_colors[UIColorName.WARNING] = colors[ColorName.YELLOW]
+    UI_colors[UIColorName.DANGER] = colors[ColorName.SOFT_RED]
     
-    background_gradient["midnight"] = (compute_bg(colors["dark_blue"][0], colors["purple"][0]))
-    background_gradient["daybreak"] = (compute_bg(colors["purple"][0], colors["orange"][0]))
-    background_gradient["orchids"] = (compute_bg(colors["pink"][0], colors["purple"][0]))
-    background_gradient["peppermint"] = (compute_bg(colors["sky_blue"][0], colors["light_green"][0]))
-    background_gradient["forrest"] = (compute_bg(colors["dark_green"][0], colors["light_green"][0]))
-    background_gradient["tomato"] = (compute_bg(colors["soft_red"][0], colors["yellow"][0]))
-    background_gradient["ocean"] = (compute_bg(colors["sky_blue"][0], colors["blue"][0]))
-    background_gradient["coral_reef"] = (compute_bg(colors["red"][0], colors["blue"][0]))
-    background_gradient["none"] = (colors["white"][0], colors["white"][0])
+    background_gradient[BGGradientName.MIDNIGHT.value] = (compute_bg(colors[ColorName.DARK_BLUE][0], colors[ColorName.PURPLE][0]))
+    background_gradient[BGGradientName.DAYBREAK.value] = (compute_bg(colors[ColorName.PURPLE][0], colors[ColorName.ORANGE][0]))
+    background_gradient[BGGradientName.ORCHIDS.value] = (compute_bg(colors[ColorName.PINK][0], colors[ColorName.PURPLE][0]))
+    background_gradient[BGGradientName.PEPPERMINT.value] = (compute_bg(colors[ColorName.SKY_BLUE][0], colors[ColorName.LIGHT_GREEN][0]))
+    background_gradient[BGGradientName.FORREST.value] = (compute_bg(colors[ColorName.DARK_GREEN][0], colors[ColorName.LIGHT_GREEN][0]))
+    background_gradient[BGGradientName.TOMATO.value] = (compute_bg(colors[ColorName.SOFT_RED][0], colors[ColorName.YELLOW][0]))
+    background_gradient[BGGradientName.OCEAN.value] = (compute_bg(colors[ColorName.SKY_BLUE][0], colors[ColorName.BLUE][0]))
+    background_gradient[BGGradientName.CORAL_REEF.value] = (compute_bg(colors[ColorName.RED][0], colors[ColorName.BLUE][0]))
+    background_gradient[BGGradientName.NONE.value] = (colors[ColorName.WHITE][0], colors[ColorName.WHITE][0]) if global_vars.user_dark_mode == False else (colors[ColorName.GRAY][0], colors[ColorName.GRAY][0])
+
+    card_themes[CardThemeName.LIGHT] = colors[ColorName.WHITE][0]+(128, )
+    card_themes[CardThemeName.DARK] = colors[ColorName.BLACK][0]+(100, )
+    card_themes[CardThemeName.PRIMARY] = colors[ColorName.LIGHT_BLUE][0]+(100, )
+    card_themes[CardThemeName.WARNING] = colors[ColorName.YELLOW][0]+(100, )
+    card_themes[CardThemeName.DANGER] = colors[ColorName.RED][0]+(100, )
+    card_themes[CardThemeName.DYNAMIC] = colors[ColorName.BLACK][0]+(100, ) if global_vars.user_dark_mode else colors[ColorName.WHITE][0]+(128, )
 
 compute_dynamic_colors()
 
-card_themes = { #(R, G, B, A)
-    "light": colors["white"][0]+(64, ),
-    "dark": colors["black"][0]+(64, ),
-    "primary": colors["light_blue"][0]+(64, ),
-    "warning": colors["yellow"][0]+(64, ),
-    "danger": colors["red"][0]+(64, )
-}
-
 text_size = {
-    "large_title": 128,
-    "title": 96,
-    "small_title": 64,
-    "subtitle": 48,
-    "text": 32,
-    "small_text": 24
+    TextSizeName.LARGE_TITLE: 128,
+    TextSizeName.TITLE: 96,
+    TextSizeName.SMALL_TITLE: 64,
+    TextSizeName.SUBTITLE: 48,
+    TextSizeName.TEXT: 32,
+    TextSizeName.SMALL_TEXT: 24
 }

@@ -10,7 +10,7 @@ class Button:
         self.width, self.height = size
         self.last_active = False #used to check if the active state changed since last frame
         #create objects
-        self.text_object = text.Text(display_text, text_size, (0, 0), self.text_color) #position initialized with (0, 0) as size is unknown
+        self.text_object = text.Text(display_text, text_size, (0, 0), size, self.text_color) #position initialized with (0, 0) as size is unknown
         self.rect = pygame.Rect(0, 0, self.width, self.height) #position set to 0, 0 because of rendering to buffer screen
         self.hitbox = pygame.Rect(self.position[0], self.position[1], self.width, self.height) #hitbox rectangle at correct position for mouse interaction
         #create buffer screen with SRCALPHA (sRGB) params

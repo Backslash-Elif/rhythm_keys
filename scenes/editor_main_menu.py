@@ -1,29 +1,24 @@
-import pygame, global_vars, tools
+import global_vars, tools
 from scenes import scene
 
-from components import button, text, touchtrigger, fpscounter, bgstyle
-from components.styles import colors, UI_colors, background_gradient
+from components import button, debug, text, bgstyle
+from components.styles import colors, UI_colors, background_gradient, ColorName, UIColorName, text_size, TextSizeName
 
 class EditorMainMenu(scene.Scene):
     def __init__(self, manager):
         super().__init__(manager)
         self.manager = manager
-        #fps stuff
-        self.fps_toggle = touchtrigger.Touchtrigger((0, 0), (256, 24))
-        self.show_fps = False
-        self.fps = fpscounter.Fpscounter()
-        self.info_text = text.Text("loading", 24, (0, 0))
+        
+        self.debug_text_debugobject = debug.DebugInfo()
+        self.debug_grid_debugobject = debug.Grid(global_vars.sys_screen_size)
+
         #components
-        self.title_text = text.Text("Welcome to the editor!", 128, (0, 175), colors["light_green"][0])
-        self.create_button = button.Button("Create New", 32, tools.Screen.center_obj(global_vars.sys_screen_size, (512, 64), (0, -72)), (512, 64), UI_colors["primary"])
-        self.open_button = button.Button("Open...", 32, tools.Screen.center_obj(global_vars.sys_screen_size, (512, 64)), (512, 64), UI_colors["secondary"])
-        self.back_button = button.Button("Back", 32, tools.Screen.center_obj(global_vars.sys_screen_size, (512, 64), (0, 72)), (512, 64), UI_colors["secondary"])
-        #configure components
-        self.title_text.set_position((tools.Screen.center_axis(global_vars.sys_screen_size[0], self.title_text.get_size()[0]), self.title_text.get_position()[1]))
+        self.title_text = text.Text("Welcome to the editor!", text_size[TextSizeName.LARGE_TITLE], (0, 150), (global_vars.sys_screen_size[0], 100), colors[ColorName.GREEN][0])
+        self.create_button = button.Button("Create New", text_size[TextSizeName.TEXT], tools.Screen.center_obj(global_vars.sys_screen_size, (500, 75), (0, -100)), (500, 75), UI_colors[UIColorName.PRIMARY])
+        self.open_button = button.Button("Open...", text_size[TextSizeName.TEXT], tools.Screen.center_obj(global_vars.sys_screen_size, (500, 75)), (500, 75), UI_colors[UIColorName.SECONDARY])
+        self.back_button = button.Button("Back", text_size[TextSizeName.TEXT], tools.Screen.center_obj(global_vars.sys_screen_size, (500, 75), (0, 100)), (500, 75), UI_colors[UIColorName.SECONDARY])
     
     def handle_event(self, event):
-        if self.fps_toggle.update(event):
-            self.show_fps = not self.show_fps
         if self.create_button.is_clicked(event):
             self.manager.switch_to_scene("Editor create menu")
         if self.back_button.is_clicked(event):
@@ -31,13 +26,11 @@ class EditorMainMenu(scene.Scene):
     
     def draw(self, surface):
         bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color])
-        if self.show_fps:
-            self.info_text.set_text(f"FPS: {self.fps.get_fps()}, Mouse: X={pygame.mouse.get_pos()[0]} Y={pygame.mouse.get_pos()[1]}")
-            self.info_text.draw(surface)
+        if global_vars.sys_debug_lvl > 0:
+            self.debug_text_debugobject.draw(surface)
         self.title_text.draw(surface)
         self.create_button.draw(surface)
         self.open_button.draw(surface)
         self.back_button.draw(surface)
-    
-    def update(self):
-        self.fps.tick()
+        if global_vars.sys_debug_lvl > 1:
+            self.debug_grid_debugobject.draw(surface)

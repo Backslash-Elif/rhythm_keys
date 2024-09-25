@@ -43,6 +43,8 @@ editor_filepath = ""
 #system and misc
 sys_screen_size = (1920, 1080) #TODO make 720p mode
 sys_oobe = False #out of box experience
+sys_persistant_storage = {}
+sys_debug_lvl = 2 #0=none, 1=minimal, 2=all
 
 #constants
 const_defaults = {
