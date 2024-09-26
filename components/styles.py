@@ -70,9 +70,10 @@ class BGGradientName(Enum):
     ORCHIDS = "orchids"
     PEPPERMINT = "peppermint"
     FORREST = "forrest"
-    TOMATO = "tomato"
+    AUTUMN = "autumn"
     OCEAN = "ocean"
-    CORAL_REEF = "coral_reef"
+    MOUNTAIN_MIST = "mountain_mist"
+    CHERRY_BLOSSOM = "cherry_blossom"
     NONE = "none"
 
 class CardThemeName(Enum):
@@ -126,32 +127,31 @@ background_gradient = {}
 card_themes = {} #(R, G, B, A)
 
 def compute_dynamic_colors():
-    global dynamic_card_color, dynamic_text_color
-
     colors[ColorName.DYNAMIC] = ((255, 255, 255), (212, 212, 212), (0, 0, 0)) if global_vars.user_dark_mode else ((0, 0, 0), (58, 58, 58), (255, 255, 255))
 
-    UI_colors[UIColorName.PRIMARY] = colors[ColorName.LIGHT_BLUE]
-    UI_colors[UIColorName.SECONDARY] = colors[ColorName.DARK_GRAY] if global_vars.user_dark_mode else colors[ColorName.LIGHT_GRAY] #automatically switch between themes depending on light or dark mode
-    UI_colors[UIColorName.SUCCESS] = colors[ColorName.LIGHT_GREEN]
-    UI_colors[UIColorName.WARNING] = colors[ColorName.YELLOW]
-    UI_colors[UIColorName.DANGER] = colors[ColorName.SOFT_RED]
+    UI_colors[UIColorName.PRIMARY] = ((0, 111, 238), (0, 100, 214), (255, 255, 255)) if global_vars.user_dark_mode else ((0, 111, 238), (51, 140, 241), (255, 255, 255))
+    UI_colors[UIColorName.SECONDARY] = ((63, 63, 70), (57, 57, 63), (255, 255, 255)) if global_vars.user_dark_mode else ((212, 212, 216), (221, 221, 224), (0, 0, 0))
+    UI_colors[UIColorName.SUCCESS] = ((23, 201, 100), (21, 181, 90), (0, 0, 0)) if global_vars.user_dark_mode else ((23, 201, 100), (69, 212, 131), (0, 0, 0))
+    UI_colors[UIColorName.WARNING] = ((245, 165, 36), (220, 148, 32), (0, 0, 0)) if global_vars.user_dark_mode else ((245, 165, 36), (247, 183, 80), (0, 0, 0))
+    UI_colors[UIColorName.DANGER] = ((243, 18, 96), (219, 16, 86), (255, 255, 255)) if global_vars.user_dark_mode else ((243, 18, 96), (245, 65, 128), (255, 255, 255))
     
-    background_gradient[BGGradientName.MIDNIGHT.value] = (compute_bg(colors[ColorName.DARK_BLUE][0], colors[ColorName.PURPLE][0]))
+    background_gradient[BGGradientName.MIDNIGHT.value] = (compute_bg(colors[ColorName.DARK_BLUE][0], colors[ColorName.PURPLE][0])) #darkblue, purple
     background_gradient[BGGradientName.DAYBREAK.value] = (compute_bg(colors[ColorName.PURPLE][0], colors[ColorName.ORANGE][0]))
     background_gradient[BGGradientName.ORCHIDS.value] = (compute_bg(colors[ColorName.PINK][0], colors[ColorName.PURPLE][0]))
     background_gradient[BGGradientName.PEPPERMINT.value] = (compute_bg(colors[ColorName.SKY_BLUE][0], colors[ColorName.LIGHT_GREEN][0]))
     background_gradient[BGGradientName.FORREST.value] = (compute_bg(colors[ColorName.DARK_GREEN][0], colors[ColorName.LIGHT_GREEN][0]))
-    background_gradient[BGGradientName.TOMATO.value] = (compute_bg(colors[ColorName.SOFT_RED][0], colors[ColorName.YELLOW][0]))
+    background_gradient[BGGradientName.AUTUMN.value] = (compute_bg(colors[ColorName.ORANGE][0], colors[ColorName.RED][0]))
     background_gradient[BGGradientName.OCEAN.value] = (compute_bg(colors[ColorName.SKY_BLUE][0], colors[ColorName.BLUE][0]))
-    background_gradient[BGGradientName.CORAL_REEF.value] = (compute_bg(colors[ColorName.RED][0], colors[ColorName.BLUE][0]))
-    background_gradient[BGGradientName.NONE.value] = (colors[ColorName.WHITE][0], colors[ColorName.WHITE][0]) if global_vars.user_dark_mode == False else (colors[ColorName.GRAY][0], colors[ColorName.GRAY][0])
+    background_gradient[BGGradientName.MOUNTAIN_MIST.value] = (compute_bg(colors[ColorName.DARK_BLUE][0], colors[ColorName.LIGHT_GRAY][0]))
+    background_gradient[BGGradientName.CHERRY_BLOSSOM.value] = (compute_bg(colors[ColorName.SOFT_RED][0], colors[ColorName.WHITE][0]))
+    background_gradient[BGGradientName.NONE.value] = (colors[ColorName.WHITE][0], colors[ColorName.WHITE][0]) if global_vars.user_dark_mode == False else (colors[ColorName.BLACK_GRAY][0], colors[ColorName.BLACK_GRAY][0])
 
-    card_themes[CardThemeName.LIGHT] = colors[ColorName.WHITE][0]+(128, )
+    card_themes[CardThemeName.LIGHT] = colors[ColorName.WHITE][0]+(150, )
     card_themes[CardThemeName.DARK] = colors[ColorName.BLACK][0]+(100, )
     card_themes[CardThemeName.PRIMARY] = colors[ColorName.LIGHT_BLUE][0]+(100, )
     card_themes[CardThemeName.WARNING] = colors[ColorName.YELLOW][0]+(100, )
     card_themes[CardThemeName.DANGER] = colors[ColorName.RED][0]+(100, )
-    card_themes[CardThemeName.DYNAMIC] = colors[ColorName.BLACK][0]+(100, ) if global_vars.user_dark_mode else colors[ColorName.WHITE][0]+(128, )
+    card_themes[CardThemeName.DYNAMIC] = colors[ColorName.BLACK][0]+(100, ) if global_vars.user_dark_mode else colors[ColorName.WHITE][0]+(150, )
 
 compute_dynamic_colors()
 
