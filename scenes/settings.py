@@ -10,7 +10,7 @@ class Settings(scene.Scene):
         self.manager = manager
         
         self.debug_text_debugobject = debug.DebugInfo()
-        self.debug_grid_debugobject = debug.Grid(global_vars.sys_screen_size)
+        self.debug_grid_debugobject = debug.Grid(global_vars.const_rendersize)
 
         #components
         self.fg_cardobject = card.Card((200, 100), (1500, 800), card_themes[CardThemeName.DYNAMIC])

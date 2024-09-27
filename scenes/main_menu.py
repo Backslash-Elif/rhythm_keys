@@ -10,14 +10,14 @@ class MainMenu(scene.Scene):
         self.manager = manager
         
         self.debug_text_debugobject = debug.DebugInfo()
-        self.debug_grid_debugobject = debug.Grid(global_vars.sys_screen_size)
+        self.debug_grid_debugobject = debug.Grid(global_vars.const_rendersize)
 
         #components
-        self.title_textobject = text.Text("Welcome to RHYTHM KEYS!", text_size[TextSizeName.LARGE_TITLE], (0, 150), (global_vars.sys_screen_size[0], 100), colors[ColorName.SKY_BLUE][0])
-        self.title_bg_textobject = text.Text("Welcome to RHYTHM KEYS!", text_size[TextSizeName.LARGE_TITLE]+2, (0, 150), (global_vars.sys_screen_size[0], 100), colors[ColorName.LIGHT_BLUE][0]) #almost identical duplicate for effect
-        self.play_buttonobject = button.Button("Play", text_size[TextSizeName.TEXT], tools.Screen.center_obj(global_vars.sys_screen_size, (500, 75), (0, -100)), (500, 75), UI_colors[UIColorName.PRIMARY])
-        self.editor_buttonobject = button.Button("Editor", text_size[TextSizeName.TEXT], tools.Screen.center_obj(global_vars.sys_screen_size, (500, 75)), (500, 75), UI_colors[UIColorName.SECONDARY])
-        self.settings_buttonobject = button.Button("Settings", text_size[TextSizeName.TEXT], tools.Screen.center_obj(global_vars.sys_screen_size, (500, 75), (0, 100)), (500, 75), UI_colors[UIColorName.SECONDARY])
+        self.title_textobject = text.Text("Welcome to RHYTHM KEYS!", text_size[TextSizeName.LARGE_TITLE], (0, 150), (global_vars.const_rendersize[0], 100), colors[ColorName.SKY_BLUE][0])
+        self.title_bg_textobject = text.Text("Welcome to RHYTHM KEYS!", text_size[TextSizeName.LARGE_TITLE]+2, (0, 150), (global_vars.const_rendersize[0], 100), colors[ColorName.LIGHT_BLUE][0]) #almost identical duplicate for effect
+        self.play_buttonobject = button.Button("Play", text_size[TextSizeName.TEXT], tools.Screen.center_obj(global_vars.const_rendersize, (500, 75), (0, -100)), (500, 75), UI_colors[UIColorName.PRIMARY])
+        self.editor_buttonobject = button.Button("Editor", text_size[TextSizeName.TEXT], tools.Screen.center_obj(global_vars.const_rendersize, (500, 75)), (500, 75), UI_colors[UIColorName.SECONDARY])
+        self.settings_buttonobject = button.Button("Settings", text_size[TextSizeName.TEXT], tools.Screen.center_obj(global_vars.const_rendersize, (500, 75), (0, 100)), (500, 75), UI_colors[UIColorName.SECONDARY])
     
     def handle_event(self, event):
         if self.editor_buttonobject.is_clicked(event):

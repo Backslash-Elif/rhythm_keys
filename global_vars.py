@@ -25,7 +25,7 @@ def fetch_settings(config_filepath: str):
             user_name = settings.get("user_name", "")
             user_dark_mode = settings.get("user_dark_mode", False)
             user_bg_color = settings.get("user_bg_color", "none")
-            sys_screen_size = settings.get("sys_screen_size", (1920, 1080))
+            sys_screen_size = settings.get("sys_screen_size", 1)
         return True
 
 def save_config():
@@ -54,24 +54,26 @@ editor_bpm = 0
 editor_lvldat = {}
 editor_filepath = ""
 #system and misc
-sys_screen_size = (1920, 1080) #TODO make 720p mode
+sys_screen_size = 1 #0=HD, 1=Full HD (Native), 2=QHD, 3=4K UHD
 sys_oobe = False #out of box experience
 sys_persistant_storage = {}
-sys_debug_lvl = 2 #0=none, 1=minimal, 2=all
+sys_debug_lvl = 0 #0=none, 1=minimal, 2=all
 
 #constants
 const_defaults = {
     "user_name": "",
     "user_dark_mode": False,
     "user_bg_color": "none",
-    "sys_screen_size": (1920, 1080)
+    "sys_screen_size": 1
 }
+const_rendersize = (1920, 1080)
 const_os_name = platform.system()
 const_save_dir_name = "rhythm_keys"
 const_save_dir = save_directory(const_save_dir_name)
 print("Local save directory located at: " + const_save_dir)
 const_config_file = os.path.join(const_save_dir, "config.json")
 const_editor_difficulty_names = ["beginner", "easy", "medium", "hard", "ultra"]
+const_screen_sizes = ((1280, 720), (1920, 1080), (2560, 1440), (3840, 2160))
 
 if not fetch_settings(const_config_file):
     sys_oobe = True

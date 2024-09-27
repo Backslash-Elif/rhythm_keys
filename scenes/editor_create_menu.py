@@ -31,7 +31,7 @@ class EditorCreateMenu(scene.Scene):
         global_vars.editor_difficulty = 0
         
         self.debug_text_debugobject = debug.DebugInfo()
-        self.debug_grid_debugobject = debug.Grid(global_vars.sys_screen_size)
+        self.debug_grid_debugobject = debug.Grid(global_vars.const_rendersize)
 
         self.back_btn = button.Button("Back", text_size[TextSizeName.TEXT], (50, 950), (100, 50), UI_colors[UIColorName.DANGER])
         self.fg_cardobject = card.Card((200, 200), (1500, 600), card_themes[CardThemeName.DYNAMIC])

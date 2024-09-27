@@ -11,7 +11,7 @@ class EditorEditor(scene.Scene):
         self.manager = manager
 
         self.debug_text_debugobject = debug.DebugInfo()
-        self.debug_grid_debugobject = debug.Grid(global_vars.sys_screen_size)
+        self.debug_grid_debugobject = debug.Grid(global_vars.const_rendersize)
 
         self.exitbtn_buttonobject = button.Button("Exit", text_size[TextSizeName.TEXT], (40, 40), (100, 50), UI_colors[UIColorName.DANGER]) #no adjustments for eventual screensize change as the origin is top left
 
