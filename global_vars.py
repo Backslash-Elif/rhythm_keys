@@ -27,6 +27,19 @@ def fetch_settings(config_filepath: str):
             user_bg_color = settings.get("user_bg_color", "none")
             sys_screen_size = settings.get("sys_screen_size", (1920, 1080))
         return True
+
+def save_config():
+    settings = {
+        "user_name": user_name,
+        "user_dark_mode": user_dark_mode,
+        "user_bg_color": user_bg_color,
+        "sys_screen_size": sys_screen_size
+    }
+
+    with open(const_config_file, 'w') as config_file:
+        json.dump(settings, config_file, indent=4)
+    print("Saved config.")
+
 #user
 user_name = ""
 user_dark_mode = False

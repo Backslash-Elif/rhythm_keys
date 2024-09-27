@@ -25,7 +25,6 @@ class Alert:
         text_pos = tools.Screen.center_obj(global_vars.sys_screen_size, (card_size[0]-20, card_size[1]-20))
         self.text_object.set_size((card_size[0]-20, card_size[1]-20))
         self.text_object.set_position((text_pos[0], text_pos[1]))
-        print(self.text_object.get_position(), self.text_object.get_size())
         self.msg_card = card.Card(tools.Screen.center_obj(global_vars.sys_screen_size, card_size), card_size, card_themes[CardThemeName.WARNING])
         self.action_btn.set_position((tools.Screen.center_axis(global_vars.sys_screen_size[0], 64), (global_vars.sys_screen_size[1]/2)+(card_size[1]/2-(32+16))))
         self.active = True

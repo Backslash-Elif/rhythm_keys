@@ -2,7 +2,7 @@ import global_vars, tools, global_vars
 from scenes import scene
 
 from components import button, debug, text, bgstyle
-from components.styles import colors, UI_colors, background_gradient, ColorName, UIColorName, text_size, TextSizeName
+from components.styles import colors, UI_colors, background_gradient, ColorName, UIColorName, text_size, TextSizeName, BGGradientName
 
 class MainMenu(scene.Scene):
     def __init__(self, manager):
@@ -26,6 +26,8 @@ class MainMenu(scene.Scene):
             self.manager.switch_to_scene("Settings")
     
     def draw(self, surface):
+        if global_vars.user_bg_color == BGGradientName.NONE.value or len(global_vars.user_name) < 4:
+            global_vars.sys_oobe = True
         if global_vars.sys_oobe:
             self.manager.switch_to_scene("OOBE")
         bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color])

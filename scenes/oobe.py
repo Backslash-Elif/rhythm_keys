@@ -28,8 +28,9 @@ class OutOfBoxExperience(scene.Scene):
         self.theme5_buttonobject = button.Button("Forrest", text_size[TextSizeName.TEXT], (1250, 550), (150, 100), colors[ColorName.DARK_GREEN])
         self.theme6_buttonobject = button.Button("Autumn", text_size[TextSizeName.TEXT], (1450, 550), (150, 100), colors[ColorName.ORANGE])
         self.theme7_buttonobject = button.Button("Ocean", text_size[TextSizeName.TEXT], (1050, 700), (150, 100), colors[ColorName.BLUE])
-        self.theme8_buttonobject = button.Button("Mountain Mist", text_size[TextSizeName.SMALL_TEXT], (1250, 700), (150, 100), colors[ColorName.LIGHT_GRAY])
-        self.theme9_buttonobject = button.Button("Cherry Blossom", text_size[TextSizeName.SMALL_TEXT], (1450, 700), (150, 100), colors[ColorName.SOFT_RED])
+        self.theme8_buttonobject = button.Button("Mountain\nMist", text_size[TextSizeName.TEXT], (1250, 700), (150, 100), colors[ColorName.LIGHT_GRAY])
+        self.theme9_buttonobject = button.Button("Cherry\nBlossom", text_size[TextSizeName.TEXT], (1450, 700), (150, 100), colors[ColorName.SOFT_RED])
+        self.subtitle_textobject = text.Text("More settings cand be found\non the settings page.", text_size[TextSizeName.SMALL_TEXT], (300, 800), (300, 50), colors[ColorName.DYNAMIC][1], text.TextAlign.TOP_LEFT)
         self.complete_buttonobject = button.Button("Complete", text_size[TextSizeName.TEXT], (300, 750), (150, 50), UI_colors[UIColorName.PRIMARY])
         self.alertobject = alert.Alert()
 
@@ -69,6 +70,13 @@ class OutOfBoxExperience(scene.Scene):
             if self.complete_buttonobject.is_clicked(event):
                 if len(self.username_inputobject.get_text().strip()) < 4:
                     self.alertobject.new_alert("Please enter a valid Username.\n\n(Must be 4 or more and at most 15\ncharacters long.)")
+                elif global_vars.user_bg_color == BGGradientName.NONE.value:
+                    self.alertobject.new_alert("Please choose a theme.")
+                else:
+                    global_vars.user_name = self.username_inputobject.get_text()
+                    global_vars.save_config()
+                    global_vars.sys_oobe = False
+                    self.manager.switch_to_scene("Main menu")
     
     def draw(self, surface):
         bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color])
