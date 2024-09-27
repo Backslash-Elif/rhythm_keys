@@ -22,34 +22,45 @@ class Text:
         self.size = size
 
         self.font = pygame.font.SysFont(None, self.text_size) #font set to None for pygame built-in font
-        self.buffer = pygame.Surface(size, pygame.SRCALPHA)
         self._render()
     
     def _render(self):
-        self.buffer.fill((255, 255, 255, 0))
-        text_size = self.font.size(self.display_text)
+        self.buffer = pygame.Surface(self.size, pygame.SRCALPHA)
+        textsegments, segment_heights, total_size = self.__compute_newlines(self.display_text)
         text_position = (0, 0)
         if self.text_align == TextAlign.TOP_LEFT:
             text_position = (0, 0)
         elif self.text_align == TextAlign.TOP:
-            text_position = (tools.Screen.center_axis(self.size[0], self.text_size[0]), 0)
+            text_position = (tools.Screen.center_axis(self.size[0], self.total_size[0]), 0)
         elif self.text_align == TextAlign.TOP_RIGHT:
-            text_position = (self.size[0] - text_size[0], 0)
+            text_position = (self.size[0] - total_size[0], 0)
         elif self.text_align == TextAlign.LEFT:
-            text_position = (0, tools.Screen.center_axis(self.size[1], text_size[1]))
+            text_position = (0, tools.Screen.center_axis(self.size[1], total_size[1]))
         elif self.text_align == TextAlign.CENTER:
-            text_position = (tools.Screen.center_obj(self.size, text_size))
+            text_position = (tools.Screen.center_obj(self.size, total_size))
         elif self.text_align == TextAlign.RIGHT:
-            text_position = (self.size[0] - text_size[0], tools.Screen.center_axis(self.size[1], text_size[1]))
+            text_position = (self.size[0] - total_size[0], tools.Screen.center_axis(self.size[1], total_size[1]))
         elif self.text_align == TextAlign.BOTTOM_LEFT:
-            text_position = (0, self.size[1] - text_size[1])
+            text_position = (0, self.size[1] - total_size[1])
         elif self.text_align == TextAlign.BOTTOM:
-            text_position = (0, tools.Screen.center_axis(self.size[1], text_size[1]))
+            text_position = (0, tools.Screen.center_axis(self.size[1], total_size[1]))
         elif self.text_align == TextAlign.BOTTOM_RIGHT:
-            text_position = (self.size[0] - text_size[0], self.size[1] - text_size[1])
+            text_position = (self.size[0] - total_size[0], self.size[1] - total_size[1])
         
-        text_surface = self.font.render(self.display_text, True, self.text_color)
-        self.buffer.blit(text_surface, text_position)
+        for segment, height_index in zip(textsegments, range(len(segment_heights))):
+            text_surface = self.font.render(segment, True, self.text_color)
+            self.buffer.blit(text_surface, (text_position[0], text_position[1]+sum(segment_heights[0:height_index])))
+    
+    def __compute_newlines(self, inputtext: str): #internal method for getting text segments, their height and their complete size
+        inputtext = inputtext.replace("\n\n", "\n \n")
+        segments = inputtext.split("\n")
+        widths = []
+        heights = []
+        for segment in segments:
+            tempsize = self.font.size(segment)
+            widths.append(tempsize[0])
+            heights.append(tempsize[1])
+        return segments, heights, (max(widths), sum(heights)) #textsegments, segment height, (total width, total height)
     
     def draw(self, surface): #draw to surface
         surface.blit(self.buffer, self.position)

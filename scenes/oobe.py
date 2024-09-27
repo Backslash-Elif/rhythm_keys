@@ -68,7 +68,7 @@ class OutOfBoxExperience(scene.Scene):
                 global_vars.user_bg_color = BGGradientName.CHERRY_BLOSSOM.value
             if self.complete_buttonobject.is_clicked(event):
                 if len(self.username_inputobject.get_text().strip()) < 4:
-                    self.alertobject.new_alert("Please enter a valid Username.")
+                    self.alertobject.new_alert("Please enter a valid Username.\n\n(Must be 4 or more and at most 15\ncharacters long.)")
     
     def draw(self, surface):
         bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color])
