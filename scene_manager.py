@@ -2,9 +2,8 @@ import pygame, global_vars
 from scenes import main_menu, settings, oobe, editor_main_menu, editor_create_menu, editor_editor
 
 class SceneManager:
-    def __init__(self,initial_scene: str) -> None:
-        self.virtual_screen = pygame.Surface((1920, 1080))
-        self.main_screen_size = global_vars.const_screen_sizes[global_vars.sys_screen_size]
+    def __init__(self, screen_mgr, initial_scene: str) -> None:
+        self.screen_mgr = screen_mgr
         self.scenes = {
             "Main menu": main_menu.MainMenu,
             "Settings": settings.Settings,
@@ -24,12 +23,10 @@ class SceneManager:
         self.current_scene.handle_event(event)
     
     def draw(self, surface):
-        self.current_scene.draw(self.virtual_screen)
-        scaled_surface = pygame.transform.scale(self.virtual_screen, self.main_screen_size)
-        surface.blit(scaled_surface, (0, 0))
+        self.current_scene.draw(surface)
     
     def update(self):
         self.current_scene.update()
     
-    def update_main_screen_size(self, new_screensize: tuple):
-        self.main_screen_size = new_screensize
+    def set_screensize(self, screensize_id: int):
+        self.screen_mgr.set_screensize(screensize_id)

@@ -31,7 +31,7 @@ class Text:
         if self.text_align == TextAlign.TOP_LEFT:
             text_position = (0, 0)
         elif self.text_align == TextAlign.TOP:
-            text_position = (tools.Screen.center_axis(self.size[0], self.total_size[0]), 0)
+            text_position = (tools.Screen.center_axis(self.size[0], total_size[0]), 0)
         elif self.text_align == TextAlign.TOP_RIGHT:
             text_position = (self.size[0] - total_size[0], 0)
         elif self.text_align == TextAlign.LEFT:
@@ -43,7 +43,7 @@ class Text:
         elif self.text_align == TextAlign.BOTTOM_LEFT:
             text_position = (0, self.size[1] - total_size[1])
         elif self.text_align == TextAlign.BOTTOM:
-            text_position = (0, tools.Screen.center_axis(self.size[1], total_size[1]))
+            text_position = (tools.Screen.center_axis(self.size[0], total_size[0]), self.size[1] - total_size[1])
         elif self.text_align == TextAlign.BOTTOM_RIGHT:
             text_position = (self.size[0] - total_size[0], self.size[1] - total_size[1])
         

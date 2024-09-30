@@ -28,6 +28,11 @@ class Settings(scene.Scene):
         self.theme7_buttonobject = button.Button("Ocean", text_size[TextSizeName.TEXT], (1400, 630), (200, 50), colors[ColorName.BLUE])
         self.theme8_buttonobject = button.Button("Mountain Mist", text_size[TextSizeName.TEXT], (1400, 690), (200, 50), colors[ColorName.LIGHT_GRAY])
         self.theme9_buttonobject = button.Button("Cherry Blossom", text_size[TextSizeName.TEXT], (1400, 750), (200, 50), colors[ColorName.SOFT_RED])
+        self.scale_textobject = text.Text("Window scaling", text_size[TextSizeName.TEXT], (300, 350), (300, 50), colors[ColorName.DYNAMIC][1], text.TextAlign.BOTTOM)
+        self.scale0_buttonobject = button.Button("720p\n(Downscaled)", text_size[TextSizeName.SMALL_TEXT], (900, 550), (150, 100), colors[ColorName.GRAY])
+        self.scale1_buttonobject = button.Button("1080p (native)", text_size[TextSizeName.TEXT], (900, 550), (200, 150), colors[ColorName.DARK_GRAY] if global_vars.user_dark_mode else colors[ColorName.LIGHT_GRAY], text.TextAlign.BOTTOM)
+        self.scale2_buttonobject = button.Button("1440p (upscaled)", text_size[TextSizeName.TEXT], (900, 550), (250, 200), colors[ColorName.GRAY], text.TextAlign.BOTTOM)
+        self.scale3_buttonobject = button.Button("4k (upscaled a lot)", text_size[TextSizeName.TEXT], (900, 550), (300, 250), colors[ColorName.DARK_GRAY] if global_vars.user_dark_mode else colors[ColorName.LIGHT_GRAY], text.TextAlign.BOTTOM)
         self.alertobject = alert.Alert()
 
         #configure
@@ -63,6 +68,14 @@ class Settings(scene.Scene):
                 global_vars.user_dark_mode = not global_vars.user_dark_mode
                 compute_dynamic_colors()
                 self.manager.switch_to_scene("Settings")
+            if self.scale0_buttonobject.is_clicked(event):
+                self.manager.set_screensize(0)
+            elif self.scale1_buttonobject.is_clicked(event):
+                self.manager.set_screensize(1)
+            elif self.scale2_buttonobject.is_clicked(event):
+                self.manager.set_screensize(2)
+            elif self.scale3_buttonobject.is_clicked(event):
+                self.manager.set_screensize(3)
             if self.back_buttonobject.is_clicked(event):
                 if len(self.username_inputobject.get_text()) < 4:
                     self.alertobject.new_alert("Please enter a valid Username.\n\n(Must be 4 or more and at most 15\ncharacters long.)")
@@ -91,6 +104,11 @@ class Settings(scene.Scene):
         self.theme7_buttonobject.draw(surface)
         self.theme8_buttonobject.draw(surface)
         self.theme9_buttonobject.draw(surface)
+        self.scale_textobject.draw(surface)
+        self.scale3_buttonobject.draw(surface)#reverse for drawing order
+        self.scale2_buttonobject.draw(surface)
+        self.scale1_buttonobject.draw(surface)
+        self.scale0_buttonobject.draw(surface)
         self.alertobject.draw(surface)
         if global_vars.sys_debug_lvl > 1:
             self.debug_grid_debugobject.draw(surface)

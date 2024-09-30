@@ -1,4 +1,4 @@
-import pygame
+import pygame, global_vars
 from components import text
 from components.styles import colors, text_size, ColorName, TextSizeName
 
@@ -7,7 +7,7 @@ class DebugInfo:
         self.info_text = text.Text("loading", text_size[TextSizeName.SMALL_TEXT], (0, 0), (300, 25), colors[ColorName.RED][0], text.TextAlign.TOP_LEFT)
     
     def draw(self, surface):
-        self.info_text.set_text(f"Mouse: X={pygame.mouse.get_pos()[0]} Y={pygame.mouse.get_pos()[1]}")
+        self.info_text.set_text(f"Mouse: X={global_vars.get_mouse_pos()[0]} Y={global_vars.get_mouse_pos()[1]} {pygame.mouse.get_pos()}")
         self.info_text.draw(surface)
         
 

@@ -1,29 +1,40 @@
-import pygame, scene_manager, global_vars
+try:
+    import pygame, tkinter
+except:
+    import platform, subprocess
+    print("\n\nIt seems like you're running this script in a custom environment.")
+    print("This is fine, however not all required modules are installed.\n")
+    install = ""
+    while install.lower() not in ("y", "n"):
+        install = input("Would you like to attempt to auto-install the missing modules? [Y/N] >")
+    if install.lower() == "y":
+        print("Attempting to install pygame...")
+        subprocess.run(['pip', 'install', 'pygame'])
+        subprocess.run(['pip', 'install', 'tk'])
+        if platform.system() == "Linux":
+            subprocess.run(['sudo', 'apt', 'install', 'python3-pygame'])
+            subprocess.run(['sudo', 'apt', 'install', 'python3-tk'])
+    else:
+        print("Please install modules:\ntkinter (alias: tk)\npygame")
+    print("Please restart this script.")
+    input("Press ENTER to exit...")
+    exit()
 
-def get_screensize():
-    return global_vars.const_screen_sizes[global_vars.sys_screen_size]
+import screen_manager
 
 # Initialize Pygame
 pygame.init()
-screensize = get_screensize()
-screen = pygame.display.set_mode(screensize)
-pygame.display.set_caption("Rhythm Keys")
-clock = pygame.time.Clock()
 
-scene_mgr = scene_manager.SceneManager("Main menu")
+screen_mgr = screen_manager.ScreenManager()
 
 while True:
-    if get_screensize() != screensize:
-        screensize = get_screensize()
-        scene_mgr.update_main_screen_size(screensize)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
 
-        scene_mgr.handle_event(event)
+        screen_mgr.handle_event(event)
     
-    scene_mgr.update()
-    scene_mgr.draw(screen)
-    pygame.display.flip()
-    clock.tick(60)
+    screen_mgr.draw()
+    screen_mgr.flip_screen()
+    screen_mgr.tick(60)

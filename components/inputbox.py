@@ -1,4 +1,4 @@
-import pygame
+import pygame, global_vars
 from components import text
 
 class InputBox:
@@ -36,7 +36,7 @@ class InputBox:
         #check if mouse clicks on component
         if event.type == pygame.MOUSEBUTTONDOWN:
             update = True
-            if self.hitbox.collidepoint(event.pos):
+            if self.hitbox.collidepoint(global_vars.get_mouse_pos()):
                 self.active = True
             else:
                 self.active = False
