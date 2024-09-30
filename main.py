@@ -12,8 +12,8 @@ except:
         subprocess.run(['pip', 'install', 'pygame'])
         subprocess.run(['pip', 'install', 'tk'])
         if platform.system() == "Linux":
-            subprocess.run(['sudo', 'apt', 'install', 'python3-pygame'])
-            subprocess.run(['sudo', 'apt', 'install', 'python3-tk'])
+            subprocess.run(['sudo', 'apt', 'install', 'python3-pygame', '-y'])
+            subprocess.run(['sudo', 'apt', 'install', 'python3-tk', '-y'])
     else:
         print("Please install modules:\ntkinter (alias: tk)\npygame")
     print("Please restart this script.")

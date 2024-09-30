@@ -144,8 +144,6 @@ class EditorCreateMenu(scene.Scene):
     
     def draw(self, surface):
         bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color])
-        if global_vars.sys_debug_lvl > 0:
-            self.debug_text_debugobject.draw(surface)
         self.back_btn.draw(surface)
         self.fg_cardobject.draw(surface)
         self.name_text.draw(surface)
@@ -178,5 +176,7 @@ class EditorCreateMenu(scene.Scene):
         self.song_test_reset_btn.draw(surface)
         self.next_btn.draw(surface)
         self.alert_object.draw(surface)
+        if global_vars.sys_debug_lvl > 0:
+            self.debug_text_debugobject.draw(surface)
         if global_vars.sys_debug_lvl > 1:
             self.debug_grid_debugobject.draw(surface)

@@ -26,11 +26,11 @@ class EditorMainMenu(scene.Scene):
     
     def draw(self, surface):
         bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color])
-        if global_vars.sys_debug_lvl > 0:
-            self.debug_text_debugobject.draw(surface)
         self.title_text.draw(surface)
         self.create_button.draw(surface)
         self.open_button.draw(surface)
         self.back_button.draw(surface)
+        if global_vars.sys_debug_lvl > 0:
+            self.debug_text_debugobject.draw(surface)
         if global_vars.sys_debug_lvl > 1:
             self.debug_grid_debugobject.draw(surface)

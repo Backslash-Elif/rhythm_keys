@@ -3,7 +3,7 @@ from decimal import Decimal
 from scenes import scene
 
 from components import debug, touchtrigger, text, bgstyle, button, card
-from components.styles import text_size, card_themes, UI_colors, background_gradient, UIColorName, CardThemeName, TextSizeName
+from components.styles import text_size, card_themes, UI_colors, background_gradient, UIColorName, CardThemeName, TextSizeName, colors, ColorName
 
 class EditorEditor(scene.Scene):
     def __init__(self, manager):
@@ -13,18 +13,18 @@ class EditorEditor(scene.Scene):
         self.debug_text_debugobject = debug.DebugInfo()
         self.debug_grid_debugobject = debug.Grid(global_vars.const_rendersize)
 
-        self.exitbtn_buttonobject = button.Button("Exit", text_size[TextSizeName.TEXT], (40, 40), (100, 50), UI_colors[UIColorName.DANGER]) #no adjustments for eventual screensize change as the origin is top left
+        self.exitbtn_buttonobject = button.Button("Exit", text_size[TextSizeName.TEXT], (1250, 300), (100, 50), UI_colors[UIColorName.DANGER])
 
         #text
-        self.title_textobject = text.Text(global_vars.editor_name, text_size[TextSizeName.TITLE], (1100, 80), (100, 100))
-        self.subtitle_textobject = text.Text(global_vars.editor_song_artist, text_size[TextSizeName.SUBTITLE], (1100, 150), (100, 100))
-        self.titledevider_cardobject = card.Card((1100, 180), (300, 6), card_themes[CardThemeName.LIGHT])
+        self.title_textobject = text.Text(global_vars.editor_name, text_size[TextSizeName.TITLE], (1100, 100), (700, 100), colors[ColorName.DYNAMIC][0], text.TextAlign.BOTTOM_LEFT)
+        self.subtitle_textobject = text.Text(global_vars.editor_song_artist, text_size[TextSizeName.SUBTITLE], (1100, 200), (700, 50), colors[ColorName.DYNAMIC][0], text.TextAlign.BOTTOM_LEFT)
+        self.titledevider_cardobject = card.Card((1100, 200), (300, 6), card_themes[CardThemeName.LIGHT] if global_vars.user_dark_mode else card_themes[CardThemeName.DARK])
 
         self.tilebg_cardobject = card.Card((300, 0), (700, 1080), card_themes[CardThemeName.DARK])
 
-        self.savebtn_buttonobject = button.Button("Save", text_size[TextSizeName.SUBTITLE], (1100, 200), (128, 64), UI_colors[UIColorName.PRIMARY])
-        self.modebtn_buttonobject = button.Button("Switch to Replay Mode", text_size[TextSizeName.TEXT], (1100, 350), (320, 80), UI_colors[UIColorName.SECONDARY])
-        self.testbtn_buttonobject = button.Button("Test", text_size[TextSizeName.TEXT], (1100, 450), (180, 80), UI_colors[UIColorName.SECONDARY])
+        self.savebtn_buttonobject = button.Button("Save", text_size[TextSizeName.SUBTITLE], (1100, 300), (130, 50), UI_colors[UIColorName.PRIMARY])
+        self.modebtn_buttonobject = button.Button("Switch to Replay Mode", text_size[TextSizeName.TEXT], (1100, 400), (330, 50), UI_colors[UIColorName.SECONDARY])
+        self.testbtn_buttonobject = button.Button("Test", text_size[TextSizeName.TEXT], (1450, 400), (100, 50), UI_colors[UIColorName.SECONDARY])
 
         self.replaymode = False
 
@@ -77,8 +77,6 @@ class EditorEditor(scene.Scene):
 
     def draw(self, surface):
         bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color])
-        if global_vars.sys_debug_lvl > 0:
-            self.debug_text_debugobject.draw(surface)
         self.exitbtn_buttonobject.draw(surface)
         self.title_textobject.draw(surface)
         self.subtitle_textobject.draw(surface)
@@ -109,5 +107,7 @@ class EditorEditor(scene.Scene):
             self.beatnrdisplay6_textobject.draw(surface)
             self.beatnrdisplay7_textobject.draw(surface)
             self.beatnrdisplay8_textobject.draw(surface)
+        if global_vars.sys_debug_lvl > 0:
+            self.debug_text_debugobject.draw(surface)
         if global_vars.sys_debug_lvl > 1:
             self.debug_grid_debugobject.draw(surface)

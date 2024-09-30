@@ -31,12 +31,12 @@ class MainMenu(scene.Scene):
         if global_vars.sys_oobe:
             self.manager.switch_to_scene("OOBE")
         bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color])
-        if global_vars.sys_debug_lvl > 0:
-            self.debug_text_debugobject.draw(surface)
         self.title_bg_textobject.draw(surface)
         self.title_textobject.draw(surface)
         self.play_buttonobject.draw(surface)
         self.editor_buttonobject.draw(surface)
         self.settings_buttonobject.draw(surface)
+        if global_vars.sys_debug_lvl > 0:
+            self.debug_text_debugobject.draw(surface)
         if global_vars.sys_debug_lvl > 1:
             self.debug_grid_debugobject.draw(surface)

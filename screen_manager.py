@@ -18,7 +18,7 @@ class ScreenManager:
 
     def draw(self):
         self.scene_mgr.draw(self.virtual_screen)
-        self.screen.blit(pygame.transform.scale(self.virtual_screen, self.current_screensize), (0, 0))
+        self.screen.blit(pygame.transform.smoothscale(self.virtual_screen, self.current_screensize), (0, 0))
     
     def flip_screen(self):
         pygame.display.flip()

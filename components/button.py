@@ -30,15 +30,15 @@ class Button:
         self.text_object.draw(self.buffer)
 
     def draw(self, surface):
+        #blits the prerendered buffer to the given surface
+        surface.blit(self.buffer, self.position)
+    
+    def is_clicked(self, event):#also the event handler because never only one of them gets checked
         #check if the active state has changed and if so, re-render the component
         if self.hitbox.collidepoint(global_vars.get_mouse_pos()) != self.last_active:
             self.last_active = not self.last_active
             self._render()
         
-        #blits the prerendered buffer to the given surface
-        surface.blit(self.buffer, self.position)
-    
-    def is_clicked(self, event):
         #check if event is mouse button release and if it is within the hitbox rect
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:  #1 = left mouse button
             return self.hitbox.collidepoint(global_vars.get_mouse_pos())

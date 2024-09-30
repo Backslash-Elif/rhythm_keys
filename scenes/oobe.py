@@ -80,8 +80,6 @@ class OutOfBoxExperience(scene.Scene):
     
     def draw(self, surface):
         bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color])
-        if global_vars.sys_debug_lvl > 0:
-            self.debug_text_debugobject.draw(surface)
         self.fg_cardobject.draw(surface)
         self.title_textobject.draw(surface)
         self.subtitle_textobject.draw(surface)
@@ -100,5 +98,7 @@ class OutOfBoxExperience(scene.Scene):
         self.theme9_buttonobject.draw(surface)
         self.complete_buttonobject.draw(surface)
         self.alertobject.draw(surface)
+        if global_vars.sys_debug_lvl > 0:
+            self.debug_text_debugobject.draw(surface)
         if global_vars.sys_debug_lvl > 1:
             self.debug_grid_debugobject.draw(surface)
