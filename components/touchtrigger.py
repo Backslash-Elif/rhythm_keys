@@ -27,3 +27,7 @@ class Touchtrigger:
         pygame.draw.rect(surface, (255, 0, 0), self.rect, 3)
         name_surface = self.font.render(name, True, (255, 255, 255))  # White text
         surface.blit(name_surface, (self.location[0] + 3, self.location[1] + 3))
+    
+    def set_pos(self, new_pos:tuple):
+        self.location = new_pos
+        self.rect = pygame.Rect(self.location, self.size) #update the rectangle

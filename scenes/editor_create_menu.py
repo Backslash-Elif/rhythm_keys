@@ -14,7 +14,7 @@ def file_picker():
     root.withdraw()
 
     #file allow list
-    file_types = [("All Audio Files", "*.wav;*.mp3;*.ogg;*.midi")]
+    file_types = [("Compressed Audio Format", "*.mp3;*.ogg")]
 
     #file dialog
     file_path = filedialog.askopenfilename(title="Select an Audio File", filetypes=file_types)

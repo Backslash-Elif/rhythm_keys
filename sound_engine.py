@@ -1,4 +1,5 @@
 import pygame
+from decimal import Decimal
 
 class SoundEngine:
     def __init__(self):
@@ -6,6 +7,7 @@ class SoundEngine:
         self.current_song = None
         self.play_state = 0 #0= stopped, 1= playing, 2= paused
         self.sound = None
+        self.progress_shift = Decimal(0.0)
 
     def load(self, songpath: str): #load song from path
         self.eject()
@@ -41,12 +43,18 @@ class SoundEngine:
 
     def get_song_progress(self): #get the progress of the played song
         if self.play_state:
-            return pygame.mixer.music.get_pos()
-        return 0
+            return Decimal(str(pygame.mixer.music.get_pos()/1000 )) + Decimal(str(self.progress_shift))
+        return Decimal("0.0")
 
     def seek_to(self, seconds: float): #seek to position
         if self.current_song:
+            pygame.mixer.music.pause()
+            self.progress_shift += Decimal(str(seconds)) - self.get_song_progress()
+            pygame.mixer.music.rewind() #for absolute positioning
             pygame.mixer.music.set_pos(seconds)
+            pygame.mixer.music.unpause()
+            self.play_state = 1
+        
 
     def get_song_len(self): #get length of loaded song
         if self.sound:
