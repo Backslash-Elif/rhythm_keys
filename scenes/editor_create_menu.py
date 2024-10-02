@@ -64,14 +64,19 @@ class EditorCreateMenu(scene.Scene):
         self.songpicker_btn = button.Button("Pick song...", text_size[TextSizeName.TEXT], (1100, 300), (500, 50), UI_colors[UIColorName.PRIMARY])
         self.song_file_text = text.Text("No song selected yet!", text_size[TextSizeName.TEXT], (1100, 350), (500, 50), colors[ColorName.DYNAMIC][0], text.TextAlign.LEFT)
         self.song_bpm_text = text.Text("BPM:", text_size[TextSizeName.TEXT], (1100, 450), (100, 50), colors[ColorName.DYNAMIC][0])
-        self.song_bpm_input = inputbox.InputBox((150, 50), text_size[TextSizeName.TEXT], (1200, 450), 3 , UI_colors[UIColorName.SECONDARY])
-        self.song_tap_btn = button.Button("Tap", text_size[TextSizeName.TEXT], (1370, 450), (130, 50), UI_colors[UIColorName.PRIMARY])
+        self.song_bpm_input = inputbox.InputBox((130, 50), text_size[TextSizeName.TEXT], (1200, 450), 3 , UI_colors[UIColorName.SECONDARY])
+        self.song_tap_btn = button.Button("Tap", text_size[TextSizeName.TEXT], (1350, 450), (150, 50), UI_colors[UIColorName.PRIMARY])
         self.song_tap_reset_btn = button.Button("Reset", text_size[TextSizeName.SMALL_TEXT], (1520, 450), (80, 50), UI_colors[UIColorName.DANGER])
         self.song_tap = [] #for bpm calculation
         self.song_test = sound_engine.SoundEngine()
-        self.song_len_text = text.Text("Length:", text_size[TextSizeName.TEXT], (1100, 500), (500, 50), colors[ColorName.DYNAMIC][0], text.TextAlign.LEFT)
-        self.song_test_btn = button.Button("Play", text_size[TextSizeName.TEXT], (1370, 650), (130, 50), UI_colors[UIColorName.PRIMARY])
+        self.song_len_text = text.Text("Length:", text_size[TextSizeName.TEXT], (1100, 400), (500, 50), colors[ColorName.DYNAMIC][0], text.TextAlign.LEFT)
+        self.startdelay_textobject = text.Text("Delay at songstart:", text_size[TextSizeName.TEXT], (1100, 550), (250, 50), colors[ColorName.DYNAMIC][0])
+        self.startdelay_inputobject = inputbox.InputBox((150, 50), text_size[TextSizeName.TEXT], (1350, 550), 3 , UI_colors[UIColorName.SECONDARY], "0")
+        self.startdelay2_textobject = text.Text("ms", text_size[TextSizeName.TEXT], (1500, 550), (100, 50), colors[ColorName.DYNAMIC][0], text.TextAlign.LEFT)
+        self.song_test_btn = button.Button("Play", text_size[TextSizeName.TEXT], (1350, 650), (150, 50), UI_colors[UIColorName.PRIMARY])
         self.song_test_reset_btn = button.Button("Reset", text_size[TextSizeName.SMALL_TEXT], (1520, 650), (80, 50), UI_colors[UIColorName.DANGER])
+        self.testprogress_textobject = text.Text("--:--", text_size[TextSizeName.TEXT], (1200, 650), (150, 50), colors[ColorName.DYNAMIC][0], text.TextAlign.TOP)
+        self.testbeat_textobject = text.Text("Beat --/--", text_size[TextSizeName.SMALL_TEXT], (1200, 650), (150, 50), colors[ColorName.DYNAMIC][0], text.TextAlign.BOTTOM)
 
         self.next_btn = button.Button("Next", text_size[TextSizeName.TEXT], (1750, 950), (100, 50), UI_colors[UIColorName.PRIMARY])
 
@@ -108,12 +113,13 @@ class EditorCreateMenu(scene.Scene):
                     else:
                         self.song_len_text.set_text(f"Length: {song_m}min {song_s}sec ({int(self.song_test.get_song_len())}sec)")
             self.song_bpm_input.handle_events(event)
+            self.startdelay_inputobject.handle_events(event)
             if self.song_tap_btn.is_clicked(event): #bpm logic
                 self.song_tap.append(time.time())
                 if len(self.song_tap) >= 8:
                     intervals = [self.song_tap[i+1] - self.song_tap[i] for i in range(len(self.song_tap)-1)] #get intervals with math magic
                     average_interval = sum(intervals) / len(intervals)
-                    self.song_bpm_input.set_text(str(round(60 / average_interval)+1)) #+1 because it was always one too low
+                    self.song_bpm_input.set_text(str(round(60 / average_interval)))
                 else:
                     self.song_bpm_input.set_text("Computing...")
             if self.song_tap_reset_btn.is_clicked(event): #bpm reset
@@ -138,6 +144,7 @@ class EditorCreateMenu(scene.Scene):
                     global_vars.editor_song_artist = self.artist_input.get_text()
                     global_vars.editor_length = self.song_test.get_song_len()
                     global_vars.editor_difficulty = self.difficulty
+                    global_vars.editor_bpm = int(self.song_bpm_input.get_text())
                     self.manager.switch_to_scene("Editor")
                 else:
                     self.alert_object.new_alert("Fill out all fields!")
@@ -172,8 +179,15 @@ class EditorCreateMenu(scene.Scene):
         self.song_tap_btn.draw(surface)
         self.song_tap_reset_btn.draw(surface)
         self.song_len_text.draw(surface)
+        self.startdelay_textobject.draw(surface)
+        self.startdelay_inputobject.draw(surface)
+        self.startdelay2_textobject.draw(surface)
         self.song_test_btn.draw(surface)
         self.song_test_reset_btn.draw(surface)
+        self.testprogress_textobject.set_text(f"{str(int(float(self.song_test.get_song_progress())/60)).zfill(2)}:{str(int(float(self.song_test.get_song_progress())%60)).zfill(2)}" if global_vars.editor_filepath else "--:--")
+        self.testbeat_textobject.set_text(f"Beat {int(float(self.song_test.get_song_progress())*(int(self.song_bpm_input.get_text())/60))}/{int(self.song_test.get_song_len()*(int(self.song_bpm_input.get_text())/60))}" if self.song_bpm_input.get_text().isnumeric() else "Beat --/--")
+        self.testprogress_textobject.draw(surface)
+        self.testbeat_textobject.draw(surface)
         self.next_btn.draw(surface)
         self.alert_object.draw(surface)
         if global_vars.sys_debug_lvl > 0:

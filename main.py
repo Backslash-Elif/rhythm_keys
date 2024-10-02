@@ -1,6 +1,7 @@
-try:
-    import pygame, tkinter
-except:
+import importlib.util
+if importlib.util.find_spec("pygame") is not None and importlib.util.find_spec("tkinter") is not None:
+    import pygame
+else:
     import platform, subprocess
     print("\n\nIt seems like you're running this script in a custom environment.")
     print("This is fine, however not all required modules are installed.\n")

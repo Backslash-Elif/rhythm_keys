@@ -74,6 +74,8 @@ editor_difficulty = 0
 editor_bpm = 0
 editor_lvldat = {}
 editor_filepath = ""
+editor_startdelay_ms = 0
+editor_load_vars = False
 #system and misc
 sys_screen_size_id = 0 #0=HD, 1=Full HD (Native), 2=QHD, 3=4K UHD
 sys_current_screen_size = const_screen_sizes[sys_screen_size_id]

@@ -50,8 +50,10 @@ class EditorEditor(scene.Scene):
         self.replaymode = False
 
         #speed & media control (replay mode only)
-        self.mediactrl_cardobject = card.Card((1090, 740), (520, 270), card_themes[CardThemeName.DARK])
-        self.mediactrllabel_textobject = text.Text("Speed & Media Control", text_size[TextSizeName.TEXT], (1100, 750), (500, 50))
+        self.mediactrl_cardobject = card.Card((1040, 740), (520, 270), card_themes[CardThemeName.DARK])
+        self.mediactrllabel_textobject = text.Text("Speed & Media Control", text_size[TextSizeName.TEXT], (1050, 750), (500, 50), colors[ColorName.DYNAMIC][1])
+        self.mediaprogress1_textobject = text.Text("--:--", text_size[TextSizeName.SUBTITLE], (1100, 800), (400, 100), colors[ColorName.DYNAMIC][0], text.TextAlign.LEFT)
+        self.mediaprogress2_textobject = text.Text("beat --/--\n@--BPM", text_size[TextSizeName.TEXT], (1100, 800), (400, 100), colors[ColorName.DYNAMIC][0], text.TextAlign.RIGHT)
         self.fastback_buttonobject = button.Button("", text_size[TextSizeName.SUBTITLE], (1060, 910), (80, 80), UI_colors[UIColorName.SECONDARY])
         self.fastback_imageobject = display_image.DisplayImage("assets/icons/fast-back.png", (1060, 910), (80, 80))
         self.back_buttonobject = button.Button("", text_size[TextSizeName.SUBTITLE], (1160, 910), (80, 80), UI_colors[UIColorName.SECONDARY])
@@ -146,6 +148,10 @@ class EditorEditor(scene.Scene):
         if self.replaymode:
             self.mediactrl_cardobject.draw(surface)
             self.mediactrllabel_textobject.draw(surface)
+            self.mediaprogress1_textobject.set_text(f"{str(int(float(self.soundengine.get_song_progress())/60)).zfill(2)}:{str(int(float(self.soundengine.get_song_progress())%60)).zfill(2)}")
+            self.mediaprogress2_textobject.set_text(f"Beat {int(float(self.soundengine.get_song_progress())*(global_vars.editor_bpm/60))}/{int(global_vars.editor_length*(global_vars.editor_bpm/60))}\n@{global_vars.editor_bpm}BPM")
+            self.mediaprogress1_textobject.draw(surface)
+            self.mediaprogress2_textobject.draw(surface)
             self.fastback_buttonobject.draw(surface)
             self.fastback_imageobject.draw(surface)
             self.back_buttonobject.draw(surface)
@@ -159,6 +165,17 @@ class EditorEditor(scene.Scene):
             self.forward_imageobject.draw(surface)
             self.fastforward_buttonobject.draw(surface)
             self.fastforward_imageobject.draw(surface)
+            for y, i in zip((950, 850, 750, 650, 550, 450, 350, 250, 150, 50, -50), range(-5, 6)):
+                beat = int(float(self.soundengine.get_song_progress())*(global_vars.editor_bpm/60))
+                beat_float = int(str(float(self.soundengine.get_song_progress()*Decimal(global_vars.editor_bpm/60))).split(".")[1][:2])
+                if beat + i < 1:
+                    continue
+                tempdata = loadfromlvldat(beat+i)
+                for x, i2 in zip((350, 500, 650, 800), range(4)):
+                    self.arrow_imageobject.set_pos((x, y+beat_float))
+                    self.arrow_imageobject.set_image(f"assets/arrows/smol/{['up','down','left','right'][i2]}.png" if hextobits(tempdata)[i2] else f"assets/arrows/smol_dark/{['up','down','left','right'][i2]}.png")
+                    self.arrow_imageobject.draw(surface)
+
         else:
             self.advancebeats_buttonobject.draw(surface)
             self.deadvancebeats_buttonobject.draw(surface)
