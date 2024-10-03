@@ -2,7 +2,7 @@ import pygame, tools, global_vars, sound_engine
 from decimal import Decimal
 from scenes import scene
 
-from components import debug, touchtrigger, text, bgstyle, button, card, display_image
+from components import debug, touchtrigger, text, bgstyle, button, card, display_image, alert, key_reader
 from components.styles import text_size, card_themes, UI_colors, background_gradient, UIColorName, CardThemeName, TextSizeName, colors, ColorName
 
 def hextobits(hex:str):
@@ -35,6 +35,8 @@ class EditorEditor(scene.Scene):
         self.debug_text_debugobject = debug.DebugInfo()
         self.debug_grid_debugobject = debug.Grid(global_vars.const_rendersize)
 
+        global_vars.editor_load_vars = True
+
         #text
         self.title_textobject = text.Text(global_vars.editor_name, text_size[TextSizeName.TITLE], (1050, 100), (700, 100), colors[ColorName.DYNAMIC][0], text.TextAlign.BOTTOM_LEFT)
         self.subtitle_textobject = text.Text(global_vars.editor_song_artist, text_size[TextSizeName.SUBTITLE], (1050, 200), (700, 50), colors[ColorName.DYNAMIC][0], text.TextAlign.BOTTOM_LEFT)
@@ -50,6 +52,7 @@ class EditorEditor(scene.Scene):
         self.replaymode = False
 
         #speed & media control (replay mode only)
+        self.inputrow_cardobject = card.Card((300, 450), (650, 100), card_themes[CardThemeName.PRIMARY])
         self.mediactrl_cardobject = card.Card((1040, 740), (520, 270), card_themes[CardThemeName.DARK])
         self.mediactrllabel_textobject = text.Text("Speed & Media Control", text_size[TextSizeName.TEXT], (1050, 750), (500, 50), colors[ColorName.DYNAMIC][1])
         self.mediaprogress1_textobject = text.Text("--:--", text_size[TextSizeName.SUBTITLE], (1100, 800), (400, 100), colors[ColorName.DYNAMIC][0], text.TextAlign.LEFT)
@@ -85,26 +88,29 @@ class EditorEditor(scene.Scene):
 
         self.soundengine = sound_engine.SoundEngine()
         self.soundengine.load(global_vars.editor_filepath)
+
+        self.alertobject = alert.Alert()
+        self.keyreaderobject = key_reader.KeyReader()
+
     def handle_event(self, event):
-        if self.modebtn_buttonobject.is_clicked(event):
-            if self.replaymode:
-                self.modebtn_buttonobject.set_text("Switch to Replay Mode")
-            else:
-                self.modebtn_buttonobject.set_text("Switch to Select Mode")
-            self.replaymode = not self.replaymode
-        if self.advancebeats_buttonobject.is_clicked(event):
-            self.beatnrset += 1
-            self.beatnrdisplay1_textobject.set_text(str(self.beatnrset * 8 + 1).zfill(4))
-            self.beatnrdisplay2_textobject.set_text(str(self.beatnrset * 8 + 2).zfill(4))
-            self.beatnrdisplay3_textobject.set_text(str(self.beatnrset * 8 + 3).zfill(4))
-            self.beatnrdisplay4_textobject.set_text(str(self.beatnrset * 8 + 4).zfill(4))
-            self.beatnrdisplay5_textobject.set_text(str(self.beatnrset * 8 + 5).zfill(4))
-            self.beatnrdisplay6_textobject.set_text(str(self.beatnrset * 8 + 6).zfill(4))
-            self.beatnrdisplay7_textobject.set_text(str(self.beatnrset * 8 + 7).zfill(4))
-            self.beatnrdisplay8_textobject.set_text(str(self.beatnrset * 8 + 8).zfill(4))
-        if self.deadvancebeats_buttonobject.is_clicked(event):
-            if self.beatnrset > 0:
-                self.beatnrset -= 1
+        self.keyreaderobject.handle_events(event)
+        self.soundengine.handle_events(event)
+        if self.alertobject.is_active():
+            self.alertobject.handle_events(event)
+        else:
+            if self.exitbtn_buttonobject.is_clicked(event):
+                if any("shift" in s for s in self.keyreaderobject.get_keys()):
+                    self.manager.switch_to_scene("Editor create menu")
+                else:
+                    self.alertobject.new_alert("Are you sure you want to quit?\n\nIf you are, please press shift\nand press exit again.\n\n\n(!!!All progress will be lost!!!)")
+            if self.modebtn_buttonobject.is_clicked(event):
+                if self.replaymode:
+                    self.modebtn_buttonobject.set_text("Switch to Replay Mode")
+                else:
+                    self.modebtn_buttonobject.set_text("Switch to Select Mode")
+                self.replaymode = not self.replaymode
+            if self.advancebeats_buttonobject.is_clicked(event):
+                self.beatnrset += 1
                 self.beatnrdisplay1_textobject.set_text(str(self.beatnrset * 8 + 1).zfill(4))
                 self.beatnrdisplay2_textobject.set_text(str(self.beatnrset * 8 + 2).zfill(4))
                 self.beatnrdisplay3_textobject.set_text(str(self.beatnrset * 8 + 3).zfill(4))
@@ -113,30 +119,44 @@ class EditorEditor(scene.Scene):
                 self.beatnrdisplay6_textobject.set_text(str(self.beatnrset * 8 + 6).zfill(4))
                 self.beatnrdisplay7_textobject.set_text(str(self.beatnrset * 8 + 7).zfill(4))
                 self.beatnrdisplay8_textobject.set_text(str(self.beatnrset * 8 + 8).zfill(4))
-        if self.fastback_buttonobject.is_clicked(event):
-            self.soundengine.seek_to(max(self.soundengine.get_song_progress() - 10, 0.0))
-        if self.back_buttonobject.is_clicked(event):
-            self.soundengine.seek_to(max(self.soundengine.get_song_progress() - 5, 0.0))
-        if self.playpause_buttonobject.is_clicked(event):
-            if self.soundengine.get_play_state() == 1:
-                self.soundengine.pause()
-            else:
-                self.soundengine.play()
-        if self.fastforward_buttonobject.is_clicked(event):
-            self.soundengine.seek_to(min(self.soundengine.get_song_progress() + 10, self.soundengine.get_song_len()))
-        if self.forward_buttonobject.is_clicked(event):
-            self.soundengine.seek_to(min(self.soundengine.get_song_progress() + 5, self.soundengine.get_song_len()))
-        for y, i in zip((850, 750, 650, 550, 450, 350, 250, 150), range(1, 9)):
-                tempdata = hextobits(loadfromlvldat(self.beatnrset*8+i))
-                for x, i2 in zip((350, 500, 650, 800), range(4)):
-                    self.arrow_triggerobject.set_pos((x, y))
-                    if self.arrow_triggerobject.update(event):
-                        tempdata[i2] = not tempdata[i2]
-                        global_vars.editor_lvldat[self.beatnrset*8+i] = bitstohex(tempdata)
-        if self.savebtn_buttonobject.is_clicked(event):
-            print(global_vars.editor_lvldat)
+            if self.deadvancebeats_buttonobject.is_clicked(event):
+                if self.beatnrset > 0:
+                    self.beatnrset -= 1
+                    self.beatnrdisplay1_textobject.set_text(str(self.beatnrset * 8 + 1).zfill(4))
+                    self.beatnrdisplay2_textobject.set_text(str(self.beatnrset * 8 + 2).zfill(4))
+                    self.beatnrdisplay3_textobject.set_text(str(self.beatnrset * 8 + 3).zfill(4))
+                    self.beatnrdisplay4_textobject.set_text(str(self.beatnrset * 8 + 4).zfill(4))
+                    self.beatnrdisplay5_textobject.set_text(str(self.beatnrset * 8 + 5).zfill(4))
+                    self.beatnrdisplay6_textobject.set_text(str(self.beatnrset * 8 + 6).zfill(4))
+                    self.beatnrdisplay7_textobject.set_text(str(self.beatnrset * 8 + 7).zfill(4))
+                    self.beatnrdisplay8_textobject.set_text(str(self.beatnrset * 8 + 8).zfill(4))
+            if self.fastback_buttonobject.is_clicked(event):
+                self.soundengine.seek_to(max(self.soundengine.get_song_progress() - 10, 0.0))
+            if self.back_buttonobject.is_clicked(event):
+                self.soundengine.seek_to(max(self.soundengine.get_song_progress() - 5, 0.0))
+            if self.playpause_buttonobject.is_clicked(event):
+                if self.soundengine.get_play_state() == 1:
+                    self.soundengine.pause()
+                else:
+                    self.soundengine.play()
+            if self.fastforward_buttonobject.is_clicked(event):
+                self.soundengine.seek_to(min(self.soundengine.get_song_progress() + 10, self.soundengine.get_song_len()))
+            if self.forward_buttonobject.is_clicked(event):
+                self.soundengine.seek_to(min(self.soundengine.get_song_progress() + 5, self.soundengine.get_song_len()))
+            for y, i in zip((850, 750, 650, 550, 450, 350, 250, 150), range(1, 9)):
+                    tempdata = hextobits(loadfromlvldat(self.beatnrset*8+i))
+                    for x, i2 in zip((350, 500, 650, 800), range(4)):
+                        self.arrow_triggerobject.set_pos((x, y))
+                        if self.arrow_triggerobject.update(event):
+                            tempdata[i2] = not tempdata[i2]
+                            global_vars.editor_lvldat[self.beatnrset*8+i] = bitstohex(tempdata)
+            if self.savebtn_buttonobject.is_clicked(event):
+                print(global_vars.editor_lvldat)
+            #print(self.keyreaderobject.get_keys())
+
     def draw(self, surface):
         bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color])
+        #print(self.keyreaderobject.get_keys())
         self.exitbtn_buttonobject.draw(surface)
         self.title_textobject.draw(surface)
         self.subtitle_textobject.draw(surface)
@@ -146,6 +166,7 @@ class EditorEditor(scene.Scene):
         self.modebtn_buttonobject.draw(surface)
         self.testbtn_buttonobject.draw(surface)
         if self.replaymode:
+            self.inputrow_cardobject.draw(surface)
             self.mediactrl_cardobject.draw(surface)
             self.mediactrllabel_textobject.draw(surface)
             self.mediaprogress1_textobject.set_text(f"{str(int(float(self.soundengine.get_song_progress())/60)).zfill(2)}:{str(int(float(self.soundengine.get_song_progress())%60)).zfill(2)}")
@@ -172,9 +193,24 @@ class EditorEditor(scene.Scene):
                     continue
                 tempdata = loadfromlvldat(beat+i)
                 for x, i2 in zip((350, 500, 650, 800), range(4)):
+                    print((x, y+beat_float), end=" ")
                     self.arrow_imageobject.set_pos((x, y+beat_float))
                     self.arrow_imageobject.set_image(f"assets/arrows/smol/{['up','down','left','right'][i2]}.png" if hextobits(tempdata)[i2] else f"assets/arrows/smol_dark/{['up','down','left','right'][i2]}.png")
                     self.arrow_imageobject.draw(surface)
+            print()
+            if self.soundengine.get_play_state() == 1:
+                beat = int(float(self.soundengine.get_song_progress())*(global_vars.editor_bpm/60))
+                beat_float = int(str(float(self.soundengine.get_song_progress()*Decimal(global_vars.editor_bpm/60))).split(".")[1][:2])
+                if beat_float < 5 or beat_float > 65:
+                    if beat_float > 65:
+                        beat += 1
+                    tempdata = hextobits(loadfromlvldat(beat))
+                    tempkeys = self.keyreaderobject.get_keys()
+                    tempdata[0] = True if "up" in tempkeys else tempdata[0]
+                    tempdata[1] = True if "down" in tempkeys else tempdata[1]
+                    tempdata[2] = True if "left" in tempkeys else tempdata[2]
+                    tempdata[3] = True if "right" in tempkeys else tempdata[3]
+                    global_vars.editor_lvldat[beat] = bitstohex(tempdata)
 
         else:
             self.advancebeats_buttonobject.draw(surface)
@@ -193,6 +229,7 @@ class EditorEditor(scene.Scene):
                     self.arrow_imageobject.set_pos((x, y))
                     self.arrow_imageobject.set_image(f"assets/arrows/smol/{['up','down','left','right'][i2]}.png" if hextobits(tempdata)[i2] else f"assets/arrows/smol_dark/{['up','down','left','right'][i2]}.png")
                     self.arrow_imageobject.draw(surface)
+        self.alertobject.draw(surface)
         if global_vars.sys_debug_lvl > 0:
             self.debug_text_debugobject.draw(surface)
         if global_vars.sys_debug_lvl > 1:

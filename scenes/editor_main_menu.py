@@ -12,6 +12,8 @@ class EditorMainMenu(scene.Scene):
         self.debug_text_debugobject = debug.DebugInfo()
         self.debug_grid_debugobject = debug.Grid(global_vars.const_rendersize)
 
+        global_vars.editor_load_vars = False
+
         #components
         self.title_text = text.Text("Welcome to the editor!", text_size[TextSizeName.LARGE_TITLE], (0, 150), (global_vars.const_rendersize[0], 100), colors[ColorName.GREEN][0])
         self.create_button = button.Button("Create New", text_size[TextSizeName.TEXT], tools.Screen.center_obj(global_vars.const_rendersize, (500, 75), (0, -100)), (500, 75), UI_colors[UIColorName.PRIMARY])

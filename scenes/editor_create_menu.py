@@ -24,11 +24,16 @@ class EditorCreateMenu(scene.Scene):
     def __init__(self, manager):
         super().__init__(manager)
         self.manager = manager
-        global_vars.editor_name = ""
-        global_vars.editor_author = global_vars.user_name
-        global_vars.editor_song_artist = ""
-        global_vars.editor_length = 0
-        global_vars.editor_difficulty = 0
+        if not global_vars.editor_load_vars:
+            global_vars.editor_name = ""
+            global_vars.editor_author = global_vars.user_name
+            global_vars.editor_song_artist = ""
+            global_vars.editor_length = 0
+            global_vars.editor_difficulty = 0
+            global_vars.editor_bpm = 0
+            global_vars.editor_filepath = ""
+            global_vars.editor_startdelay_ms = 0
+        global_vars.editor_lvldat = {}
         
         self.debug_text_debugobject = debug.DebugInfo()
         self.debug_grid_debugobject = debug.Grid(global_vars.const_rendersize)
@@ -81,8 +86,15 @@ class EditorCreateMenu(scene.Scene):
         self.next_btn = button.Button("Next", text_size[TextSizeName.TEXT], (1750, 950), (100, 50), UI_colors[UIColorName.PRIMARY])
 
         self.alert_object = alert.Alert()
+
+        if global_vars.editor_load_vars:
+            self.name_input.set_text(global_vars.editor_name)
+            self.artist_input.set_text(global_vars.editor_song_artist)
+            self.song_bpm_input.set_text(str(global_vars.editor_bpm))
+            self.startdelay_inputobject.set_text(str(global_vars.editor_startdelay_ms))
     
     def handle_event(self, event):
+        self.song_test.handle_events(event)
         if self.alert_object.is_active():
             self.alert_object.handle_events(event)
         else:
