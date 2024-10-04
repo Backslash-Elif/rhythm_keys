@@ -17,3 +17,11 @@ class KeyReader:
 
     def get_keys(self):
         return list(self.pressed_keys)
+    
+    def get_pressed_key(self, event):
+        if event.type == pygame.KEYDOWN:
+            return pygame.key.name(event.key)
+    
+    def get_released_key(self, event):
+        if event.type == pygame.KEYUP:
+            return pygame.key.name(event.key)

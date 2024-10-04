@@ -81,7 +81,7 @@ sys_screen_size_id = 0 #0=HD, 1=Full HD (Native), 2=QHD, 3=4K UHD
 sys_current_screen_size = const_screen_sizes[sys_screen_size_id]
 sys_oobe = False #out of box experience
 sys_persistant_storage = {}
-sys_debug_lvl = 2 #0=none, 1=minimal, 2=all
+sys_debug_lvl = 0 #0=none, 1=minimal, 2=all
 
 if not fetch_settings(const_config_file):
     sys_oobe = True

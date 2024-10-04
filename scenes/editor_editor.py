@@ -92,6 +92,8 @@ class EditorEditor(scene.Scene):
         self.alertobject = alert.Alert()
         self.keyreaderobject = key_reader.KeyReader()
 
+        self.framekeys = set() #keyset for new inputs
+
     def handle_event(self, event):
         self.keyreaderobject.handle_events(event)
         self.soundengine.handle_events(event)
@@ -153,6 +155,7 @@ class EditorEditor(scene.Scene):
             if self.savebtn_buttonobject.is_clicked(event):
                 print(global_vars.editor_lvldat)
             #print(self.keyreaderobject.get_keys())
+            self.framekeys.add(self.keyreaderobject.get_pressed_key(event))
 
     def draw(self, surface):
         bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color])
@@ -188,29 +191,31 @@ class EditorEditor(scene.Scene):
             self.fastforward_imageobject.draw(surface)
             for y, i in zip((950, 850, 750, 650, 550, 450, 350, 250, 150, 50, -50), range(-5, 6)):
                 beat = int(float(self.soundengine.get_song_progress())*(global_vars.editor_bpm/60))
-                beat_float = int(str(float(self.soundengine.get_song_progress()*Decimal(global_vars.editor_bpm/60))).split(".")[1][:2])
+                beat_float = int((str(float(self.soundengine.get_song_progress()*Decimal(global_vars.editor_bpm/60)))+"0").split(".")[1][:2])
                 if beat + i < 1:
                     continue
                 tempdata = loadfromlvldat(beat+i)
                 for x, i2 in zip((350, 500, 650, 800), range(4)):
-                    print((x, y+beat_float), end=" ")
+                    #print(y+beat_float, end=" ")
+                    #print((x, y+beat_float), end=" ")
                     self.arrow_imageobject.set_pos((x, y+beat_float))
                     self.arrow_imageobject.set_image(f"assets/arrows/smol/{['up','down','left','right'][i2]}.png" if hextobits(tempdata)[i2] else f"assets/arrows/smol_dark/{['up','down','left','right'][i2]}.png")
                     self.arrow_imageobject.draw(surface)
-            print()
+            #print(beat_float)
             if self.soundengine.get_play_state() == 1:
                 beat = int(float(self.soundengine.get_song_progress())*(global_vars.editor_bpm/60))
-                beat_float = int(str(float(self.soundengine.get_song_progress()*Decimal(global_vars.editor_bpm/60))).split(".")[1][:2])
-                if beat_float < 5 or beat_float > 65:
-                    if beat_float > 65:
-                        beat += 1
-                    tempdata = hextobits(loadfromlvldat(beat))
+                beat_float = int((str(float(self.soundengine.get_song_progress()*Decimal(global_vars.editor_bpm/60)))+"0").split(".")[1][:2])
+                if beat_float > 50:
+                    beat += 1
+                    tempkeys = list(self.framekeys)
+                else:
                     tempkeys = self.keyreaderobject.get_keys()
-                    tempdata[0] = True if "up" in tempkeys else tempdata[0]
-                    tempdata[1] = True if "down" in tempkeys else tempdata[1]
-                    tempdata[2] = True if "left" in tempkeys else tempdata[2]
-                    tempdata[3] = True if "right" in tempkeys else tempdata[3]
-                    global_vars.editor_lvldat[beat] = bitstohex(tempdata)
+                tempdata = hextobits(loadfromlvldat(beat))
+                tempdata[0] = True if "up" in tempkeys else tempdata[0]
+                tempdata[1] = True if "down" in tempkeys else tempdata[1]
+                tempdata[2] = True if "left" in tempkeys else tempdata[2]
+                tempdata[3] = True if "right" in tempkeys else tempdata[3]
+                global_vars.editor_lvldat[beat] = bitstohex(tempdata)
 
         else:
             self.advancebeats_buttonobject.draw(surface)
@@ -234,3 +239,4 @@ class EditorEditor(scene.Scene):
             self.debug_text_debugobject.draw(surface)
         if global_vars.sys_debug_lvl > 1:
             self.debug_grid_debugobject.draw(surface)
+        self.framekeys.clear()
