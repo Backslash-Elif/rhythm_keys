@@ -1,4 +1,4 @@
-import pygame, global_vars, tools
+import global_vars
 from scenes import scene
 
 from components import button, debug, text, bgstyle, inputbox, card, alert

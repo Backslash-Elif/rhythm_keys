@@ -1,4 +1,4 @@
-import pygame, tools, global_vars, sound_engine
+import global_vars, sound_engine
 from decimal import Decimal
 from scenes import scene
 

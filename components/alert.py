@@ -1,4 +1,4 @@
-import pygame, global_vars, tools
+import pygame, global_vars, screen_utils
 from components import card, text, button
 from components.styles import card_themes, UI_colors, CardThemeName, UIColorName
 
@@ -22,11 +22,11 @@ class Alert:
         #styling:
         card_size = (500, 300)
         self.text_object.set_text(alert_text)
-        text_pos = tools.Screen.center_obj(global_vars.const_rendersize, (card_size[0]-20, card_size[1]-20))
+        text_pos = screen_utils.center_obj(global_vars.const_rendersize, (card_size[0]-20, card_size[1]-20))
         self.text_object.set_size((card_size[0]-20, card_size[1]-70))
         self.text_object.set_position((text_pos[0], text_pos[1]))
-        self.msg_card = card.Card(tools.Screen.center_obj(global_vars.const_rendersize, card_size), card_size, card_themes[CardThemeName.WARNING])
-        self.action_btn.set_position((tools.Screen.center_axis(global_vars.const_rendersize[0], 64), (global_vars.const_rendersize[1]/2)+(card_size[1]/2-(32+16))))
+        self.msg_card = card.Card(screen_utils.center_obj(global_vars.const_rendersize, card_size), card_size, card_themes[CardThemeName.WARNING])
+        self.action_btn.set_position((screen_utils.center_axis(global_vars.const_rendersize[0], 64), (global_vars.const_rendersize[1]/2)+(card_size[1]/2-(32+16))))
         self.active = True
         self._render()
     
