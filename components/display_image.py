@@ -27,6 +27,9 @@ class DisplayImage:
     def set_pos(self, new_pos:tuple):
         self.position = new_pos
     
+    def get_pos(self):
+        return self.position
+    
     def set_image(self, new_image:str):
         self.image = new_image
         self._render()
