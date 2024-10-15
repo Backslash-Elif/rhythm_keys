@@ -24,8 +24,8 @@ class Alert:
         content_pos = (700, 400) #almost the middle, easier to calculate than actual middle
         content_size = (500, 300)
         
-        self.msg_card = rectangle.Rectangle((690, 390), (520, 320), colors[ColorName.BLACK_GRAY][0], 16) #rectangle is 10px bigger on all sides
-        self.text_object = text.Text(alert_text, text_size[TextSizeName.TEXT], content_pos, content_size)
+        self.msg_card = rectangle.Rectangle((690, 390), (520, 320), colors[ColorName.BLACK_GRAY][0] if global_vars.user_dark_mode else colors[ColorName.LIGHT_GRAY][0], 16, 3, (255, 255, 255) if global_vars.user_dark_mode else (0, 0, 0)) #rectangle is 10px bigger on all sides
+        self.text_object = text.Text(alert_text, text_size[TextSizeName.TEXT], content_pos, content_size, colors[ColorName.DYNAMIC][0])
         self.confirm_buttonobject = button.Button("OK", text_size[TextSizeName.TEXT], (1050, 660), (100, 40), UI_colors[UIColorName.PRIMARY])
         self.cancel_buttonobject = button.Button("Cancel", text_size[TextSizeName.TEXT], (750, 660), (100, 40), UI_colors[UIColorName.DANGER])
         self.inputobject = inputbox.InputBox((content_size[0], 50), text_size[TextSizeName.TEXT], (700, 600), 32, UI_colors[UIColorName.SECONDARY])
@@ -37,6 +37,7 @@ class Alert:
         
         self.active = True
         self.alerttype = alert_type
+        self.result = None
         self._render()
     
     def handle_events(self, event):
@@ -68,6 +69,3 @@ class Alert:
     
     def get_result(self):
         return self.result
-
-    def reset_result(self):
-        self.result = None

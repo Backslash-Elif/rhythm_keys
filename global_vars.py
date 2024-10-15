@@ -66,7 +66,7 @@ user_name = ""
 user_dark_mode = False
 user_bg_color = "none"
 #editor
-editor_name = ""
+editor_name = "" #song name
 editor_author = ""
 editor_song_artist = ""
 editor_length = 0
@@ -75,6 +75,7 @@ editor_bpm = 0
 editor_lvldat = {}
 editor_filepath = ""
 editor_startdelay_ms = 0
+editor_snap_value = 4
 editor_load_vars = False
 #system and misc
 sys_screen_size_id = 0 #0=HD, 1=Full HD (Native), 2=QHD, 3=4K UHD

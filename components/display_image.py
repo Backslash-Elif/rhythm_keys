@@ -8,8 +8,9 @@ class DisplayImage:
 
     def _render(self):
         try:
-            self.img_obj = pygame.transform.scale(pygame.image.load(self.image), self.size)
-        except: #draws missing texture (like in source engine or minecraft)
+            self.img_obj = pygame.transform.smoothscale(pygame.image.load(self.image), self.size)
+        except Exception as e: #draws missing texture (like in source engine or minecraft)
+            print("Recoverable exception:", e)
             self.img_obj = pygame.Surface(self.size)
             self.rect1 = pygame.Rect(0, 0, self.size[0]/2, self.size[1]/2)
             self.rect2 = pygame.Rect(self.size[0]/2, 0, self.size[0]/2, self.size[1]/2)

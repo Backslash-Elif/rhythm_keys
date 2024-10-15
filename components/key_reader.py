@@ -12,8 +12,8 @@ class KeyReader:
             #print("removed:", pygame.key.name(event.key))
             try:
                 self.pressed_keys.discard(pygame.key.name(event.key))
-            except:
-                pass
+            except Exception as e:
+                print("Recoverable exception:", e)
 
     def get_keys(self):
         return list(self.pressed_keys)

@@ -1,11 +1,13 @@
 import pygame
 
 class Rectangle:
-    def __init__(self, position: tuple, size: tuple, color: tuple = (255, 0, 0), radius: int = 0) -> None:
+    def __init__(self, position: tuple, size: tuple, color: tuple = (255, 0, 0), radius: int = 0, border_width:int = 0, border_color:tuple = (0, 0, 0)) -> None:
         self.position = position
         self.size = size
         self.color = color
         self.radius = radius
+        self.border = int(border_width)
+        self.border_color = border_color
         self._update_rect()
     
     def _update_rect(self):
@@ -13,6 +15,8 @@ class Rectangle:
     
     def draw(self, surface):
         pygame.draw.rect(surface, self.color, self.rect, border_radius=self.radius)
+        if self.border > 0:
+            pygame.draw.rect(surface, self.border_color, self.rect, width=self.border, border_radius=self.radius)
     
     def set_position(self, new_position: tuple):
         self.position = new_position
@@ -39,3 +43,12 @@ class Rectangle:
     
     def get_radius(self):
         return self.radius
+
+    def set_border_width(self, new_border_width):
+        self.border = new_border_width
+    def set_border_color(self, new_border_color):
+        self.border_color = new_border_color
+    def get_border_width(self):
+        return self.border
+    def get_border_color(self):
+        return self.border_color

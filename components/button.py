@@ -1,5 +1,5 @@
 import pygame, global_vars
-from components import text
+from components import text, rectangle
 
 class Button:
     def __init__(self, display_text: str, text_size: int, position: tuple, size: tuple, color_scheme: tuple, textallign: text.TextAlign = text.TextAlign.CENTER):
@@ -12,7 +12,7 @@ class Button:
         self.last_active = False #used to check if the active state changed since last frame
         #create objects
         self.text_object = text.Text(display_text, text_size, (0, 0), size, self.text_color, self.textalign) #position initialized with (0, 0) as size is unknown
-        self.rect = pygame.Rect(0, 0, self.width, self.height) #position set to 0, 0 because of rendering to buffer screen
+        self.rectangleobject = rectangle.Rectangle((0, 0), (self.width, self.height), self.color, 10, 2, self.text_color)#position set to 0, 0 because of rendering to buffer screen
         self.hitbox = pygame.Rect(self.position[0], self.position[1], self.width, self.height) #hitbox rectangle at correct position for mouse interaction
         #create buffer screen with SRCALPHA (sRGB) params
         self.buffer = pygame.Surface(size, pygame.SRCALPHA)
@@ -22,9 +22,10 @@ class Button:
     def _render(self): #prerenders the component to a buffer screen
         #draw rounded rectangle
         if self.hitbox.collidepoint(global_vars.get_mouse_pos()):
-            pygame.draw.rect(self.buffer, self.hover_color, self.rect, border_radius=10)
+            self.rectangleobject.set_color(self.hover_color)
         else:
-            pygame.draw.rect(self.buffer, self.color, self.rect, border_radius=10)
+            self.rectangleobject.set_color(self.color)
+        self.rectangleobject.draw(self.buffer)
         #update and draw the text object
         self.text_object.set_position(((self.width/2)-self.text_object.get_size()[0]/2, (self.height/2)-self.text_object.get_size()[1]/2))
         self.text_object.draw(self.buffer)

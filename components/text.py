@@ -14,7 +14,7 @@ class TextAlign(Enum):
 
 class Text:
     def __init__(self, text: str, text_size: int, position: tuple, size: tuple, color:tuple = (255, 255, 255), text_align: TextAlign = TextAlign.CENTER) -> None:
-        self.display_text = text
+        self.display_text = str(text)
         self.text_size = text_size
         self.position = position
         self.text_color = color

@@ -33,6 +33,7 @@ class EditorCreateMenu(scene.Scene):
             global_vars.editor_bpm = 0
             global_vars.editor_filepath = ""
             global_vars.editor_startdelay_ms = 0
+            global_vars.editor_snapvalue = 4
         global_vars.editor_lvldat = {}
         
         self.debug_text_debugobject = debug.DebugInfo()
@@ -92,6 +93,8 @@ class EditorCreateMenu(scene.Scene):
             self.artist_input.set_text(global_vars.editor_song_artist)
             self.song_bpm_input.set_text(str(global_vars.editor_bpm))
             self.startdelay_inputobject.set_text(str(global_vars.editor_startdelay_ms))
+
+        self.switch_to_editor = False #loading the editor took long so added a messagebox to explain the waiting time. the alert has to be drawn first tho
     
     def handle_event(self, event):
         self.song_test.handle_events(event)
@@ -157,7 +160,8 @@ class EditorCreateMenu(scene.Scene):
                     global_vars.editor_length = self.song_test.get_song_len()
                     global_vars.editor_difficulty = self.difficulty
                     global_vars.editor_bpm = int(self.song_bpm_input.get_text())
-                    self.manager.switch_to_scene("Editor")
+                    self.alert_object.new_alert("Please wait.\n\nInitialising editor...")
+                    self.switch_to_editor = True
                 else:
                     self.alert_object.new_alert("Fill out all fields!")
     
@@ -206,3 +210,5 @@ class EditorCreateMenu(scene.Scene):
             self.debug_text_debugobject.draw(surface)
         if global_vars.sys_debug_lvl > 1:
             self.debug_grid_debugobject.draw(surface)
+        if self.switch_to_editor:
+            self.manager.switch_to_scene("Editor")
