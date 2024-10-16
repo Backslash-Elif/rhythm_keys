@@ -12,10 +12,10 @@ def file_picker():
     root.withdraw()
 
     #file allow list
-    file_types = [("Compressed Audio Format", "*.mp3;*.ogg")]
+    file_types = [("Compressed File Archive", "*.zip")]
 
     #file dialog
-    file_path = filedialog.askopenfilename(title="Select an Audio File", filetypes=file_types)
+    file_path = filedialog.askopenfilename(title="Select an Zip Archive", filetypes=file_types)
     return file_path
 
 class ImportPackage(scene.Scene):
@@ -32,7 +32,7 @@ class ImportPackage(scene.Scene):
         self.back_buttonobject = button.Button("Back", text_size[TextSizeName.TEXT], (50, 950), (100, 50), UI_colors[UIColorName.DANGER])
         self.filepicker_buttonobject = button.Button("Pick a file...", text_size[TextSizeName.TEXT], (300, 400), (500, 100), UI_colors[UIColorName.PRIMARY])
         self.existing_buttonobject = button.Button("Level selecter", text_size[TextSizeName.TEXT], (1100, 400), (500, 100), UI_colors[UIColorName.PRIMARY])
-        self.or_textobject = text.Text("or", text_size[TextSizeName.TEXT], (900, 400), (100, 100), colors[ColorName.DYNAMIC])
+        self.or_textobject = text.Text("or", text_size[TextSizeName.TEXT], (900, 400), (100, 100), colors[ColorName.DYNAMIC][0])
         self.alertobject = alert.Alert()
     
     def handle_event(self, event):
@@ -42,10 +42,11 @@ class ImportPackage(scene.Scene):
             if self.filepicker_buttonobject.is_clicked(event):
                 selected_file = file_picker()
                 global_vars.load_from_external_file(selected_file)
+                self.manager.switch_to_scene("Editor")
             if self.existing_buttonobject.is_clicked(event):
                 print("not implemented")
             if self.back_buttonobject.is_clicked(event):
-                self.manager.switch_to_scene("Main menu")
+                self.manager.switch_to_scene("Editor main menu")
     
     def draw(self, surface):
         bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color])

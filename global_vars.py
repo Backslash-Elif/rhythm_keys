@@ -66,14 +66,14 @@ def load_level():
         with open(os.path.join(const_working_dir, "level.json"), 'r') as level_file:
             level = json.load(level_file)
             editor_name = level.get("name", "Error")
-            editor_author = level.get("name", "Error")
-            editor_song_artist = level.get("name", "Error")
-            editor_length = level.get("name", 0)
-            editor_difficulty = level.get("name", 0)
-            editor_bpm = level.get("name", 0)
-            editor_startdelay = Decimal(level.get("name", 0))
-            editor_snap_value = level.get("name", 4)
-            editor_lvldat = level.get("name", {})
+            editor_author = level.get("author", "Error")
+            editor_song_artist = level.get("artist", "Error")
+            editor_length = level.get("length", 0)
+            editor_difficulty = level.get("difficulty", 0)
+            editor_bpm = level.get("bpm", 0)
+            editor_startdelay = Decimal(level.get("startdelay", 0))
+            editor_snap_value = level.get("snap", 4)
+            editor_lvldat = level.get("lvldat", {})
 
 def copy_audio_to_working_dir(filepath: str):
     try:
@@ -112,8 +112,6 @@ def load_from_external_file(filepath: str):
         
         #copy
         shutil.copy(filepath, destination)
-        
-        return destination
     except Exception as e:
         print("Error:", e)
     
