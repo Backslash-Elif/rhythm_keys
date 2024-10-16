@@ -12,7 +12,7 @@ class EditorMainMenu(scene.Scene):
         self.debug_text_debugobject = debug.DebugInfo()
         self.debug_grid_debugobject = debug.Grid(global_vars.const_rendersize)
 
-        global_vars.editor_load_vars = False
+        global_vars.clear_working_dir()
 
         #components
         self.title_text = text.Text("Welcome to the editor!", text_size[TextSizeName.LARGE_TITLE], (0, 150), (global_vars.const_rendersize[0], 100), colors[ColorName.GREEN][0])
@@ -23,6 +23,8 @@ class EditorMainMenu(scene.Scene):
     def handle_event(self, event):
         if self.create_button.is_clicked(event):
             self.manager.switch_to_scene("Editor create menu")
+        if self.open_button.is_clicked(event):
+            self.manager.switch_to_scene("Import package")
         if self.back_button.is_clicked(event):
             self.manager.switch_to_scene("Main menu")
     

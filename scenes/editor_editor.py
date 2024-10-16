@@ -4,27 +4,7 @@ from scenes import scene
 
 from components import debug, touchtrigger, text, bgstyle, button, card, display_image, alert, key_reader, inputbox
 from components.styles import text_size, card_themes, UI_colors, background_gradient, UIColorName, CardThemeName, TextSizeName, colors, ColorName
-
-def hextobits(hex:str):
-    dec = int(hex, 16)
-    bits = []
-    for i in range(4):
-        bits.append(True if dec%2 else False)
-        dec = int(dec/2)
-    return list(reversed(bits))
-
-def bitstohex(bits:iter):
-    bits = list(reversed(bits))
-    dec = 0
-    for i in range(4):
-        dec += [1,2,4,8][i] if bits[i] else 0
-    return str(hex(dec)[2:])
-
-def loadfromlvldat(index:int):
-    if index in global_vars.editor_lvldat:
-        return global_vars.editor_lvldat[index]
-    else:
-        return '0'
+from game_utils import hextobits, bitstohex, loadfromlvldat
 
 class EditorEditor(scene.Scene):
     def __init__(self, manager):
@@ -33,8 +13,6 @@ class EditorEditor(scene.Scene):
 
         self.debug_text_debugobject = debug.DebugInfo()
         self.debug_grid_debugobject = debug.Grid(global_vars.const_rendersize)
-
-        global_vars.editor_load_vars = True
 
         #text
         self.title_textobject = text.Text(global_vars.editor_name, text_size[TextSizeName.TITLE], (1050, 100), (700, 100), colors[ColorName.DYNAMIC][0], text.TextAlign.BOTTOM_LEFT)
@@ -75,7 +53,11 @@ class EditorEditor(scene.Scene):
         self.arrow_d_imageobject = display_image.DisplayImage("assets/arrows/smol/down.png", (500, 50), (100, 100))
         self.arrow_l_imageobject = display_image.DisplayImage("assets/arrows/smol/left.png", (650, 50), (100, 100))
         self.arrow_r_imageobject = display_image.DisplayImage("assets/arrows/smol/right.png", (800, 50), (100, 100))
-        self.arrow_triggerobject = touchtrigger.Touchtrigger((350, 850), (100, 100)) #trigger for mouse
+        
+        self.tilebg_triggerobject = touchtrigger.Touchtrigger((300, 0), (650, 1080)) #trigger for mouse
+        self.arrow_triggerobject = touchtrigger.Touchtrigger((0, 0), (100, 100)) #trigger for mouse
+        self.select_imageobject = display_image.DisplayImage("assets/icons/selected.png", (0, 0), (100, 100))
+        self.selected_arrow = None #if selected: [beat, track]
 
         #settings
         self.settings_cardobject = card.Card((200, 200), (1500, 600), card_themes[CardThemeName.DYNAMIC])
@@ -132,6 +114,8 @@ class EditorEditor(scene.Scene):
 
         self.alertid = 0 #0=nothing, 1=exit, 2=settings save, 3=settings discard
 
+        global_vars.save_level() #init leveldata
+
     def handle_event(self, event):
         self.keyreaderobject.handle_events(event)
         self.soundengine.handle_events(event)
@@ -143,12 +127,12 @@ class EditorEditor(scene.Scene):
                         self.manager.switch_to_scene("Editor main menu")
                 if self.alertid == 2:
                     if self.alertobject.get_result():
-                        if self.bpm_inputobject.get_text().isnumeric() and self.snaps_inputobject.get_text().isnumeric() and self.delay_inputobject.get_text().isnumeric():
+                        if self.bpm_inputobject.get_text().isnumeric() and self.snaps_inputobject.get_text().isnumeric() and self.delay_inputobject.get_text().replace("-", "").isnumeric():
                             global_vars.editor_name = self.name_inputobject.get_text()
                             global_vars.editor_song_artist = self.artist_inputobject.get_text()
                             global_vars.editor_bpm = int(self.bpm_inputobject.get_text())
                             global_vars.editor_snap_value = int(self.snaps_inputobject.get_text())
-                            global_vars.editor_startdelay_ms = int(self.delay_inputobject.get_text())
+                            global_vars.editor_startdelay = Decimal(self.delay_inputobject.get_text())/Decimal('1000.0')
                             self.title_textobject.set_text(global_vars.editor_name)
                             self.subtitle_textobject.set_text(global_vars.editor_song_artist)
                             self.settings_hidden = True
@@ -177,7 +161,7 @@ class EditorEditor(scene.Scene):
                 if self.forward_buttonobject.is_clicked(event):
                     self.soundengine.seek_to(min(self.soundengine.get_song_progress() + 5, self.soundengine.get_song_len()))
                 if self.savebtn_buttonobject.is_clicked(event):
-                    print(global_vars.editor_lvldat)
+                    global_vars.save_level()
                 self.framekeys.add(self.keyreaderobject.get_pressed_key(event))#get newly pressed keys
                 if self.settingsbtn_buttonobject.is_clicked(event):
                     self.settings_hidden = False
@@ -185,7 +169,23 @@ class EditorEditor(scene.Scene):
                     self.artist_inputobject.set_text(global_vars.editor_song_artist)
                     self.bpm_inputobject.set_text(str(global_vars.editor_bpm))
                     self.snaps_inputobject.set_text(str(global_vars.editor_snap_value))
-                    self.delay_inputobject.set_text(str(global_vars.editor_startdelay_ms))
+                    self.delay_inputobject.set_text(str(int(global_vars.editor_startdelay * Decimal('1000.0'))))
+                #arrow selection
+                if self.tilebg_triggerobject.update(event) and self.soundengine.get_play_state() != 1:
+                    beat = float((self.soundengine.get_song_progress())*Decimal(global_vars.editor_bpm/60))
+                    tempselect = None
+                    for key, value in global_vars.editor_lvldat.items():
+                        #if tempselect:
+                        #    break
+                        if key > beat-10 and key < beat+2:
+                            tempdata = hextobits(value)
+                            temppos = (beat - key) * 100 + 50
+                            for i, t, xpos in zip(range(4), tempdata, (350, 500, 650, 800)):
+                                if t:
+                                    self.arrow_triggerobject.set_pos((xpos, temppos))
+                                    if self.arrow_triggerobject.update(event):
+                                        tempselect = [key, i]
+                    self.selected_arrow = tempselect
             else:
                 self.name_inputobject.handle_events(event)
                 self.artist_inputobject.handle_events(event)
@@ -229,8 +229,9 @@ class EditorEditor(scene.Scene):
             self.settingsbtn_buttonobject.draw(surface)
             self.mediactrl_cardobject.draw(surface)
             self.mediactrllabel_textobject.draw(surface)
-            self.mediaprogress1_textobject.set_text(f"{str(int(float(self.soundengine.get_song_progress())/60)).zfill(2)}:{str(int(float(self.soundengine.get_song_progress())%60)).zfill(2)}")
-            self.mediaprogress2_textobject.set_text(f"Beat {int(float(self.soundengine.get_song_progress())*(global_vars.editor_bpm/60))}/{int(global_vars.editor_length*(global_vars.editor_bpm/60))}\n@{global_vars.editor_bpm}BPM")
+            corrected_song_progress = self.soundengine.get_song_progress()+global_vars.editor_startdelay if self.soundengine.get_song_progress()+global_vars.editor_startdelay >= Decimal('0.0') else Decimal('0.0')
+            self.mediaprogress1_textobject.set_text(f"{str(int(float(corrected_song_progress)/60)).zfill(2)}:{str(int(float(corrected_song_progress)%60)).zfill(2)}")
+            self.mediaprogress2_textobject.set_text(f"Beat {int(float(self.soundengine.get_song_progress()+global_vars.editor_startdelay)*(global_vars.editor_bpm/60))}/{int(global_vars.editor_length*(global_vars.editor_bpm/60))}\n@{global_vars.editor_bpm}BPM")
             self.mediaprogress1_textobject.draw(surface)
             self.mediaprogress2_textobject.draw(surface)
             self.fastback_buttonobject.draw(surface)
@@ -251,7 +252,7 @@ class EditorEditor(scene.Scene):
             self.static_arrow_l_imageobject.draw(surface)
             self.static_arrow_r_imageobject.draw(surface)
             #plot algorythm
-            beat = float(self.soundengine.get_song_progress()*Decimal(global_vars.editor_bpm/60))
+            beat = float((self.soundengine.get_song_progress())*Decimal(global_vars.editor_bpm/60))
             for key, value in global_vars.editor_lvldat.items():
                 if key > beat-10 and key < beat+2:
                     tempdata = hextobits(value)
@@ -268,6 +269,45 @@ class EditorEditor(scene.Scene):
                     if tempdata[3]:
                         self.arrow_r_imageobject.set_pos((800, temppos))
                         self.arrow_r_imageobject.draw(surface)
+            #arrow selection
+            if self.selected_arrow:
+                self.select_imageobject.set_pos((350+150*self.selected_arrow[1], (beat - self.selected_arrow[0]) * 100 + 50))
+                self.select_imageobject.draw(surface)
+            #arrow alteration
+            if self.selected_arrow:
+                tempkeys = list(self.framekeys)
+                if "up" in tempkeys:
+                    tempdata = hextobits(loadfromlvldat(self.selected_arrow[0]))
+                    tempdata[self.selected_arrow[1]] = False
+                    newbeat = min(int(global_vars.editor_length*(global_vars.editor_bpm/60)), round((self.selected_arrow[0] + 1/global_vars.editor_snap_value) * global_vars.editor_snap_value)/global_vars.editor_snap_value)
+                    if newbeat<beat:
+                        newdata = hextobits(loadfromlvldat(newbeat))
+                        newdata[self.selected_arrow[1]] = True
+                        global_vars.editor_lvldat[self.selected_arrow[0]] = bitstohex(tempdata)
+                        global_vars.editor_lvldat[newbeat] = bitstohex(newdata)
+                        self.selected_arrow[0] = newbeat
+                if "down" in tempkeys:
+                    tempdata = hextobits(loadfromlvldat(self.selected_arrow[0]))
+                    tempdata[self.selected_arrow[1]] = False
+                    newbeat = max(0, round((self.selected_arrow[0] - 1/global_vars.editor_snap_value) * global_vars.editor_snap_value)/global_vars.editor_snap_value)
+                    if newbeat>beat-10:
+                        newdata = hextobits(loadfromlvldat(newbeat))
+                        newdata[self.selected_arrow[1]] = True
+                        global_vars.editor_lvldat[self.selected_arrow[0]] = bitstohex(tempdata)
+                        global_vars.editor_lvldat[newbeat] = bitstohex(newdata)
+                        self.selected_arrow[0] = newbeat
+                if "left" in tempkeys:
+                    tempdata = hextobits(loadfromlvldat(self.selected_arrow[0]))
+                    tempdata[self.selected_arrow[1]] = False
+                    tempdata[max(0, self.selected_arrow[1]-1)] = True
+                    global_vars.editor_lvldat[self.selected_arrow[0]] = bitstohex(tempdata)
+                    self.selected_arrow[1] = max(0, self.selected_arrow[1]-1)
+                if "right" in tempkeys:
+                    tempdata = hextobits(loadfromlvldat(self.selected_arrow[0]))
+                    tempdata[self.selected_arrow[1]] = False
+                    tempdata[min(3, self.selected_arrow[1]+1)] = True
+                    global_vars.editor_lvldat[self.selected_arrow[0]] = bitstohex(tempdata)
+                    self.selected_arrow[1] = min(3, self.selected_arrow[1]+1)
             #reader algorythm
             rounded_beat = round(beat * global_vars.editor_snap_value)/global_vars.editor_snap_value
             if self.soundengine.get_play_state() == 1:
@@ -309,6 +349,7 @@ class EditorEditor(scene.Scene):
             self.delay_textobject.draw(surface)
             self.delay_inputobject.draw(surface)
             self.delay_buttonobject.draw(surface)
+            self.ms_display_textobject.draw(surface)
             self.savesettings_buttonobject.draw(surface)
             self.discardsettings_buttonobject.draw(surface)
             

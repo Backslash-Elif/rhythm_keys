@@ -1,4 +1,5 @@
 import os, time, global_vars, sound_engine
+from decimal import Decimal
 from scenes import scene
 
 from components import button, debug, text, inputbox, touchtrigger, bgstyle, display_image, card, alert
@@ -24,16 +25,15 @@ class EditorCreateMenu(scene.Scene):
     def __init__(self, manager):
         super().__init__(manager)
         self.manager = manager
-        if not global_vars.editor_load_vars:
-            global_vars.editor_name = ""
-            global_vars.editor_author = global_vars.user_name
-            global_vars.editor_song_artist = ""
-            global_vars.editor_length = 0
-            global_vars.editor_difficulty = 0
-            global_vars.editor_bpm = 0
-            global_vars.editor_filepath = ""
-            global_vars.editor_startdelay_ms = 0
-            global_vars.editor_snapvalue = 4
+        global_vars.editor_name = ""
+        global_vars.editor_author = global_vars.user_name
+        global_vars.editor_song_artist = ""
+        global_vars.editor_length = 0
+        global_vars.editor_difficulty = 0
+        global_vars.editor_bpm = 0
+        global_vars.editor_filepath = ""
+        global_vars.editor_startdelay = Decimal('0.0')
+        global_vars.editor_snap_value = 4
         global_vars.editor_lvldat = {}
         
         self.debug_text_debugobject = debug.DebugInfo()
@@ -69,16 +69,13 @@ class EditorCreateMenu(scene.Scene):
         #song selection
         self.songpicker_btn = button.Button("Pick song...", text_size[TextSizeName.TEXT], (1100, 300), (500, 50), UI_colors[UIColorName.PRIMARY])
         self.song_file_text = text.Text("No song selected yet!", text_size[TextSizeName.TEXT], (1100, 350), (500, 50), colors[ColorName.DYNAMIC][0], text.TextAlign.LEFT)
-        self.song_bpm_text = text.Text("BPM:", text_size[TextSizeName.TEXT], (1100, 450), (100, 50), colors[ColorName.DYNAMIC][0])
-        self.song_bpm_input = inputbox.InputBox((130, 50), text_size[TextSizeName.TEXT], (1200, 450), 3 , UI_colors[UIColorName.SECONDARY])
-        self.song_tap_btn = button.Button("Tap", text_size[TextSizeName.TEXT], (1350, 450), (150, 50), UI_colors[UIColorName.PRIMARY])
-        self.song_tap_reset_btn = button.Button("Reset", text_size[TextSizeName.SMALL_TEXT], (1520, 450), (80, 50), UI_colors[UIColorName.DANGER])
+        self.song_bpm_text = text.Text("BPM:", text_size[TextSizeName.TEXT], (1100, 500), (100, 50), colors[ColorName.DYNAMIC][0])
+        self.song_bpm_input = inputbox.InputBox((130, 50), text_size[TextSizeName.TEXT], (1200, 500), 3 , UI_colors[UIColorName.SECONDARY])
+        self.song_tap_btn = button.Button("Tap", text_size[TextSizeName.TEXT], (1350, 500), (150, 50), UI_colors[UIColorName.PRIMARY])
+        self.song_tap_reset_btn = button.Button("Reset", text_size[TextSizeName.SMALL_TEXT], (1520, 500), (80, 50), UI_colors[UIColorName.DANGER])
         self.song_tap = [] #for bpm calculation
         self.song_test = sound_engine.SoundEngine()
         self.song_len_text = text.Text("Length:", text_size[TextSizeName.TEXT], (1100, 400), (500, 50), colors[ColorName.DYNAMIC][0], text.TextAlign.LEFT)
-        self.startdelay_textobject = text.Text("Delay at songstart:", text_size[TextSizeName.TEXT], (1100, 550), (250, 50), colors[ColorName.DYNAMIC][0])
-        self.startdelay_inputobject = inputbox.InputBox((150, 50), text_size[TextSizeName.TEXT], (1350, 550), 3 , UI_colors[UIColorName.SECONDARY], "0")
-        self.startdelay2_textobject = text.Text("ms", text_size[TextSizeName.TEXT], (1500, 550), (100, 50), colors[ColorName.DYNAMIC][0], text.TextAlign.LEFT)
         self.song_test_btn = button.Button("Play", text_size[TextSizeName.TEXT], (1350, 650), (150, 50), UI_colors[UIColorName.PRIMARY])
         self.song_test_reset_btn = button.Button("Reset", text_size[TextSizeName.SMALL_TEXT], (1520, 650), (80, 50), UI_colors[UIColorName.DANGER])
         self.testprogress_textobject = text.Text("--:--", text_size[TextSizeName.TEXT], (1200, 650), (150, 50), colors[ColorName.DYNAMIC][0], text.TextAlign.TOP)
@@ -88,13 +85,7 @@ class EditorCreateMenu(scene.Scene):
 
         self.alert_object = alert.Alert()
 
-        if global_vars.editor_load_vars:
-            self.name_input.set_text(global_vars.editor_name)
-            self.artist_input.set_text(global_vars.editor_song_artist)
-            self.song_bpm_input.set_text(str(global_vars.editor_bpm))
-            self.startdelay_inputobject.set_text(str(global_vars.editor_startdelay_ms))
-
-        self.switch_to_editor = False #loading the editor took long so added a messagebox to explain the waiting time. the alert has to be drawn first tho
+        self.switch_to_editor = 0 #loading the editor took long so added a messagebox to explain the waiting time. the alert has to be drawn first tho
     
     def handle_event(self, event):
         self.song_test.handle_events(event)
@@ -128,7 +119,6 @@ class EditorCreateMenu(scene.Scene):
                     else:
                         self.song_len_text.set_text(f"Length: {song_m}min {song_s}sec ({int(self.song_test.get_song_len())}sec)")
             self.song_bpm_input.handle_events(event)
-            self.startdelay_inputobject.handle_events(event)
             if self.song_tap_btn.is_clicked(event): #bpm logic
                 self.song_tap.append(time.time())
                 if len(self.song_tap) >= 8:
@@ -160,12 +150,18 @@ class EditorCreateMenu(scene.Scene):
                     global_vars.editor_length = self.song_test.get_song_len()
                     global_vars.editor_difficulty = self.difficulty
                     global_vars.editor_bpm = int(self.song_bpm_input.get_text())
-                    self.alert_object.new_alert("Please wait.\n\nInitialising editor...")
-                    self.switch_to_editor = True
+                    self.alert_object.new_alert("Please wait.\n\nPreparing files & Initialising editor...")
+                    newfile = global_vars.copy_audio_to_working_dir(global_vars.editor_filepath)
+                    global_vars.editor_filepath = newfile
+                    self.switch_to_editor = 1
                 else:
                     self.alert_object.new_alert("Fill out all fields!")
     
     def draw(self, surface):
+        if self.switch_to_editor > 0:
+            self.switch_to_editor += 1
+        if self.switch_to_editor > 2:
+            self.manager.switch_to_scene("Editor")
         bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color])
         self.back_btn.draw(surface)
         self.fg_cardobject.draw(surface)
@@ -195,9 +191,6 @@ class EditorCreateMenu(scene.Scene):
         self.song_tap_btn.draw(surface)
         self.song_tap_reset_btn.draw(surface)
         self.song_len_text.draw(surface)
-        self.startdelay_textobject.draw(surface)
-        self.startdelay_inputobject.draw(surface)
-        self.startdelay2_textobject.draw(surface)
         self.song_test_btn.draw(surface)
         self.song_test_reset_btn.draw(surface)
         self.testprogress_textobject.set_text(f"{str(int(float(self.song_test.get_song_progress())/60)).zfill(2)}:{str(int(float(self.song_test.get_song_progress())%60)).zfill(2)}" if global_vars.editor_filepath else "--:--")
@@ -210,5 +203,3 @@ class EditorCreateMenu(scene.Scene):
             self.debug_text_debugobject.draw(surface)
         if global_vars.sys_debug_lvl > 1:
             self.debug_grid_debugobject.draw(surface)
-        if self.switch_to_editor:
-            self.manager.switch_to_scene("Editor")
