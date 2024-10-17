@@ -44,7 +44,7 @@ class ImportPackage(scene.Scene):
                 global_vars.load_from_external_file(selected_file)
                 self.manager.switch_to_scene("Editor")
             if self.existing_buttonobject.is_clicked(event):
-                print("not implemented")
+                self.manager.switch_to_scene("Level selector")
             if self.back_buttonobject.is_clicked(event):
                 self.manager.switch_to_scene("Editor main menu")
     

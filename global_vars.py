@@ -59,7 +59,7 @@ def save_level():
     print("Saved level.")
 
 def load_level():
-    global editor_name, editor_author, editor_song_artist, editor_length, editor_difficulty, editor_bpm, editor_startdelay, editor_snap_value, editor_lvldat
+    global editor_name, editor_author, editor_song_artist, editor_length, editor_difficulty, editor_bpm, editor_startdelay, editor_snap_value, editor_lvldat, editor_filepath
     if not os.path.exists(os.path.join(const_working_dir, "level.json")): #if no settings are present
         print("level.json not found!")
     else:
@@ -74,6 +74,12 @@ def load_level():
             editor_startdelay = Decimal(level.get("startdelay", 0))
             editor_snap_value = level.get("snap", 4)
             editor_lvldat = level.get("lvldat", {})
+            editor_lvldat = {float(key): value for key, value in editor_lvldat.items()}
+    
+    for ext in ['mp3', 'ogg']:
+        audio_file = os.path.join(const_working_dir, f'audiotrack.{ext}')
+        if os.path.isfile(audio_file):
+            editor_filepath = audio_file
 
 def copy_audio_to_working_dir(filepath: str):
     try:
@@ -133,10 +139,6 @@ def load_from_external_file(filepath: str):
     
     os.remove(destination)
     load_level()
-    for ext in ['mp3', 'ogg']:
-        audio_file = os.path.join(const_working_dir, f'audiotrack.{ext}')
-        if os.path.isfile(audio_file):
-            editor_filepath = audio_file
 
 def clear_working_dir():
     try:
@@ -150,7 +152,8 @@ def clear_working_dir():
     except Exception as e:
         print("Error:", e)
 
-def save_lvl_list(sys_lvl_list):
+def save_lvl_list():
+    global sys_lvl_list
     try:
         with open(const_lvl_list_file, 'w') as file:
             json.dump(sys_lvl_list, file, indent=4)
@@ -172,11 +175,15 @@ def load_lvl_list():
         print("Error loading sys_lvl_list:", e)
         sys_lvl_list = {}
 
-def create_package():
+def generate_uuid():
+    return str(uuid.uuid4())
+
+def create_package(uuid):
     #made by You AI-powered search engine (you.com) because I suck at zip archives and stuff
+    global sys_lvl_list
     try:
         # Prepare the archive name with a UUID
-        archive_name = str(uuid.uuid4()) + '.zip'
+        archive_name = uuid + '.zip'
         archive_path = os.path.join(os.path.dirname(const_working_dir), archive_name)
         
         # Create a ZIP archive
@@ -193,12 +200,13 @@ def create_package():
                     archive.write(audio_file, arcname=os.path.basename(audio_file))
                     break  # Stop after adding the first existing audio file
 
-        return archive_name
+        sys_lvl_list[uuid] = {"name": editor_name, "author": editor_author, "highscore": 0}
+        save_lvl_list()
         
     except Exception as e:
         print("Error:", e)
 
-def unzip_file_to_working_dir(filename: str):
+def load_package(filename: str):
     #made by You AI-powered search engine (you.com) because I suck at zip archives and stuff
     try:
         # Construct the full path to the ZIP file
@@ -217,7 +225,7 @@ def unzip_file_to_working_dir(filename: str):
         # Unzip the file
         with zipfile.ZipFile(zip_file_path, 'r') as archive:
             archive.extractall(const_working_dir)
-    
+
     except Exception as e:
         print("Error:", e)
 
@@ -260,6 +268,7 @@ editor_lvldat = {}
 editor_filepath = ""
 editor_startdelay = Decimal('0.0')
 editor_snap_value = 4
+editor_uuid = ""
 #system and misc
 sys_lvl_list = {} #lvl_list but it's a dict X3
 sys_screen_size_id = 0 #0=HD, 1=Full HD (Native), 2=QHD, 3=4K UHD

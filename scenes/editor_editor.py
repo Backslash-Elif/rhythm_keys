@@ -116,6 +116,9 @@ class EditorEditor(scene.Scene):
 
         global_vars.save_level() #init leveldata
 
+        if global_vars.editor_uuid == "":
+            global_vars.editor_uuid = global_vars.generate_uuid()
+
     def handle_event(self, event):
         self.keyreaderobject.handle_events(event)
         self.soundengine.handle_events(event)
@@ -124,6 +127,10 @@ class EditorEditor(scene.Scene):
             if self.alertobject.get_result() != None:
                 if self.alertid == 1:
                     if self.alertobject.get_result():
+                        global_vars.save_level()
+                        global_vars.create_package(global_vars.editor_uuid)
+                        global_vars.editor_uuid = ""
+                        self.soundengine.eject()
                         self.manager.switch_to_scene("Editor main menu")
                 if self.alertid == 2:
                     if self.alertobject.get_result():
@@ -145,7 +152,7 @@ class EditorEditor(scene.Scene):
         else:
             if self.settings_hidden:
                 if self.exitbtn_buttonobject.is_clicked(event):
-                    self.alertobject.new_alert("Are you sure you want to quit?\n\n\n(!!!All progress will be lost!!!)", 1)
+                    self.alertobject.new_alert("Are you sure you want to quit?\n\n\nYou will be able to find your\nlevel in the level selector", 1)
                     self.alertid = 1
                 if self.fastback_buttonobject.is_clicked(event):
                     self.soundengine.seek_to(max(self.soundengine.get_song_progress() - 10, 0.0))

@@ -158,10 +158,10 @@ class EditorCreateMenu(scene.Scene):
                     self.alert_object.new_alert("Fill out all fields!")
     
     def draw(self, surface):
+        if self.switch_to_editor > 1:
+            self.manager.switch_to_scene("Editor")
         if self.switch_to_editor > 0:
             self.switch_to_editor += 1
-        if self.switch_to_editor > 2:
-            self.manager.switch_to_scene("Editor")
         bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color])
         self.back_btn.draw(surface)
         self.fg_cardobject.draw(surface)
