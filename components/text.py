@@ -84,3 +84,7 @@ class Text:
     
     def set_position(self, newposition: tuple): #setter method text position
         self.position = newposition
+    
+    def set_color(self, newcolor:tuple):
+        self.text_color = newcolor
+        self._render()

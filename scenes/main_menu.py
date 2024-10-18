@@ -17,7 +17,8 @@ class MainMenu(scene.Scene):
         self.title_bg_textobject = text.Text("Welcome to RHYTHM KEYS!", text_size[TextSizeName.LARGE_TITLE]+2, (0, 150), (global_vars.const_rendersize[0], 100), colors[ColorName.LIGHT_BLUE][0]) #almost identical duplicate for effect
         self.play_buttonobject = button.Button("Play", text_size[TextSizeName.TEXT], screen_utils.center_obj(global_vars.const_rendersize, (500, 75), (0, -100)), (500, 75), UI_colors[UIColorName.PRIMARY])
         self.editor_buttonobject = button.Button("Editor", text_size[TextSizeName.TEXT], screen_utils.center_obj(global_vars.const_rendersize, (500, 75)), (500, 75), UI_colors[UIColorName.SECONDARY])
-        self.settings_buttonobject = button.Button("Settings", text_size[TextSizeName.TEXT], screen_utils.center_obj(global_vars.const_rendersize, (500, 75), (0, 100)), (500, 75), UI_colors[UIColorName.SECONDARY])
+        self.import_buttonobject = button.Button("Level import & export", text_size[TextSizeName.TEXT], screen_utils.center_obj(global_vars.const_rendersize, (500, 75), (0, 100)), (500, 75), UI_colors[UIColorName.SECONDARY])
+        self.settings_buttonobject = button.Button("Settings", text_size[TextSizeName.TEXT], screen_utils.center_obj(global_vars.const_rendersize, (500, 75), (0, 200)), (500, 75), UI_colors[UIColorName.SECONDARY])
 
         self.konami = ("up", "up", "down", "down", "left", "right", "left", "right", "b", "a")
         self.konami_stage = 0
@@ -25,8 +26,13 @@ class MainMenu(scene.Scene):
         self.keyreaderobject = key_reader.KeyReader()
     
     def handle_event(self, event):
+        if self.play_buttonobject.is_clicked(event):
+            global_vars.sys_persistant_storage["play"] = True
+            self.manager.switch_to_scene("Level selector")
         if self.editor_buttonobject.is_clicked(event):
             self.manager.switch_to_scene("Editor main menu")
+        if self.import_buttonobject.is_clicked(event):
+            self.manager.switch_to_scene("Import export")
         if self.settings_buttonobject.is_clicked(event):
             self.manager.switch_to_scene("Settings")
         new_key = self.keyreaderobject.get_pressed_key(event)
@@ -49,6 +55,7 @@ class MainMenu(scene.Scene):
         self.title_textobject.draw(surface)
         self.play_buttonobject.draw(surface)
         self.editor_buttonobject.draw(surface)
+        self.import_buttonobject.draw(surface)
         self.settings_buttonobject.draw(surface)
         if global_vars.sys_debug_lvl > 0:
             self.debug_text_debugobject.draw(surface)

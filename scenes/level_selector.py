@@ -28,6 +28,7 @@ class LevelSelector(scene.Scene):
         self.orderreverse_buttonobject = button.Button("Reverse", text_size[TextSizeName.TEXT], (600, 950), (150, 50), UI_colors[UIColorName.DANGER])
 
         self.alert_object = alert.Alert()
+        self.alertid = 0
 
         self.switch_to_editor = 0 #loading the editor took long so added a messagebox to explain the waiting time. the alert has to be drawn first tho
 
@@ -56,11 +57,17 @@ class LevelSelector(scene.Scene):
                 self.manager.switch_to_scene("Editor main menu")
             if self.selected_item != None:
                 if self.next_btn.is_clicked(event):
-                    self.alert_object.new_alert("Please wait.\n\nPreparing files & Initialising editor...")
-                    global_vars.load_package(list(self.sorting.values())[self.selected_item]+".zip")
-                    global_vars.load_level()
-                    global_vars.editor_uuid = list(self.sorting.values())[self.selected_item]
-                    self.switch_to_editor = 1
+                    if "exportfile" in global_vars.sys_persistant_storage:
+                        if global_vars.sys_persistant_storage["exportfile"]:
+                            global_vars.sys_persistant_storage["exportfile"] = str(list(self.sorting.values())[self.selected_item])
+                            self.manager.switch_to_scene("Import export")
+                    if "play" in global_vars.sys_persistant_storage:
+                        if global_vars.sys_persistant_storage["play"]:
+                            global_vars.load_package(list(self.sorting.values())[self.selected_item]+".zip")
+                            global_vars.load_level()
+                            self.manager.switch_to_scene("Game")
+                    self.alert_object.new_alert("Would you like to save a copy?\n\n(Press cancel to edit the original instead)", 1)
+                    self.alertid = 1
             if self.orderby_buttonobject.is_clicked(event):
                 self.sorting_mode += 1
                 if self.sorting_mode > 2:
@@ -95,9 +102,18 @@ class LevelSelector(scene.Scene):
     
     def draw(self, surface):
         if self.switch_to_editor > 1:
+            global_vars.load_package(list(self.sorting.values())[self.selected_item]+".zip")
+            global_vars.load_level()
             self.manager.switch_to_scene("Editor")
         if self.switch_to_editor > 0:
             self.switch_to_editor += 1
+        if self.alertid == 1 and self.alert_object.get_result() != None:
+            self.alert_object.new_alert("Please wait.\n\nPreparing files & Initialising editor...")
+            if self.alert_object.get_result():
+                global_vars.editor_uuid = ""
+            else:
+                global_vars.editor_uuid = list(self.sorting.values())[self.selected_item]
+            self.switch_to_editor = 1
         bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color])
         self.back_btn.draw(surface)
         self.title_textobject.draw(surface)

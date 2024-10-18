@@ -206,6 +206,16 @@ def create_package(uuid):
     except Exception as e:
         print("Error:", e)
 
+def export_package(uuid, destinationpath):
+    #made by You AI-powered search engine (you.com) because I suck at zip archives and stuff
+    global sys_lvl_list
+    try:
+        sourcepath = os.path.join(const_save_dir, uuid+".zip")
+        shutil.copy(sourcepath, destinationpath)
+        
+    except Exception as e:
+        print("Error:", e)
+
 def load_package(filename: str):
     #made by You AI-powered search engine (you.com) because I suck at zip archives and stuff
     try:

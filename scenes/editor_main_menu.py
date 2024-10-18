@@ -24,7 +24,7 @@ class EditorMainMenu(scene.Scene):
         if self.create_button.is_clicked(event):
             self.manager.switch_to_scene("Editor create menu")
         if self.open_button.is_clicked(event):
-            self.manager.switch_to_scene("Import package")
+            self.manager.switch_to_scene("Level selector")
         if self.back_button.is_clicked(event):
             self.manager.switch_to_scene("Main menu")
     
