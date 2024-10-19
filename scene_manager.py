@@ -1,5 +1,5 @@
 import pygame, global_vars
-from scenes import main_menu, settings, oobe, editor_main_menu, editor_create_menu, editor_editor, level_selector, import_export, main_game
+from scenes import main_menu, settings, oobe, editor_main_menu, editor_create_menu, editor_editor, level_selector, import_export, main_game, results
 
 class SceneManager:
     def __init__(self, screen_mgr, initial_scene: str) -> None:
@@ -13,7 +13,8 @@ class SceneManager:
             "Editor": editor_editor.EditorEditor,
             "Level selector": level_selector.LevelSelector,
             "Import export": import_export.ImportExport,
-            "Game": main_game.MainGame
+            "Game": main_game.MainGame,
+            "Level results": results.Results
             }
         self.current_scene = self.scenes[initial_scene](self) #create a instance of the selected class
     

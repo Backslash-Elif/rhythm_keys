@@ -179,6 +179,7 @@ def generate_uuid():
     return str(uuid.uuid4())
 
 def create_package(uuid):
+    load_lvl_list()
     #made by You AI-powered search engine (you.com) because I suck at zip archives and stuff
     global sys_lvl_list
     try:

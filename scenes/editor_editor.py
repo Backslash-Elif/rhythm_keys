@@ -128,6 +128,7 @@ class EditorEditor(scene.Scene):
                 if self.alertid == 1:
                     if self.alertobject.get_result():
                         global_vars.save_level()
+                        global_vars.load_lvl_list()
                         global_vars.create_package(global_vars.editor_uuid)
                         global_vars.editor_uuid = ""
                         self.soundengine.eject()
@@ -154,6 +155,10 @@ class EditorEditor(scene.Scene):
                 if self.exitbtn_buttonobject.is_clicked(event):
                     self.alertobject.new_alert("Are you sure you want to quit?\n\n\nYou will be able to find your\nlevel in the level selector", 1)
                     self.alertid = 1
+                if self.testbtn_buttonobject.is_clicked(event):
+                    global_vars.save_level()
+                    global_vars.sys_persistant_storage["editortest"] = True
+                    self.manager.switch_to_scene("Game")
                 if self.fastback_buttonobject.is_clicked(event):
                     self.soundengine.seek_to(max(self.soundengine.get_song_progress() - 10, 0.0))
                 if self.back_buttonobject.is_clicked(event):

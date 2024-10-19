@@ -55,7 +55,7 @@ class MainGame(scene.Scene):
 
         self.score = []
         self.score_textobject = text.Text("Score", text_size[TextSizeName.SMALL_TITLE], (1050, 500), (200, 100), colors[ColorName.DYNAMIC][0], text.TextAlign.LEFT)
-        self.score_rating_imageobject = display_image.DisplayImage("assets/ranking/s.png", (1050, 700), (150, 150)) #C=0-39, B=40-64, A=65-89, S=90-100
+        self.score_rating_imageobject = display_image.DisplayImage("assets/ranking/s.png", (1050, 600), (150, 150)) #C=0-39, B=40-64, A=65-89, S=90-100
 
         self.framekeys = set() #keyset for new inputs
         self.playing = True
@@ -72,9 +72,6 @@ class MainGame(scene.Scene):
             if self.alertobject.get_result() != None:
                 if self.alertid == 1:
                     if self.alertobject.get_result():
-                        global_vars.save_level()
-                        global_vars.create_package(global_vars.editor_uuid)
-                        global_vars.editor_uuid = ""
                         self.soundengine.eject()
                         self.manager.switch_to_scene("Editor main menu")
                 if self.alertid == 2:
@@ -100,10 +97,24 @@ class MainGame(scene.Scene):
                     self.soundengine.pause()
                 if self.exit_buttonobject.is_clicked(event):
                     self.soundengine.eject()
-                    self.manager.switch_to_scene("Level selector")
+                    if "editortest" in global_vars.sys_persistant_storage:
+                        if global_vars.sys_persistant_storage["editortest"]:
+                            global_vars.load_level()
+                            self.manager.switch_to_scene("Editor")
+                        else:
+                            self.manager.switch_to_scene("Level selector")
+                    else:
+                        self.manager.switch_to_scene("Level selector")
 
     def draw(self, surface):
         bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color])
+        if self.soundengine.get_play_state() == 3:
+            if "editortest" in global_vars.sys_persistant_storage:
+                if global_vars.sys_persistant_storage["editortest"]:
+                    global_vars.load_level()
+                    self.manager.switch_to_scene("Editor")
+            global_vars.sys_persistant_storage["songresult"] = int(sum(self.score)/len(self.score))
+            self.manager.switch_to_scene("Level results")
         if self.playing:
             #print(self.keyreaderobject.get_keys())
             self.title_textobject.draw(surface)
@@ -152,7 +163,6 @@ class MainGame(scene.Scene):
                             else:
                                 self.missed_note()
                     global_vars.editor_lvldat[key] = bitstohex(tempdata)
-                    break
             
             if not matches:
                 tempkeys = list(self.framekeys)
