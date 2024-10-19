@@ -89,7 +89,6 @@ class Settings(scene.Scene):
         self.fg_cardobject.draw(surface)
         self.title_textobject.draw(surface)
         self.back_buttonobject.draw(surface)
-        self.title_textobject.draw(surface)
         self.username_textobject.draw(surface)
         self.username_inputobject.draw(surface)
         self.darkmode_buttonobject.draw(surface)

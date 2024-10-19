@@ -11,6 +11,9 @@ class LevelSelector(scene.Scene):
         self.manager = manager
 
         global_vars.load_lvl_list()
+
+        if "select_destination" not in global_vars.sys_persistant_storage:
+            global_vars.sys_persistant_storage["select_destination"] = 0
         
         self.debug_text_debugobject = debug.DebugInfo()
         self.debug_grid_debugobject = debug.Grid(global_vars.const_rendersize)
@@ -57,17 +60,18 @@ class LevelSelector(scene.Scene):
                 self.manager.switch_to_scene("Editor main menu")
             if self.selected_item != None:
                 if self.next_btn.is_clicked(event):
-                    if "exportfile" in global_vars.sys_persistant_storage:
-                        if global_vars.sys_persistant_storage["exportfile"]:
-                            global_vars.sys_persistant_storage["exportfile"] = str(list(self.sorting.values())[self.selected_item])
-                            self.manager.switch_to_scene("Import export")
-                    if "play" in global_vars.sys_persistant_storage:
-                        if global_vars.sys_persistant_storage["play"]:
-                            global_vars.load_package(list(self.sorting.values())[self.selected_item]+".zip")
-                            global_vars.load_level()
-                            self.manager.switch_to_scene("Game")
-                    self.alert_object.new_alert("Would you like to save a copy?\n\n(Press cancel to edit the original instead)", 1)
-                    self.alertid = 1
+                    if global_vars.sys_persistant_storage["select_destination"] == 1:
+                        global_vars.sys_persistant_storage["exportfile"] = str(list(self.sorting.values())[self.selected_item])
+                        self.manager.switch_to_scene("Import export")
+                    if global_vars.sys_persistant_storage["select_destination"] == 2:
+                        global_vars.load_package(list(self.sorting.values())[self.selected_item]+".zip")
+                        global_vars.load_level()
+                        global_vars.editor_uuid = list(self.sorting.values())[self.selected_item]
+                        self.switch_to_editor = 1
+                        self.alert_object.new_alert("Please wait.\n\nLoading...")
+                    if global_vars.sys_persistant_storage["select_destination"] == 0:
+                        self.alert_object.new_alert("Would you like to save a copy?\n\n(Press cancel to edit the original instead)", 1)
+                        self.alertid = 1
             if self.orderby_buttonobject.is_clicked(event):
                 self.sorting_mode += 1
                 if self.sorting_mode > 2:
@@ -104,7 +108,10 @@ class LevelSelector(scene.Scene):
         if self.switch_to_editor > 1:
             global_vars.load_package(list(self.sorting.values())[self.selected_item]+".zip")
             global_vars.load_level()
-            self.manager.switch_to_scene("Editor")
+            if global_vars.sys_persistant_storage["select_destination"] == 2:
+                self.manager.switch_to_scene("Game")
+            else:
+                self.manager.switch_to_scene("Editor")
         if self.switch_to_editor > 0:
             self.switch_to_editor += 1
         if self.alertid == 1 and self.alert_object.get_result() != None:

@@ -53,8 +53,14 @@ class MainGame(scene.Scene):
         self.alertobject = alert.Alert()
         self.keyreaderobject = key_reader.KeyReader()
 
+        self.score = []
+        self.score_textobject = text.Text("Score", text_size[TextSizeName.SMALL_TITLE], (1050, 500), (200, 100), colors[ColorName.DYNAMIC][0], text.TextAlign.LEFT)
+        self.score_rating_imageobject = display_image.DisplayImage("assets/ranking/s.png", (1050, 700), (150, 150)) #C=0-39, B=40-64, A=65-89, S=90-100
+
         self.framekeys = set() #keyset for new inputs
         self.playing = True
+        self.notes = 0
+        self.missed = 0
 
         self.alertid = 0 #0=nothing, 1=exit, 2=restart
 
@@ -88,6 +94,8 @@ class MainGame(scene.Scene):
                 if self.restart_buttonobject.is_clicked(event):
                     self.playing = True
                     self.countdown_counter = 91
+                    self.score = []
+                    global_vars.load_level()
                     self.soundengine.seek_to(0.0)
                     self.soundengine.pause()
                 if self.exit_buttonobject.is_clicked(event):
@@ -126,17 +134,59 @@ class MainGame(scene.Scene):
                         self.arrow_r_imageobject.set_pos((800, temppos))
                         self.arrow_r_imageobject.draw(surface)
             
-            #reader algorythm
-            rounded_beat = round(beat * global_vars.editor_snap_value)/global_vars.editor_snap_value
-            if self.soundengine.get_play_state() == 1:
+            #new reader
+            matches = 0
+            for key, value in global_vars.editor_lvldat.items():
+                if key+0.5 > beat and key-0.5 < beat:
+                    matches+=1
+                    tempkeys = list(self.framekeys)
+                    tempdata = hextobits(loadfromlvldat(key))
+                    for i in tempdata:
+                        if i:
+                            self.notes += 1
+                    for tempkey, i in zip(("up", "down", "left", "right"), range(4)):
+                        if tempkey in tempkeys:
+                            if tempdata[i]:
+                                tempdata[i] = False
+                                self.score.append(min(100, int((1-abs(beat-key))*100+5)))
+                            else:
+                                self.missed_note()
+                    global_vars.editor_lvldat[key] = bitstohex(tempdata)
+                    break
+            
+            if not matches:
                 tempkeys = list(self.framekeys)
-                tempdata = hextobits(loadfromlvldat(rounded_beat))
-                tempdata[0] = True if "up" in tempkeys else tempdata[0]
-                tempdata[1] = True if "down" in tempkeys else tempdata[1]
-                tempdata[2] = True if "left" in tempkeys else tempdata[2]
-                tempdata[3] = True if "right" in tempkeys else tempdata[3]
-                if True in tempdata:
-                    global_vars.editor_lvldat[rounded_beat] = bitstohex(tempdata)
+                for i in ("up", "down", "left", "right"):
+                    if i in tempkeys:
+                        self.missed_note()
+            
+            temp_lvldat = {}
+            for key, value in global_vars.editor_lvldat.items(): #making new dict so no runtime error
+                if key+1<beat:
+                    temp_lvldat[key] = value
+                else:
+                    break
+            
+            for key, value in temp_lvldat.items():
+                if key >= 0.0:
+                    tempdata = hextobits(loadfromlvldat(key))
+                    for i in tempdata:
+                        if i:
+                            self.missed_note()
+                global_vars.editor_lvldat.pop(key)
+            if self.score:
+                tempscore = int(sum(self.score)/len(self.score))
+                self.score_textobject.set_text(f"Score:\n{tempscore}")
+                if tempscore<40:
+                    self.score_rating_imageobject.set_image("assets/ranking/c.png")
+                elif tempscore<65:
+                    self.score_rating_imageobject.set_image("assets/ranking/b.png")
+                elif tempscore<90:
+                    self.score_rating_imageobject.set_image("assets/ranking/a.png")
+                else:
+                    self.score_rating_imageobject.set_image("assets/ranking/s.png")
+                self.score_rating_imageobject.draw(surface)
+                self.score_textobject.draw(surface)
             self.framekeys.clear()#clear newly pressed keys
             if self.countdown_counter > 0:
                 self.countdown_rectangleobject.draw(surface)
@@ -164,3 +214,7 @@ class MainGame(scene.Scene):
             self.debug_text_debugobject.draw(surface)
         if global_vars.sys_debug_lvl > 1:
             self.debug_grid_debugobject.draw(surface)
+    
+    def missed_note(self):
+        self.missed+=1
+        self.score.append(0)

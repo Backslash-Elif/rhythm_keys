@@ -27,7 +27,7 @@ class MainMenu(scene.Scene):
     
     def handle_event(self, event):
         if self.play_buttonobject.is_clicked(event):
-            global_vars.sys_persistant_storage["play"] = True
+            global_vars.sys_persistant_storage["select_destination"] = 2
             self.manager.switch_to_scene("Level selector")
         if self.editor_buttonobject.is_clicked(event):
             self.manager.switch_to_scene("Editor main menu")

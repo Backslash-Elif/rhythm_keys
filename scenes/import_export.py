@@ -71,7 +71,7 @@ class ImportExport(scene.Scene):
                 global_vars.create_package(global_vars.generate_uuid())
                 self.alertobject.new_alert("Import was successful!")
             if self.export_buttonobject.is_clicked(event):
-                global_vars.sys_persistant_storage["exportfile"] = True
+                global_vars.sys_persistant_storage["select_destination"] = 1
                 self.manager.switch_to_scene("Level selector")
             if self.back_buttonobject.is_clicked(event):
                 self.manager.switch_to_scene("Main menu")
