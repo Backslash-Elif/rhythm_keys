@@ -1,8 +1,8 @@
-import global_vars, utils, sound_engine
+import global_vars, utils, sound_engine, pygame
 from decimal import Decimal
 from scenes import scene
 
-from components import debug, touchtrigger, text, bgstyle, button, card, display_image, alert, key_reader, inputbox
+from components import debug, touchtrigger, text, bgstyle, button, card, display_image, alert, key_reader, inputbox, rectangle
 from components.styles import text_size, card_themes, UI_colors, background_gradient, UIColorName, CardThemeName, TextSizeName, colors, ColorName
 from utils import hextobits, bitstohex, loadfromlvldat
 
@@ -53,6 +53,9 @@ class EditorEditor(scene.Scene):
         self.arrow_d_imageobject = display_image.DisplayImage("assets/arrows/smol/down.png", (500, 50), (100, 100))
         self.arrow_l_imageobject = display_image.DisplayImage("assets/arrows/smol/left.png", (650, 50), (100, 100))
         self.arrow_r_imageobject = display_image.DisplayImage("assets/arrows/smol/right.png", (800, 50), (100, 100))
+
+        #beat allign
+        self.beatallign_rectangleobject = rectangle.Rectangle((350, 0), (550, 3), colors[ColorName.WHITE][0])
         
         #arrow selection
         self.tilebg_triggerobject = touchtrigger.Touchtrigger((300, 0), (650, 1080)) #trigger for mouse
@@ -161,7 +164,7 @@ class EditorEditor(scene.Scene):
                     self.soundengine.seek_to(max(self.soundengine.get_song_progress() - 10, 0.0))
                 if self.back_buttonobject.is_clicked(event):#back 5s
                     self.soundengine.seek_to(max(self.soundengine.get_song_progress() - 5, 0.0))
-                if self.playpause_buttonobject.is_clicked(event):#play/pause
+                if self.playpause_buttonobject.is_clicked(event) or self.keyreaderobject.get_pressed_key(event) == "space":#play/pause
                     self.soundengine.pause() if self.soundengine.get_play_state() == 1 else self.soundengine.play()
                 if self.fastforward_buttonobject.is_clicked(event):#forward 5s
                     self.soundengine.seek_to(min(self.soundengine.get_song_progress() + 10, self.soundengine.get_song_len()))
@@ -195,6 +198,15 @@ class EditorEditor(scene.Scene):
                                     if self.arrow_triggerobject.update(event):
                                         tempselect = [key, i]
                     self.selected_arrow = tempselect
+
+                #scrolling
+                if self.soundengine.get_play_state() > 1:
+                    if event.type == pygame.MOUSEWHEEL:
+                        if event.y > 0:
+                            self.soundengine.seek_to(min(self.soundengine.get_song_progress() + Decimal(1/global_vars.editor_snap_value), self.soundengine.get_song_len()))
+                        elif event.y < 0:
+                            self.soundengine.seek_to(max(self.soundengine.get_song_progress() - Decimal(1/global_vars.editor_snap_value), 0.0))
+                        self.soundengine.pause()
 
             else:
                 self.name_inputobject.handle_events(event)
@@ -263,7 +275,13 @@ class EditorEditor(scene.Scene):
             self.static_arrow_l_imageobject.draw(surface)
             self.static_arrow_r_imageobject.draw(surface)
 
-            beat = float((self.soundengine.get_song_progress())*Decimal(global_vars.editor_bpm/60))
+            beat = float((self.soundengine.get_song_progress()+global_vars.editor_startdelay)*Decimal(str(global_vars.editor_bpm/60)))
+
+            #beat allign
+            beatoffset = int(str(beat).split('.')[1][0:2].ljust(2, "0"))
+            for i in range(12):
+                self.beatallign_rectangleobject.set_position((350, (-51)+100*i+beatoffset))
+                self.beatallign_rectangleobject.draw(surface)
 
             #plot algorythm
             for key, value in global_vars.editor_lvldat.items(): #iterate through all items

@@ -114,7 +114,7 @@ class MainGame(scene.Scene):
                 utils.load_level()
                 self.manager.switch_to_scene("Editor")
             else:
-                global_vars.sys_persistant_storage["songresult"] = [int(sum(self.score)/len(self.score)), self.missed]
+                global_vars.sys_persistant_storage["songresult"] = [min(100, int(sum(self.score)/len(self.score))), self.missed]
                 self.manager.switch_to_scene("Level results")
 
         if self.playing:
@@ -129,7 +129,7 @@ class MainGame(scene.Scene):
             self.static_arrow_r_imageobject.draw(surface)
 
             #plot algorythm
-            beat = float((self.soundengine.get_song_progress())*Decimal(global_vars.editor_bpm/60))
+            beat = float((self.soundengine.get_song_progress()+global_vars.editor_startdelay)*Decimal(str(global_vars.editor_bpm/60)))
             for key, value in global_vars.editor_lvldat.items():
                 if key > beat-2 and key < beat+10:
                     tempdata = hextobits(value)
@@ -161,10 +161,14 @@ class MainGame(scene.Scene):
                         if tempkey in tempkeys:
                             if tempdata[i]:
                                 tempdata[i] = False
-                                self.score.append(min(100, int((1-abs(beat-key))*100+5)))
+                                self.score.append(min(110, int((1-abs(beat-key))*110+10))) #110 to allow player to catch up
                             else:
                                 self.missed_note()
-                    global_vars.editor_lvldat[key] = bitstohex(tempdata)
+                            break
+                    if True in tempdata:
+                        global_vars.editor_lvldat[key] = bitstohex(tempdata)
+                    else:
+                        global_vars.editor_lvldat.pop(key)
             if not matches: #if user misses note
                 tempkeys = list(self.framekeys)
                 for i in ("up", "down", "left", "right"):
@@ -197,7 +201,7 @@ class MainGame(scene.Scene):
             
             #ranking logic
             if self.score:
-                tempscore = int(sum(self.score)/len(self.score))
+                tempscore = min(100, int(sum(self.score)/len(self.score)))
                 self.score_textobject.set_text(f"Score:\n{tempscore}")
                 if tempscore<40:
                     self.score_rating_imageobject.set_image("assets/ranking/c.png")
