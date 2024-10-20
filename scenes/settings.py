@@ -43,8 +43,10 @@ class Settings(scene.Scene):
     def handle_event(self, event):
         if self.alertobject.is_active():
             self.alertobject.handle_events(event)
-        else:
+        else: #events aren't handled when alert is active
             self.username_inputobject.handle_events(event)
+
+            #all the different themes
             if self.theme1_buttonobject.is_clicked(event):
                 global_vars.user_bg_color = BGGradientName.MIDNIGHT.value
             if self.theme2_buttonobject.is_clicked(event):
@@ -63,11 +65,14 @@ class Settings(scene.Scene):
                 global_vars.user_bg_color = BGGradientName.MOUNTAIN_MIST.value
             if self.theme9_buttonobject.is_clicked(event):
                 global_vars.user_bg_color = BGGradientName.CHERRY_BLOSSOM.value
-            if self.darkmode_buttonobject.is_clicked(event):
+
+            if self.darkmode_buttonobject.is_clicked(event): #darkmode button; components can't dynamically switch to darmode so the new colors are computed and then the scene reloaded
                 global_vars.sys_persistant_storage["settings_username"] = self.username_inputobject.get_text()
                 global_vars.user_dark_mode = not global_vars.user_dark_mode
                 compute_dynamic_colors()
                 self.manager.switch_to_scene("Settings")
+
+            #screen scales
             if self.scale0_buttonobject.is_clicked(event):
                 self.manager.set_screensize(0)
             elif self.scale1_buttonobject.is_clicked(event):
@@ -76,7 +81,8 @@ class Settings(scene.Scene):
                 self.manager.set_screensize(2)
             elif self.scale3_buttonobject.is_clicked(event):
                 self.manager.set_screensize(3)
-            if self.back_buttonobject.is_clicked(event):
+
+            if self.back_buttonobject.is_clicked(event): #back button & validation
                 if len(self.username_inputobject.get_text()) < 4:
                     self.alertobject.new_alert("Please enter a valid Username.\n\n(Must be 4 or more and at most 15\ncharacters long.)")
                 else:
@@ -85,7 +91,8 @@ class Settings(scene.Scene):
                     self.manager.switch_to_scene("Main menu")
     
     def draw(self, surface):
-        bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color])
+        bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color]) #draws background
+
         self.fg_cardobject.draw(surface)
         self.title_textobject.draw(surface)
         self.back_buttonobject.draw(surface)
@@ -106,7 +113,10 @@ class Settings(scene.Scene):
         self.scale2_buttonobject.draw(surface)
         self.scale1_buttonobject.draw(surface)
         self.scale0_buttonobject.draw(surface)
+
         self.alertobject.draw(surface)
+
+        #draws debug info
         if global_vars.sys_debug_lvl > 0:
             self.debug_text_debugobject.draw(surface)
         if global_vars.sys_debug_lvl > 1:

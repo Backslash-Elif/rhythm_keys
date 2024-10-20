@@ -1,4 +1,4 @@
-import pygame, global_vars
+import pygame, utils
 
 class Touchtrigger:
     def __init__(self, location: tuple, size: tuple) -> None:
@@ -17,7 +17,7 @@ class Touchtrigger:
         # check if event is mouse button RELEASE
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:  # 1 = left mouse button
             #check if mouse position is over rect
-            if self.rect.collidepoint(global_vars.get_mouse_pos()):
+            if self.rect.collidepoint(utils.get_mouse_pos()):
                 return True  #trigger activated
         return False
 

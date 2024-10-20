@@ -12,14 +12,10 @@ class DisplayImage:
         except Exception as e: #draws missing texture (like in source engine or minecraft)
             print("Recoverable exception:", e)
             self.img_obj = pygame.Surface(self.size)
-            self.rect1 = pygame.Rect(0, 0, self.size[0]/2, self.size[1]/2)
-            self.rect2 = pygame.Rect(self.size[0]/2, 0, self.size[0]/2, self.size[1]/2)
-            self.rect3 = pygame.Rect(0, self.size[1]/2, self.size[0]/2, self.size[1]/2)
-            self.rect4 = pygame.Rect(self.size[0]/2, self.size[1]/2, self.size[0]/2, self.size[1]/2)
-            pygame.draw.rect(self.img_obj, (255, 0, 255), self.rect1)
-            pygame.draw.rect(self.img_obj, (0, 0, 0), self.rect2)
-            pygame.draw.rect(self.img_obj, (0, 0, 0), self.rect3)
-            pygame.draw.rect(self.img_obj, (255, 0, 255), self.rect4)
+            pygame.draw.rect(self.img_obj, (255, 0, 255), pygame.Rect(0, 0, self.size[0]/2, self.size[1]/2))
+            pygame.draw.rect(self.img_obj, (0, 0, 0), pygame.Rect(self.size[0]/2, 0, self.size[0]/2, self.size[1]/2))
+            pygame.draw.rect(self.img_obj, (0, 0, 0), pygame.Rect(0, self.size[1]/2, self.size[0]/2, self.size[1]/2))
+            pygame.draw.rect(self.img_obj, (255, 0, 255), pygame.Rect(self.size[0]/2, self.size[1]/2, self.size[0]/2, self.size[1]/2))
     
     def draw(self, surface):
         #blits the prerendered buffer to the given surface

@@ -42,13 +42,16 @@ class OutOfBoxExperience(scene.Scene):
     def handle_event(self, event):
         if self.alertobject.is_active():
             self.alertobject.handle_events(event)
-        else:
+        else: #events aren't processed when alert is active
             self.username_inputobject.handle_events(event)
-            if self.darkmode_buttonobject.is_clicked(event):
+
+            if self.darkmode_buttonobject.is_clicked(event): #darkmode toggle button; components can't dynamically switch to darmode so the new colors are computed and then the scene reloaded
                 global_vars.sys_persistant_storage["oobe_username"] = self.username_inputobject.get_text()
                 global_vars.user_dark_mode = not global_vars.user_dark_mode
                 compute_dynamic_colors()
                 self.manager.switch_to_scene("OOBE")
+            
+            #all the different themes
             if self.theme1_buttonobject.is_clicked(event):
                 global_vars.user_bg_color = BGGradientName.MIDNIGHT.value
             if self.theme2_buttonobject.is_clicked(event):
@@ -67,7 +70,8 @@ class OutOfBoxExperience(scene.Scene):
                 global_vars.user_bg_color = BGGradientName.MOUNTAIN_MIST.value
             if self.theme9_buttonobject.is_clicked(event):
                 global_vars.user_bg_color = BGGradientName.CHERRY_BLOSSOM.value
-            if self.complete_buttonobject.is_clicked(event):
+
+            if self.complete_buttonobject.is_clicked(event): #complete button; validates input
                 if len(self.username_inputobject.get_text().strip()) < 4:
                     self.alertobject.new_alert("Please enter a valid Username.\n\n(Must be 4 or more and at most 15\ncharacters long.)")
                 elif global_vars.user_bg_color == BGGradientName.NONE.value:
@@ -79,7 +83,8 @@ class OutOfBoxExperience(scene.Scene):
                     self.manager.switch_to_scene("Main menu")
     
     def draw(self, surface):
-        bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color])
+        bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color]) #draws background
+
         self.fg_cardobject.draw(surface)
         self.title_textobject.draw(surface)
         self.subtitle_textobject.draw(surface)
@@ -97,7 +102,10 @@ class OutOfBoxExperience(scene.Scene):
         self.theme8_buttonobject.draw(surface)
         self.theme9_buttonobject.draw(surface)
         self.complete_buttonobject.draw(surface)
+
         self.alertobject.draw(surface)
+
+        #draws debug info
         if global_vars.sys_debug_lvl > 0:
             self.debug_text_debugobject.draw(surface)
         if global_vars.sys_debug_lvl > 1:

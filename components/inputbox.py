@@ -1,4 +1,4 @@
-import pygame, global_vars
+import pygame, utils
 from components import text, rectangle
 
 class InputBox:
@@ -10,10 +10,12 @@ class InputBox:
         self.max_input_len = max_input_len
         self.display_text = pre_input
         self.active = False #used to check if active
+
         #create objects
         self.text_object = text.Text(pre_input, text_size, (10, 0), (self.width-20, self.height), self.text_color, text.TextAlign.LEFT) #position initialized with (0, 0) as size is unknown
         self.rectangleobject = rectangle.Rectangle((0, 0), (self.width, self.height), self.color, 10, 2, self.text_color)#position set to 0, 0 because of rendering to buffer screen
         self.hitbox = pygame.Rect(self.position[0], self.position[1], self.width, self.height)#hitbox rectangle at correct position for mouse interaction
+
         #create buffer screen with SRCALPHA (sRGB) params
         self.buffer = pygame.Surface(size, pygame.SRCALPHA)
 
@@ -27,11 +29,9 @@ class InputBox:
         #update the text object
         self.text_object.set_text(self.display_text + ("|" if self.cursor_state else ""))
         self.text_object.set_position((5, self.height/2 - self.text_object.get_size()[1]/2))
+        
         #draw the rect with correct color based on active condition
-        if self.active:
-            self.rectangleobject.set_color(self.active_color)
-        else:
-            self.rectangleobject.set_color(self.color)
+        self.rectangleobject.set_color(self.active_color if self.active else self.color)
         self.rectangleobject.draw(self.buffer)
         #draw textobject to buffer
         self.text_object.draw(self.buffer)
@@ -41,14 +41,14 @@ class InputBox:
         #check if mouse clicks on component
         if event.type == pygame.MOUSEBUTTONDOWN:
             update = True
-            if self.hitbox.collidepoint(global_vars.get_mouse_pos()):
+            if self.hitbox.collidepoint(utils.get_mouse_pos()):
                 self.active = True
                 self.cursor_counter = 1
             else:
                 self.cursor_counter = 60
                 self.active = False
 
-        #ad or remove characters
+        #add or remove characters
         if self.active:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:

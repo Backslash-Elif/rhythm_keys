@@ -1,4 +1,4 @@
-import pygame, global_vars, screen_utils
+import pygame, global_vars
 from components import card, text, button, rectangle, inputbox
 from components.styles import card_themes, UI_colors, CardThemeName, UIColorName, text_size, TextSizeName, colors, ColorName
 
@@ -10,58 +10,61 @@ class Alert:
 
         self.result = None
 
-        self.buffer = pygame.Surface(global_vars.const_rendersize, pygame.SRCALPHA)
+        self.buffer = pygame.Surface(global_vars.const_rendersize, pygame.SRCALPHA) #buffer surface for performance
     
-    def _render(self):
+    def _render(self): #renders the components to the buffer surface; helps performance
         self.buffer.fill((0, 0, 0, 0))
         self.fullscreencard.draw(self.buffer)
         self.msg_card.draw(self.buffer)
         self.text_object.draw(self.buffer)
 
     
-    def new_alert(self, alert_text: str = "Internal error:\n\nNo alert text provided.", alert_type: int = 0): #0=OK, 1=Cancel & OK, 3=Input & Cancel & OK
+    def new_alert(self, alert_text: str = "Internal error:\n\nNo alert text provided.", alert_type: int = 0): #0=OK, 1=Cancel & OK, 2=Input & Cancel & OK
         #styling:
         content_pos = (700, 400) #almost the middle, easier to calculate than actual middle
         content_size = (500, 300)
         
+        #creating the components
         self.msg_card = rectangle.Rectangle((690, 390), (520, 320), colors[ColorName.BLACK_GRAY][0] if global_vars.user_dark_mode else colors[ColorName.LIGHT_GRAY][0], 16, 3, (255, 255, 255) if global_vars.user_dark_mode else (0, 0, 0)) #rectangle is 10px bigger on all sides
         self.text_object = text.Text(alert_text, text_size[TextSizeName.TEXT], content_pos, content_size, colors[ColorName.DYNAMIC][0])
         self.confirm_buttonobject = button.Button("OK", text_size[TextSizeName.TEXT], (1050, 660), (100, 40), UI_colors[UIColorName.PRIMARY])
         self.cancel_buttonobject = button.Button("Cancel", text_size[TextSizeName.TEXT], (750, 660), (100, 40), UI_colors[UIColorName.DANGER])
         self.inputobject = inputbox.InputBox((content_size[0], 50), text_size[TextSizeName.TEXT], (700, 600), 32, UI_colors[UIColorName.SECONDARY])
 
-        if alert_type == 2:
-            self.text_object.set_size((content_size[0], 200))
-        else:
-            self.text_object.set_size((content_size[0], 250))
+        #setting alert type
+        self.text_object.set_size((content_size[0], 200)) if alert_type == 2 else self.text_object.set_size((content_size[0], 250))
         
+        #setting variables
         self.active = True
         self.alerttype = alert_type
         self.result = None
         self._render()
     
     def handle_events(self, event):
-        if self.confirm_buttonobject.is_clicked(event):
+        if self.confirm_buttonobject.is_clicked(event): #ok button clicked
             self.active = False
             if self.alerttype != 2:
                 self.result = True
             else:
                 self.inputobject.get_text()
+
         if self.alerttype > 0:
-            if self.cancel_buttonobject.is_clicked(event):
+            if self.cancel_buttonobject.is_clicked(event): #cancel button clicked
                 self.active = False
                 self.result = False
+
         if self.alerttype == 2:
-            self.inputobject.handle_events(event)
+            self.inputobject.handle_events(event) #pass events to the input
     
     def draw(self, surface):
         if self.active:
             #blits the prerendered buffer to the given surface
             surface.blit(self.buffer, (0, 0))
             self.confirm_buttonobject.draw(surface) #draw directly cuz already prerendered
-            if self.alerttype > 0:
+            if self.alerttype > 0: #draw cancel only if alert type is higher than 0
                 self.cancel_buttonobject.draw(surface)
-            if self.alerttype == 2:
+
+            if self.alerttype == 2:#draw input only if alert type is 2
                 self.inputobject.draw(surface)
     
     def is_active(self):

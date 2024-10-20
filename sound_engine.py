@@ -66,7 +66,7 @@ class SoundEngine:
             return "--:--"
 
     def seek_to(self, seconds: float): #seek to position
-        if self.current_song:
+        if self.current_song and self.play_state != 0:
             pygame.mixer.music.pause()
             self.progress_shift += Decimal(str(seconds)) - self.get_song_progress()
             pygame.mixer.music.rewind() #for absolute positioning

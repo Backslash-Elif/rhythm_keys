@@ -10,7 +10,7 @@ class Rectangle:
         self.border_color = border_color
         self._update_rect()
     
-    def _update_rect(self):
+    def _update_rect(self): #creates/updates the rect variable
         self.rect = pygame.Rect(self.position[0], self.position[1], self.size[0], self.size[1])
     
     def draw(self, surface):
@@ -46,9 +46,12 @@ class Rectangle:
 
     def set_border_width(self, new_border_width):
         self.border = new_border_width
+
     def set_border_color(self, new_border_color):
         self.border_color = new_border_color
+
     def get_border_width(self):
         return self.border
+    
     def get_border_color(self):
         return self.border_color

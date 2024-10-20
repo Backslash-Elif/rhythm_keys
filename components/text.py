@@ -1,4 +1,4 @@
-import pygame, screen_utils
+import pygame, utils, utils
 from enum import Enum
 
 class TextAlign(Enum):
@@ -28,22 +28,24 @@ class Text:
         self.buffer = pygame.Surface(self.size, pygame.SRCALPHA)
         textsegments, segment_heights, total_size = self.__compute_newlines(self.display_text)
         text_position = (0, 0)
+
+        #calculate the text position
         if self.text_align == TextAlign.TOP_LEFT:
             text_position = (0, 0)
         elif self.text_align == TextAlign.TOP:
-            text_position = (screen_utils.center_axis(self.size[0], total_size[0]), 0)
+            text_position = (utils.center_axis(self.size[0], total_size[0]), 0)
         elif self.text_align == TextAlign.TOP_RIGHT:
             text_position = (self.size[0] - total_size[0], 0)
         elif self.text_align == TextAlign.LEFT:
-            text_position = (0, screen_utils.center_axis(self.size[1], total_size[1]))
+            text_position = (0, utils.center_axis(self.size[1], total_size[1]))
         elif self.text_align == TextAlign.CENTER:
-            text_position = (screen_utils.center_obj(self.size, total_size))
+            text_position = (utils.center_obj(self.size, total_size))
         elif self.text_align == TextAlign.RIGHT:
-            text_position = (self.size[0] - total_size[0], screen_utils.center_axis(self.size[1], total_size[1]))
+            text_position = (self.size[0] - total_size[0], utils.center_axis(self.size[1], total_size[1]))
         elif self.text_align == TextAlign.BOTTOM_LEFT:
             text_position = (0, self.size[1] - total_size[1])
         elif self.text_align == TextAlign.BOTTOM:
-            text_position = (screen_utils.center_axis(self.size[0], total_size[0]), self.size[1] - total_size[1])
+            text_position = (utils.center_axis(self.size[0], total_size[0]), self.size[1] - total_size[1])
         elif self.text_align == TextAlign.BOTTOM_RIGHT:
             text_position = (self.size[0] - total_size[0], self.size[1] - total_size[1])
         

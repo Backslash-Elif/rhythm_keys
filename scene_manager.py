@@ -1,5 +1,5 @@
 import pygame, global_vars
-from scenes import main_menu, settings, oobe, editor_main_menu, editor_create_menu, editor_editor, level_selector, import_export, main_game, results
+from scenes import main_menu, settings, oobe, editor_main_menu, editor_create_menu, editor_editor, level_selector, data_manager, main_game, results
 
 class SceneManager:
     def __init__(self, screen_mgr, initial_scene: str) -> None:
@@ -12,7 +12,7 @@ class SceneManager:
             "Editor create menu": editor_create_menu.EditorCreateMenu,
             "Editor": editor_editor.EditorEditor,
             "Level selector": level_selector.LevelSelector,
-            "Import export": import_export.ImportExport,
+            "Data manager": data_manager.DataManager,
             "Game": main_game.MainGame,
             "Level results": results.Results
             }
