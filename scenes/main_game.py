@@ -147,33 +147,31 @@ class MainGame(scene.Scene):
                         self.arrow_r_imageobject.set_pos((800, temppos))
                         self.arrow_r_imageobject.draw(surface)
             
-            #reader algorythm for correctly reading user input and giving fair points
-            matches = 0
+            #reader algorythm for correctly reading user input and giving fair points; VERY SLOW, need to update it in the future
+            temp_lvldat = {}
             for key, value in global_vars.editor_lvldat.items():
                 if key+0.5 > beat and key-0.5 < beat:
-                    matches+=1
-                    tempkeys = list(self.framekeys)
-                    tempdata = hextobits(loadfromlvldat(key))
-                    for i in tempdata:
-                        if i:
-                            self.notes += 1
-                    for tempkey, i in zip(("up", "down", "left", "right"), range(4)):
-                        if tempkey in tempkeys:
-                            if tempdata[i]:
-                                tempdata[i] = False
-                                self.score.append(min(110, int((1-abs(beat-key))*110+10))) #110 to allow player to catch up
-                            else:
-                                self.missed_note()
-                            break
-                    if True in tempdata:
-                        global_vars.editor_lvldat[key] = bitstohex(tempdata)
-                    else:
-                        global_vars.editor_lvldat.pop(key) #fix this
-            if not matches: #if user misses note
+                    temp_lvldat[key] = value
+            
+            temp_lvldat = dict(sorted(temp_lvldat.items()))
+            for tempkey, i in zip(("up", "down", "left", "right"), range(4)):
+                hit = False
                 tempkeys = list(self.framekeys)
-                for i in ("up", "down", "left", "right"):
-                    if i in tempkeys:
-                        self.missed_note()
+                for key, value in temp_lvldat.items():
+                    if tempkey in tempkeys:
+                        tempdata = hextobits(loadfromlvldat(key))
+                        if tempdata[i]:
+                            tempdata[i] = False
+                            self.score.append(max(30, min(110, int((1-abs(beat-key)*2)*120)))) #110 max points 120 to make a little platau for fairness
+                            print(max(30, min(110, int((1-abs(beat-key)*2)*120))))
+                            hit = True
+                        if key in global_vars.editor_lvldat:
+                            if True in tempdata:
+                                global_vars.editor_lvldat[key] = bitstohex(tempdata)
+                            else:
+                                global_vars.editor_lvldat.pop(key)
+            if not hit:
+                self.missed_note
             
             temp_lvldat = {}
             for key, value in global_vars.editor_lvldat.items(): #making new dict so no runtime error
