@@ -25,6 +25,8 @@ class EditorEditor(scene.Scene):
         self.exitbtn_buttonobject = button.Button("Exit", text_size[TextSizeName.TEXT], (1300, 300), (80, 50), UI_colors[UIColorName.DANGER])
         self.testbtn_buttonobject = button.Button("Test", text_size[TextSizeName.TEXT], (1200, 300), (80, 50), UI_colors[UIColorName.SUCCESS])
         self.settingsbtn_buttonobject = button.Button("Settings...", text_size[TextSizeName.TEXT], (1050, 400), (200, 50), UI_colors[UIColorName.SECONDARY])
+        self.delscreen_buttonobject = button.Button("Delete all on screen", text_size[TextSizeName.TEXT], (1050, 500), (200, 50), UI_colors[UIColorName.DANGER])
+        self.delscreen = False
 
         #speed & media control
         self.mediactrl_cardobject = card.Card((1040, 740), (520, 270), card_themes[CardThemeName.DARK])
@@ -183,6 +185,9 @@ class EditorEditor(scene.Scene):
                     self.bpm_inputobject.set_text(str(global_vars.editor_bpm))
                     self.snaps_inputobject.set_text(str(global_vars.editor_snap_value))
                     self.delay_inputobject.set_text(str(int(global_vars.editor_startdelay * Decimal('1000.0'))))
+                
+                if self.delscreen_buttonobject.is_clicked(event):
+                    self.delscreen = True
 
                 #arrow selection algorythm
                 if self.tilebg_triggerobject.update(event) and self.soundengine.get_play_state() != 1:
@@ -249,6 +254,7 @@ class EditorEditor(scene.Scene):
             self.savebtn_buttonobject.draw(surface)
             self.testbtn_buttonobject.draw(surface)
             self.settingsbtn_buttonobject.draw(surface)
+            self.delscreen_buttonobject.draw(surface)
             self.mediactrl_cardobject.draw(surface)
             self.mediactrllabel_textobject.draw(surface)
 
@@ -284,8 +290,10 @@ class EditorEditor(scene.Scene):
                 self.beatallign_rectangleobject.draw(surface)
 
             #plot algorythm
-            for key, value in global_vars.editor_lvldat.items(): #iterate through all items
+            for key, value in global_vars.editor_lvldat.copy().items(): #iterate through all items
                 if key > beat-10 and key < beat+2: #only select visible
+                    if self.delscreen:
+                        global_vars.editor_lvldat.pop(key) #removes all on screen
                     tempdata = hextobits(value) #unpack leveldata
                     temppos = (beat - key) * 100 + 50
                     #plot the arrows
@@ -301,6 +309,10 @@ class EditorEditor(scene.Scene):
                     if tempdata[3]:
                         self.arrow_r_imageobject.set_pos((800, temppos))
                         self.arrow_r_imageobject.draw(surface)
+            
+            if self.delscreen:
+                self.delscreen = False
+                self.selected_arrow = None
 
             #arrow selection
             if self.selected_arrow:

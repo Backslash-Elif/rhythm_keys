@@ -173,19 +173,15 @@ class MainGame(scene.Scene):
             if not hit:
                 self.missed_note
             
-            temp_lvldat = {}
-            for key, value in global_vars.editor_lvldat.items(): #making new dict so no runtime error
-                if key+1<beat:
-                    temp_lvldat[key] = value
-                else:
-                    break
-            
-            for key, value in temp_lvldat.items(): #this is responsible for punishing for missed notes while simoultaniously cleaning up the useless level data
+            for key, value in global_vars.editor_lvldat.copy().items(): #this is responsible for punishing for missed notes while simoultaniously cleaning up the useless level data
                 if key >= 0.0:
-                    tempdata = hextobits(loadfromlvldat(key))
-                    for i in tempdata:
-                        if i:
-                            self.missed_note()
+                    if key+1<beat:
+                        tempdata = hextobits(loadfromlvldat(key))
+                        for i in tempdata:
+                            if i:
+                                self.missed_note()
+                    else:
+                        continue
                 global_vars.editor_lvldat.pop(key)
             
             #progress bar
