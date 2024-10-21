@@ -50,7 +50,7 @@ class DataManager(scene.Scene):
             if self.import_buttonobject.is_clicked(event): #import button
                 selected_file = self.file_picker()
                 utils.load_from_external_file(selected_file)
-                utils.create_package(global_vars.generate_uuid())
+                utils.create_package(utils.generate_uuid())
                 self.alertobject.new_alert("Import was successful!")
 
             if self.export_buttonobject.is_clicked(event): #export button
@@ -87,7 +87,7 @@ class DataManager(scene.Scene):
         if global_vars.sys_debug_lvl > 1:
             self.debug_grid_debugobject.draw(surface)
     
-    def file_picker():
+    def file_picker(self):
     #make rootwindow and hide it
         root = tk.Tk()
         root.withdraw()

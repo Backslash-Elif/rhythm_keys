@@ -168,7 +168,7 @@ class MainGame(scene.Scene):
                     if True in tempdata:
                         global_vars.editor_lvldat[key] = bitstohex(tempdata)
                     else:
-                        global_vars.editor_lvldat.pop(key)
+                        global_vars.editor_lvldat.pop(key) #fix this
             if not matches: #if user misses note
                 tempkeys = list(self.framekeys)
                 for i in ("up", "down", "left", "right"):
