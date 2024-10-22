@@ -77,14 +77,14 @@ class MainGame(scene.Scene):
             self.alertobject.handle_events(event)
         else: #events aren't processed during alerts
             if self.playing:
-                if self.pause_buttonobject.is_clicked(event): #pause button
+                if self.pause_buttonobject.is_clicked(event) or "escape" in self.keyreaderobject.get_pressed_key(event): #pause button
                     self.playing = False
                     self.soundengine.pause()
 
                 self.framekeys.add(self.keyreaderobject.get_pressed_key(event))#get newly pressed keys
                 
             else:
-                if self.resume_buttonobject.is_clicked(event): #resume button
+                if self.resume_buttonobject.is_clicked(event) or "escape" in self.keyreaderobject.get_pressed_key(event): #resume button
                     self.playing = True
                     self.countdown_counter = 91
 

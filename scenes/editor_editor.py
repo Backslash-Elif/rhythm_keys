@@ -25,8 +25,16 @@ class EditorEditor(scene.Scene):
         self.exitbtn_buttonobject = button.Button("Exit", text_size[TextSizeName.TEXT], (1300, 300), (80, 50), UI_colors[UIColorName.DANGER])
         self.testbtn_buttonobject = button.Button("Test", text_size[TextSizeName.TEXT], (1200, 300), (80, 50), UI_colors[UIColorName.SUCCESS])
         self.settingsbtn_buttonobject = button.Button("Settings...", text_size[TextSizeName.TEXT], (1050, 400), (200, 50), UI_colors[UIColorName.SECONDARY])
-        self.delscreen_buttonobject = button.Button("Delete all on screen", text_size[TextSizeName.TEXT], (1050, 500), (200, 50), UI_colors[UIColorName.DANGER])
+        self.delscreen_buttonobject = button.Button("Delete all on screen", text_size[TextSizeName.TEXT], (1050, 500), (250, 50), UI_colors[UIColorName.DANGER])
         self.delscreen = False
+
+        #help
+        helptext = "Editor controls:\n\nUse the media controls to play, pause the song as well as skip 5 and 10 vorwards and backwards respectively. While a song is playing you may press the arrow keys to insert arrows onto the edit timeline. Pause the song to select individual arrows and move them around or delete them."
+        self.help_cardobject = card.Card((0, 0), global_vars.const_rendersize, card_themes[CardThemeName.DARK])
+        self.help_buttonobject = button.Button("?", text_size[TextSizeName.TEXT], (1270, 400), (50, 50), UI_colors[UIColorName.SECONDARY])
+        self.help_rectangleobject = rectangle.Rectangle((100, 100), (900, 900), UI_colors[UIColorName.SECONDARY][0], 15, 3, colors[ColorName.DYNAMIC][0])
+        self.help_textobject = text.Text(helptext, text_size[TextSizeName.TEXT], (150, 150), (800, 800), colors[ColorName.DYNAMIC][0])
+        self.helpactive = False
 
         #speed & media control
         self.mediactrl_cardobject = card.Card((1040, 740), (520, 270), card_themes[CardThemeName.DARK])
@@ -148,7 +156,7 @@ class EditorEditor(scene.Scene):
                     if self.alertobject.get_result():
                         self.settings_hidden = True
                 self.alertid = 0
-        else: #events aren't processed if the alert is active
+        elif not self.helpactive: #events aren't processed if the alert is active
             if self.settings_hidden:
                 self.framekeys.add(self.keyreaderobject.get_pressed_key(event))#get newly pressed keys
 
@@ -241,6 +249,8 @@ class EditorEditor(scene.Scene):
                 if self.discardsettings_buttonobject.is_clicked(event):
                     self.alertobject.new_alert("Revert back to old settings and exit?", 1)
                     self.alertid = 3
+        if self.help_buttonobject.is_clicked(event) and self.soundengine.get_play_state() != 1:
+            self.helpactive = not self.helpactive
 
     def draw(self, surface):
         bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color]) #draws background
@@ -419,6 +429,13 @@ class EditorEditor(scene.Scene):
                     self.star_triggerobject.set_pos((300+50*i, 550))
                     if self.star_triggerobject.draw_debug(surface):
                         self.difficulty = i
+        
+        #help
+        if self.helpactive:
+            self.help_cardobject.draw(surface)
+            self.help_rectangleobject.draw(surface)
+            self.help_textobject.draw(surface)
+        self.help_buttonobject.draw(surface)
 
         #draws debug information
         self.alertobject.draw(surface)
