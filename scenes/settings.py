@@ -1,7 +1,7 @@
 import global_vars
 from scenes import scene
 
-from components import button, debug, text, bgstyle, card, inputbox, alert
+from components import button, debug, text, bgstyle, card, inputbox, alert, rectangle
 from components.styles import colors, UI_colors, background_gradient, text_size, ColorName, UIColorName, TextSizeName, card_themes, CardThemeName, BGGradientName, compute_dynamic_colors
 
 class Settings(scene.Scene):
@@ -35,6 +35,18 @@ class Settings(scene.Scene):
         self.scale3_buttonobject = button.Button("4k (Upscaled a lot)", text_size[TextSizeName.TEXT], (900, 550), (300, 250), colors[ColorName.DARK_GRAY] if global_vars.user_dark_mode else colors[ColorName.LIGHT_GRAY], text.TextAlign.BOTTOM)
         self.alertobject = alert.Alert()
 
+        self.creds_cardobject = card.Card((0, 0), global_vars.const_rendersize, card_themes[CardThemeName.DARK])
+        self.creds_buttonobject = button.Button("About...", text_size[TextSizeName.TEXT], (1700, 950), (150, 50), UI_colors[UIColorName.SECONDARY])
+        self.creds_rectangleobject = rectangle.Rectangle((200, 100), (1500, 800), UI_colors[UIColorName.SECONDARY][0], 15, 3, colors[ColorName.DYNAMIC][0])
+        self.creds1_textobject = text.Text("A bame by", text_size[TextSizeName.LARGE_TITLE], (300, 200), (1300, 100), colors[ColorName.DYNAMIC][0])
+        self.creds2_textobject = text.Text("Backs\\ash Studios", text_size[TextSizeName.TITLE], (300, 300), (1300, 100), colors[ColorName.DYNAMIC][0])
+        self.creds3_textobject = text.Text("Playtesters:", text_size[TextSizeName.SMALL_TITLE], (300, 450), (600, 100), colors[ColorName.DYNAMIC][0], text.TextAlign.LEFT)
+        self.creds4_textobject = text.Text("Oliver\nZifjon", text_size[TextSizeName.SUBTITLE], (300, 550), (600, 200), colors[ColorName.DYNAMIC][0], text.TextAlign.TOP_LEFT)
+        self.creds5_textobject = text.Text("Sources:", text_size[TextSizeName.SMALL_TITLE], (1000, 450), (600, 100), colors[ColorName.DYNAMIC][0], text.TextAlign.LEFT)
+        self.creds6_textobject = text.Text("pygame: www.pygame.org\n\nIcons:\ncustom-icon-design @ www.iconarchive.com\nsmashicons @ www.freepik.com", text_size[TextSizeName.TEXT], (1000, 550), (600, 200), colors[ColorName.DYNAMIC][0], text.TextAlign.TOP_LEFT)
+        self.creds7_textobject = text.Text("- Backslash Studios (2024) -", text_size[TextSizeName.SMALL_TEXT], (200, 850), (1500, 50), colors[ColorName.DYNAMIC][0])
+        self.credsactive = False
+
         #configure
         if "settings_username" in global_vars.sys_persistant_storage:
             self.username_inputobject.set_text(global_vars.sys_persistant_storage["settings_username"])
@@ -43,7 +55,7 @@ class Settings(scene.Scene):
     def handle_event(self, event):
         if self.alertobject.is_active():
             self.alertobject.handle_events(event)
-        else: #events aren't handled when alert is active
+        elif not self.credsactive: #events aren't handled when alert is active
             self.username_inputobject.handle_events(event)
 
             #all the different themes
@@ -89,6 +101,9 @@ class Settings(scene.Scene):
                     global_vars.user_name = self.username_inputobject.get_text()
                     global_vars.save_config()
                     self.manager.switch_to_scene("Main menu")
+            
+        if self.creds_buttonobject.is_clicked(event):
+            self.credsactive = not self.credsactive
     
     def draw(self, surface):
         bgstyle.Bgstyle.draw_gradient(surface, background_gradient[global_vars.user_bg_color]) #draws background
@@ -113,6 +128,19 @@ class Settings(scene.Scene):
         self.scale2_buttonobject.draw(surface)
         self.scale1_buttonobject.draw(surface)
         self.scale0_buttonobject.draw(surface)
+
+        self.creds_buttonobject.draw(surface)
+        if self.credsactive:
+            self.creds_cardobject.draw(surface)
+            self.creds_buttonobject.draw(surface)
+            self.creds_rectangleobject.draw(surface)
+            self.creds1_textobject.draw(surface)
+            self.creds2_textobject.draw(surface)
+            self.creds3_textobject.draw(surface)
+            self.creds4_textobject.draw(surface)
+            self.creds5_textobject.draw(surface)
+            self.creds6_textobject.draw(surface)
+            self.creds7_textobject.draw(surface)
 
         self.alertobject.draw(surface)
 

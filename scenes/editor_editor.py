@@ -29,7 +29,7 @@ class EditorEditor(scene.Scene):
         self.delscreen = False
 
         #help
-        helptext = "Editor controls:\n\nUse the media controls to play, pause the song as well as skip 5 and 10 vorwards and backwards respectively. While a song is playing you may press the arrow keys to insert arrows onto the edit timeline. Pause the song to select individual arrows and move them around or delete them."
+        helptext = "Editor controls:\n\n\n\nMedia Controls:\n\n\nUse the media controls to play and pause the song as well as skip 5 and 10\nvorwards and backwards respectively.\n\n\nInserting arrows\n\nWhile a song is playing you may press the arrow keys to insert arrows\nonto the edit timeline.\n\n\nEditing arrows\n\nPause the song to select individual arrows and move them around\nor delete them."
         self.help_cardobject = card.Card((0, 0), global_vars.const_rendersize, card_themes[CardThemeName.DARK])
         self.help_buttonobject = button.Button("?", text_size[TextSizeName.TEXT], (1270, 400), (50, 50), UI_colors[UIColorName.SECONDARY])
         self.help_rectangleobject = rectangle.Rectangle((100, 100), (900, 900), UI_colors[UIColorName.SECONDARY][0], 15, 3, colors[ColorName.DYNAMIC][0])
