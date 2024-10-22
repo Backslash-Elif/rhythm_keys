@@ -49,6 +49,8 @@ class LevelSelector(scene.Scene):
 
         self.selected_item = None
 
+        self.select_is_copy = False #another hack
+
         self.levelitem_cardobject = card.Card((90, 190), (820, 120), card_themes[CardThemeName.DYNAMIC])
         self.levelitem_title_textobject = text.Text("Level name", text_size[TextSizeName.SMALL_TITLE], (90, 190), (800, 100), colors[ColorName.DYNAMIC][0], text.TextAlign.TOP_LEFT)
         self.levelitem_author_textobject = text.Text("Author name", text_size[TextSizeName.TEXT], (100, 250), (400, 50), colors[ColorName.DYNAMIC][0], text.TextAlign.BOTTOM_LEFT)
@@ -127,12 +129,16 @@ class LevelSelector(scene.Scene):
         if self.switch_to_editor > 1:
             utils.load_package(list(self.sorting.values())[self.selected_item]+".zip")
             utils.load_level()
+            if self.select_is_copy: #makes copies have user's name
+                global_vars.editor_author = global_vars.user_name
             self.manager.switch_to_scene("Game" if global_vars.sys_persistant_storage["select_destination"] == 2 else "Editor")
         if self.switch_to_editor > 0:
             self.switch_to_editor += 1
         if self.alertid == 1 and self.alert_object.get_result() != None:
-            self.alert_object.new_alert("Please wait.\n\nPreparing files & Initialising editor...")
             global_vars.editor_uuid = utils.generate_uuid() if self.alert_object.get_result() else list(self.sorting.values())[self.selected_item]
+            if self.alert_object.get_result():
+                self.select_is_copy = True
+            self.alert_object.new_alert("Please wait.\n\nPreparing files & Initialising editor...")
             self.switch_to_editor = 1
         #====
         
