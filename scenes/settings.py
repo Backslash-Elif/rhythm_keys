@@ -38,12 +38,12 @@ class Settings(scene.Scene):
         self.creds_cardobject = card.Card((0, 0), global_vars.const_rendersize, card_themes[CardThemeName.DARK])
         self.creds_buttonobject = button.Button("About...", text_size[TextSizeName.TEXT], (1700, 950), (150, 50), UI_colors[UIColorName.SECONDARY])
         self.creds_rectangleobject = rectangle.Rectangle((200, 100), (1500, 800), UI_colors[UIColorName.SECONDARY][0], 15, 3, colors[ColorName.DYNAMIC][0])
-        self.creds1_textobject = text.Text("A bame by", text_size[TextSizeName.LARGE_TITLE], (300, 200), (1300, 100), colors[ColorName.DYNAMIC][0])
+        self.creds1_textobject = text.Text("A Game by", text_size[TextSizeName.LARGE_TITLE], (300, 200), (1300, 100), colors[ColorName.DYNAMIC][0])
         self.creds2_textobject = text.Text("Backs\\ash Studios", text_size[TextSizeName.TITLE], (300, 300), (1300, 100), colors[ColorName.DYNAMIC][0])
         self.creds3_textobject = text.Text("Playtesters:", text_size[TextSizeName.SMALL_TITLE], (300, 450), (600, 100), colors[ColorName.DYNAMIC][0], text.TextAlign.LEFT)
         self.creds4_textobject = text.Text("Oliver\nZifjon", text_size[TextSizeName.SUBTITLE], (300, 550), (600, 200), colors[ColorName.DYNAMIC][0], text.TextAlign.TOP_LEFT)
         self.creds5_textobject = text.Text("Sources:", text_size[TextSizeName.SMALL_TITLE], (1000, 450), (600, 100), colors[ColorName.DYNAMIC][0], text.TextAlign.LEFT)
-        self.creds6_textobject = text.Text("pygame: www.pygame.org\n\nIcons:\ncustom-icon-design @ www.iconarchive.com\nsmashicons @ www.freepik.com", text_size[TextSizeName.TEXT], (1000, 550), (600, 200), colors[ColorName.DYNAMIC][0], text.TextAlign.TOP_LEFT)
+        self.creds6_textobject = text.Text("pygame: www.pygame.org\n\nIcons:\ncustom-icon-design @ www.iconarchive.com\nsmashicons @ www.freepik.com\nCole Bemis @ iconduck.com", text_size[TextSizeName.TEXT], (1000, 550), (600, 200), colors[ColorName.DYNAMIC][0], text.TextAlign.TOP_LEFT)
         self.creds7_textobject = text.Text("- Backslash Studios (2024) -", text_size[TextSizeName.SMALL_TEXT], (200, 850), (1500, 50), colors[ColorName.DYNAMIC][0])
         self.credsactive = False
 
