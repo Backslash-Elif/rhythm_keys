@@ -7,6 +7,13 @@ class ScreenManager:
         self.current_screensize = self.screensizes[self.screensize_id]
         self.virtual_screen = pygame.Surface((1920, 1080)) #native screensize
         self.screen = pygame.display.set_mode(self.current_screensize)
+
+        try:
+            gameIcon = pygame.image.load("assets/icons/icon.png")
+            pygame.display.set_icon(gameIcon)
+        except Exception as e:
+            print("Error: ", e)
+
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("Rhythm Keys")
 
