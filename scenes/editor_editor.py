@@ -176,6 +176,7 @@ class EditorEditor(scene.Scene):
                     self.soundengine.seek_to(max(self.soundengine.get_song_progress() - 5, 0.0))
                 if self.playpause_buttonobject.is_clicked(event) or self.keyreaderobject.get_pressed_key(event) == "space":#play/pause
                     self.soundengine.pause() if self.soundengine.get_play_state() == 1 else self.soundengine.play()
+                    global_vars.editor_lvldat = dict(sorted(global_vars.editor_lvldat.items()))
                 if self.fastforward_buttonobject.is_clicked(event):#forward 5s
                     self.soundengine.seek_to(min(self.soundengine.get_song_progress() + 10, self.soundengine.get_song_len()))
                 if self.forward_buttonobject.is_clicked(event):#forward 10s

@@ -76,15 +76,15 @@ class MainGame(scene.Scene):
         if self.alertobject.is_active():
             self.alertobject.handle_events(event)
         else: #events aren't processed during alerts
+            self.framekeys.add(self.keyreaderobject.get_pressed_key(event))#get newly pressed keys
+
             if self.playing:
-                if self.pause_buttonobject.is_clicked(event) or "escape" in self.keyreaderobject.get_pressed_key(event): #pause button
+                if self.pause_buttonobject.is_clicked(event) or self.keyreaderobject.get_pressed_key(event) == "escape": #pause button
                     self.playing = False
                     self.soundengine.pause()
-
-                self.framekeys.add(self.keyreaderobject.get_pressed_key(event))#get newly pressed keys
                 
             else:
-                if self.resume_buttonobject.is_clicked(event) or "escape" in self.keyreaderobject.get_pressed_key(event): #resume button
+                if self.resume_buttonobject.is_clicked(event) or self.keyreaderobject.get_pressed_key(event) == "escape": #resume button
                     self.playing = True
                     self.countdown_counter = 91
 
@@ -158,18 +158,19 @@ class MainGame(scene.Scene):
                 hit = False
                 tempkeys = list(self.framekeys)
                 for key, value in temp_lvldat.items():
-                    if tempkey in tempkeys:
-                        tempdata = hextobits(loadfromlvldat(key))
-                        if tempdata[i]:
-                            tempdata[i] = False
-                            self.score.append(max(30, min(110, int((1-abs(beat-key)*2)*120)))) #110 max points 120 to make a little platau for fairness
-                            print(max(30, min(110, int((1-abs(beat-key)*2)*120))))
-                            hit = True
-                        if key in global_vars.editor_lvldat:
-                            if True in tempdata:
-                                global_vars.editor_lvldat[key] = bitstohex(tempdata)
-                            else:
-                                global_vars.editor_lvldat.pop(key)
+                    if not hit:
+                        if tempkey in tempkeys:
+                            tempdata = hextobits(loadfromlvldat(key))
+                            if tempdata[i]:
+                                tempdata[i] = False
+                                self.score.append(max(30, min(110, int((1-abs(beat-key)*2)*110)))) #110 max points to make a little platau for fairness
+                                print(max(30, min(110, int((1-abs(beat-key)*2)*120))))
+                                hit = True
+                            if key in global_vars.editor_lvldat:
+                                if True in tempdata:
+                                    global_vars.editor_lvldat[key] = bitstohex(tempdata)
+                                else:
+                                    global_vars.editor_lvldat.pop(key)
             if not hit:
                 self.missed_note
             
