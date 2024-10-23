@@ -99,7 +99,7 @@ class DataManager(scene.Scene):
         file_path = filedialog.askopenfilename(title="Select an Zip Archive", filetypes=file_types)
         return file_path
 
-    def save_as():#made by You AI-powered search engine (you.com)
+    def save_as(self):#made by You AI-powered search engine (you.com)
         # Create a Tkinter root window
         root = tk.Tk()
         root.withdraw()  # Hide the root window
