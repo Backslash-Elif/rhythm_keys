@@ -1,4 +1,3 @@
-import pygame, global_vars
 from scenes import main_menu, settings, oobe, editor_main_menu, editor_create_menu, editor_editor, level_selector, data_manager, main_game, results
 
 class SceneManager:

@@ -3,8 +3,8 @@ from scenes import scene
 import tkinter as tk
 from tkinter import filedialog
 
-from components import button, debug, text, bgstyle, card, inputbox, alert
-from components.styles import colors, UI_colors, background_gradient, text_size, ColorName, UIColorName, TextSizeName, card_themes, CardThemeName, BGGradientName, compute_dynamic_colors
+from components import button, debug, text, bgstyle, card, alert
+from components.styles import colors, UI_colors, background_gradient, text_size, ColorName, UIColorName, TextSizeName, card_themes, CardThemeName
 
 class DataManager(scene.Scene):
     def __init__(self, manager):

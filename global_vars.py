@@ -1,4 +1,4 @@
-import os, platform, json, pygame, shutil, zipfile, uuid
+import os, platform, json
 from decimal import Decimal
 
 def save_directory(): #gets the location for the save data

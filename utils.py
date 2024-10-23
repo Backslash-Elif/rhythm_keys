@@ -1,4 +1,4 @@
-import global_vars, os, platform, json, pygame, shutil, zipfile, uuid
+import global_vars, os, json, pygame, shutil, zipfile, uuid
 from decimal import Decimal
 
 def save_level():

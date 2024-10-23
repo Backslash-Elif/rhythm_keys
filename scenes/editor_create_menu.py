@@ -1,5 +1,4 @@
 import os, time, global_vars, utils, sound_engine
-from decimal import Decimal
 from scenes import scene
 
 from components import button, debug, text, inputbox, touchtrigger, bgstyle, display_image, card, alert

@@ -2,7 +2,7 @@ import global_vars, utils, sound_engine
 from decimal import Decimal
 from scenes import scene
 
-from components import debug, touchtrigger, text, bgstyle, button, card, display_image, alert, key_reader, inputbox, rectangle
+from components import debug, text, bgstyle, button, card, display_image, alert, key_reader, rectangle
 from components.styles import text_size, card_themes, UI_colors, background_gradient, UIColorName, CardThemeName, TextSizeName, colors, ColorName
 from utils import hextobits, bitstohex, loadfromlvldat
 
