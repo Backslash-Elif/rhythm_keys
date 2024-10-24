@@ -98,13 +98,13 @@ By structuring the game in this way, **Rhythm Keys** ensures an organized codeba
 #### Native environment
 Thythm Keys was developed on Python 3.12.3 with pygame 2.6.1 on both NT and Unix systems.
 
-#### How to run
+### How to run
 
-To get started with the game, choose the appropriate executable based on your operating system. You can either run the **Windows binary** or the **Unix executable**, both located in the root of the project directory. **It’s essential to keep the directory structure intact.**
+To get started with the game, choose the appropriate executable based on your operating system. You can either run the **Windows binary** or the **Unix executable**, both located in the root of the project directory. **It's important to keep the directory structure intact.**
 
 #### Running the Project Directly
 
-If you prefer to run the script directly instead of using the precompiled executables, you can execute **main.py**. This script will automatically detect any missing modules and prompt you to install them for you.
+If you prefer to run the script directly instead of using the precompiled executables, you can execute **main.py**. This script will automatically detect any missing modules and prompt you to attempt the automatic installation.
 
 **Note for Linux Users**: If your Python installation is system-wide, please take the necessary precautions to avoid any potential issues when installing new modules.
 
